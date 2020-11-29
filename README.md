@@ -1,12 +1,26 @@
 ## Continuous Digital Twin Evolution Driven by Experimentation
 
-### Compile the Java code
+#### Compile the Java code
 
 ```
 ./gradlew compileJava
 ```
 
-### Build the sources
+#### Run tests and static analysis
+
+Tests, PMD and checkstyle:
+
+```
+./gradlew check
+```
+
+Tests only:
+
+```
+./gradlew test
+```
+
+#### Build the sources
 
 Unlike `compileJava`, `build` will generate a `.zip` file containing the distributions files.
 
@@ -19,13 +33,13 @@ You can optionally skip the execution of static analysis and tests:
 ./gradlew build -x check
 ```
 
-### Run the main module
+#### Run the main module
 
 ```
 ./gradlew evolution:run
 ```
 
-### Create a new release
+#### Create a new release
 
 ```bash
 export TAG=0.1.0
