@@ -1,0 +1,188 @@
+/*
+ * name: monitoring
+ * domains: monitoring, API
+ * authors: Miguel Jimenez (miguel@uvic.ca)
+ * description: This metamodel is a representation of the monitors necessary to
+ *  track cloud changes at run-time. These monitors are expected to act as
+ *  historians that will keep asking the cloud provider for the current list of
+ *  computing resources (e.g., virtual machines, disks and networks). Each
+ *  monitor focuses on a specific type of resource, therefore it is given one
+ *  single URL path.
+ *
+ * TODO optional URL parameters, headers, authentication, produces (XML, JSON)
+ */
+@Ecore(
+    nsPrefix="monitoring",
+    nsURI="http://www.rigiresearch.com/middleware/monitoring/1.0.0"
+)
+@GenModel(
+    bundleManifest = "false",
+    modelDirectory = "model/build/xcore/main",
+    complianceLevel = "8.0"
+)
+package com.rigiresearch.middleware.metamodels.monitoring
+
+/*
+ * <p>The root element.
+ */
+class Root {
+    String host
+    String basePath
+    boolean https
+    contains AuthMethod[] authMethods
+    contains AuthRequirement[] authRequirements
+    contains Monitor[] monitors
+}
+
+/*
+ * <p>API Authentication method.
+ */
+abstract class AuthMethod {
+    id String ^id
+}
+
+/*
+ * <p>API authentication based on an API key.
+ */
+class ApiKeyAuth extends AuthMethod {
+    contains LocatedProperty property
+}
+
+/*
+ * <p>API authentication based on a base64 encoded string containing a username
+ * and password in the form username:password. The encoded string must be
+ * included in the request header as <code>Authorization</code>, preceded by the
+ * word Basic. For example: Authorization: Basic X, where X is the encoded
+ * value.
+ */
+class BasicAuth extends AuthMethod {
+}
+
+/*
+ * <p>API authentication based on Oauth2.
+ */
+class Oauth2Auth extends AuthMethod {
+    String authorizationUrl
+    Oauth2Flow flow
+    String[] scopes
+    String tokenUrl
+}
+
+/*
+ * <p>API authentication requires.
+ */
+class AuthRequirement {
+    String[] scopes
+    refers AuthMethod method
+}
+
+/*
+ * <p>A polling monitor associated with a specific data model and an endpoint
+ * that returns the instances of the data model.
+ */
+class Monitor {
+    contains Path path
+    contains Schema schema
+    contains CronExpression rate
+}
+
+/*
+ * <p>A GET HTTP path with parameters.
+ */
+class Path {
+    id String ^id
+    String url
+    contains LocatedProperty[] parameters
+    contains AuthRequirement[] authRequirements
+}
+
+/*
+ * <p>A typed property.
+ */
+class Property {
+    String name
+    boolean required = "false"
+    contains DataType ^type
+}
+
+/*
+ * <p>A property located at a specific location.
+ */
+class LocatedProperty extends Property {
+    PropertyLocation location
+}
+
+/*
+ * <p>A composite property to represent arrays and objects.
+ */
+class CompositeProperty extends Property {
+    contains Property[] properties
+}
+
+/*
+ * <p>A Unix-like cron expression.
+ */
+class CronExpression {
+    String value
+}
+
+/*
+ * <p>A primitive data type.
+ */
+class DataType {
+    Type ^type
+}
+
+/*
+ * <p>A composite data type.
+ */
+class Schema extends DataType {
+    contains Property[] properties
+}
+
+/*
+ * <p>An array data type.
+ */
+class Array extends DataType {
+    contains DataType subtype
+}
+
+/*
+ * <p>Possible property types based on the OpenAPI specification
+ * (cf. JSONDataType).
+ */
+enum Type {
+    ARRAY as "array" = 0,
+    BOOLEAN as "boolean" = 1,
+    FILE as "file" = 2,
+    INTEGER as "integer" = 3,
+    NULL as "null" = 4,
+    NUMBER as "number" = 5,
+    OBJECT as "object" = 6,
+    STRING as "string" = 7,
+    UNSPECIFIED as "unspecified" = 8
+}
+
+/*
+ * <p>The location of a located property. This enum is based on the OpenAPI
+ * specification (cf. ParameterLocation). However, as the monitoring paths are
+ * only of type GET, the BODY constant is not used.
+ */
+enum PropertyLocation {
+    BODY as "body" = 0
+    FORM_DATA as "formData" = 1,
+    HEADER as "header" = 2,
+    PATH as "path" = 3,
+    QUERY as "query" = 4,
+    UNSPECIFIED as "unspecified" = 5
+}
+
+/*
+ * <p>Oauth2 flow types according to the OpenAPI v2 specification.
+ */
+enum Oauth2Flow {
+    ACCESS_CODE as "accessCode" = 0,
+    APPLICATION as "application" = 1,
+    IMPLICIT as "implicit" = 2,
+    PASSWORD as "password" = 3
+}
