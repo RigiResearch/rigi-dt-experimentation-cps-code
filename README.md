@@ -24,3 +24,11 @@ You can optionally skip the execution of static analysis and tests:
 ```
 ./gradlew evolution:run
 ```
+
+### Create a new release
+
+```bash
+export TAG=0.1.0
+git tag -a $TAG -m "$TAG"
+git push origin $TAG
+```
