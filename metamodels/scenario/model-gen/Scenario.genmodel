@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="model/build/xcore/main" editDirectory="" editorDirectory=""
+    modelName="Scenario" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    testsDirectory="" bundleManifest="false" containmentProxies="true" complianceLevel="8.0"
+    copyrightFields="false" usedGenPackages="http://www.eclipse.org/emf/2002/GenModel#//ecore"
+    operationReflection="true" importOrganizing="true">
+  <modelPluginVariables>org.eclipse.xtext.xbase.lib</modelPluginVariables>
+  <modelPluginVariables>org.eclipse.emf.ecore.xcore.lib</modelPluginVariables>
+  <genPackages prefix="Scenario" basePackage="com.rigiresearch.dt.experimentation"
+      disposableProviderFactory="true" ecorePackage="Scenario.ecore#/">
+    <genClasses ecoreClass="Scenario.ecore#//Scenario">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Scenario.ecore#//Scenario/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Scenario.ecore#//Scenario/variables"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Scenario.ecore#//Scenario/expectations"/>
+    </genClasses>
+    <genClasses ecoreClass="Scenario.ecore#//Variable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Scenario.ecore#//Variable/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Scenario.ecore#//Variable/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Scenario.ecore#//Expectation">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Scenario.ecore#//Expectation/variable"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Scenario.ecore#//Expectation/change"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="Scenario.ecore#//Change"/>
+    <genClasses ecoreClass="Scenario.ecore#//Decrement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Scenario.ecore#//Decrement/percentage"/>
+    </genClasses>
+    <genClasses ecoreClass="Scenario.ecore#//Increment">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Scenario.ecore#//Increment/percentage"/>
+    </genClasses>
+    <genClasses ecoreClass="Scenario.ecore#//Maintain"/>
+  </genPackages>
+</genmodel:GenModel>

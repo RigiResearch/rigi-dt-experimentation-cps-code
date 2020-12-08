@@ -1,0 +1,82 @@
+import com.rigiresearch.middleware.tasks.ExportXcoreTask
+
+plugins {
+    id "java-library"
+    id "org.xtext.builder"
+}
+
+def xcoreInput = "model/Scenario.xcore"
+def ecoreOutput = "model-gen/Scenario.ecore"
+def genmodelOutput = "model-gen/Scenario.genmodel"
+
+dependencies {
+    api "org.eclipse.emf:org.eclipse.emf.ecore:${emfVersion}"
+    api "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
+    api "org.eclipse.emf:org.eclipse.emf.ecore.xcore.lib:${ecoreXcoreLibVersion}"
+    api "org.eclipse.emf:org.eclipse.emf.common:${emfCommonVersion}"
+    xtextLanguages "org.antlr:antlr-runtime:3.2"
+    xtextLanguages "org.eclipse.emf:org.eclipse.emf.mwe2.runtime:${mwe2Version}"
+    xtextLanguages "org.eclipse.emf:org.eclipse.emf.common:${emfCommonVersion}"
+    xtextLanguages("org.eclipse.emf:org.eclipse.emf.ecore.xcore:${ecoreXcoreVersion}") {
+        exclude group: "org.antlr", module: "antlr-runtime"
+        exclude group: "org.eclipse.xtext", module: "org.eclipse.xtext"
+        exclude group: "org.eclipse.xtext", module: "org.eclipse.xtext.xbase"
+    }
+    xtextLanguages "org.eclipse.emf:org.eclipse.emf.ecore.xcore.lib:${ecoreXcoreLibVersion}"
+    xtextLanguages "org.eclipse.emf:org.eclipse.emf.codegen:${emfCodegenVersion}"
+    xtextLanguages "org.eclipse.emf:org.eclipse.emf.ecore:${emfVersion}"
+    xtextLanguages "org.eclipse.emf:org.eclipse.emf.codegen.ecore:${emfCodegenEcoreVersion}"
+    xtextLanguages "org.eclipse.emf:org.eclipse.emf.codegen.ecore.xtext:${ecoreXtextVersion}"
+    xtextLanguages "org.eclipse.xtext:org.eclipse.xtext.ecore:${xtextVersion}"
+}
+
+sourceSets {
+    main {
+        resources {
+            exclude "**/*.xcore"
+            exclude "**/*.ecore"
+            exclude "**/*.genmodel"
+        }
+    }
+}
+
+xtext {
+    languages {
+        ecore {
+            setup = "org.eclipse.xtext.ecore.EcoreSupport"
+        }
+        codegen {
+            setup = "org.eclipse.emf.codegen.ecore.xtext.GenModelSupport"
+        }
+        xcore {
+            setup = "org.eclipse.emf.ecore.xcore.XcoreStandaloneSetup"
+            generator.outlet.producesJava = true
+            generator.outlet.cleanAutomatically = true
+        }
+    }
+}
+
+task xcoreExport(type: ExportXcoreTask) {
+    xcoreInputFile = file(xcoreInput)
+    ecoreOutputFile = file(ecoreOutput)
+    genmodelOutputFile = file(genmodelOutput)
+}
+
+task xcoreProcess {
+    description = "Replaces platform URIs with Ecore's nsURI"
+    doLast {
+        ant.replace(
+                file: ecoreOutput,
+                token: "platform:/resource/org.eclipse.emf.ecore/model/Ecore.ecore",
+                value: "http://www.eclipse.org/emf/2002/Ecore"
+        )
+        ant.replace(
+                file: genmodelOutput,
+                token: "platform:/resource/org.eclipse.emf.ecore/model/Ecore.genmodel",
+                value: "http://www.eclipse.org/emf/2002/GenModel"
+        )
+    }
+    dependsOn xcoreExport
+}
+
+build.dependsOn xcoreProcess

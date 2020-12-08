@@ -1,0 +1,46 @@
+/*
+ * name: scenario
+ * domains: experimentation, scenario modeling
+ * authors: Miguel Jimenez (miguel@uvic.ca)
+ */
+@Ecore(
+    nsPrefix="scenario",
+    nsURI="http://www.rigiresearch.com/dt/experimentation/scenario/1.0.0"
+)
+@GenModel(
+    bundleManifest = "false",
+    modelDirectory = "model/build/xcore/main",
+    complianceLevel = "8.0"
+)
+package com.rigiresearch.dt.experimentation.scenario
+
+class Scenario {
+    id String name
+    contains Variable[] variables
+    contains Expectation[] expectations
+}
+
+class Variable {
+    id String name
+    double value
+}
+
+class Expectation {
+    refers Variable variable
+    contains Change change
+}
+
+abstract class Change {
+
+}
+
+class Decrement extends Change {
+    double percentage
+}
+
+class Increment extends Change {
+    double percentage
+}
+
+class Maintain extends Change {
+}

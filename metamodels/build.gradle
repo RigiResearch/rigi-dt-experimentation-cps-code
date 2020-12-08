@@ -27,4 +27,7 @@ dependencies {
   api "org.eclipse.m2m.atl:org.eclipse.m2m.atl.common:${atlVersion}"
   api "org.eclipse.m2m.atl:org.eclipse.m2m.atl.emftvm:${atlVersion}"
   api "org.eclipse.m2m.atl:org.eclipse.m2m.atl.emftvm.trace:${atlVersion}"
+
+  // Support for loading Flexmi models
+  api "org.eclipse.epsilon:epsilon-emf:${epsilonEmfFlexmiVersion}"
 }
