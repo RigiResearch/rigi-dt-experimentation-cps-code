@@ -3,7 +3,6 @@ package com.rigiresearch.dt.experimentation;
 import com.rigiresearch.middleware.metamodels.EmfResource;
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +13,6 @@ import org.eclipse.emf.ecore.resource.Resource.Factory;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.epsilon.emc.emf.EmfModel;
-import org.eclipse.epsilon.eol.EolModule;
-import org.eclipse.epsilon.eol.IEolModule;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.eclipse.epsilon.flexmi.FlexmiResourceFactory;
 
@@ -59,23 +56,20 @@ public final class Epsilon {
     private static final String XMI_EXT = "xmi";
 
     /**
-     * The path to the Ecore metamodel on which the input models are based.
-     */
-    private final String metamodelPath;
-
-    /**
      * Loads a Flexmi model.
+     * @param metamodelPath The path to the Ecore metamodel
      * @param modelPath The path to the Flexmi model
      * @return The loaded resource
      * @throws IOException If there is a problem loading the model
      */
-    public Resource flexmi(final String modelPath) throws IOException {
+    public Resource flexmi(final String metamodelPath, final String modelPath)
+        throws IOException {
         final Map<String, Factory> factories = new HashMap<>(3);
         factories.put(Epsilon.ECORE_EXT, Epsilon.ECORE_FACTORY);
         factories.put(Epsilon.XMI_EXT, Epsilon.XMI_FACTORY);
         factories.put(Epsilon.FLEXMI_EXT, Epsilon.FLEXMI_FACTORY);
         final Resource metamodel = new EmfResource(
-            new File(this.metamodelPath),
+            new File(metamodelPath),
             Collections.singletonList(EcorePackage.eINSTANCE.eResource()),
             factories
         ).asResource();
@@ -87,36 +81,20 @@ public final class Epsilon {
     }
 
     /**
-     * Runs an EOL program.
-     * @param programPath The path to the EOL program
-     * @param arguments The input/output models of the program, if any
-     * @throws Exception If there is a problem running the program
-     */
-    public void eol(final String programPath, final Collection<EmfModel> arguments)
-        throws Exception {
-        final IEolModule module = new EolModule();
-        module.parse(new File(programPath));
-        // Make the input models available to the program
-        module.getContext().getModelRepository().addModels(arguments);
-        module.execute();
-        // Saves any changes to the models and unloads them from memory
-        module.getContext().getModelRepository().dispose();
-    }
-
-    /**
      * Instantiates an EMF model to serve as input of an Epsilon program.
      * @param name The input name (as specified in the Epsilon program)
+     * @param metamodelPath The path to the Ecore metamodel
      * @param modelPath The path to the input model
      * @param resource The model already loaded resource
      * @return The EMF model instance
      * @throws EolModelLoadingException If there is a problem loading the model
      */
-    public EmfModel input(final String name, final String modelPath,
-        final Resource resource) throws EolModelLoadingException {
+    public EmfModel input(final String name, final String metamodelPath,
+        final String modelPath, final Resource resource) throws EolModelLoadingException {
         this.register(Epsilon.FLEXMI_EXT, Epsilon.FLEXMI_FACTORY);
         final EmfModel model = new EmfModel();
         model.setName(name);
-        model.setMetamodelFile(this.metamodelPath);
+        model.setMetamodelFile(metamodelPath);
         model.setModelFile(modelPath);
         model.setResource(resource);
         model.load();

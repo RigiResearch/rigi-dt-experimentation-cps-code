@@ -1,0 +1,6 @@
+[%var s = Simulation.all.first();%]
+Scenario: [%=s.scenario%]
+Parameters:
+[%for (p in s.parameters){%]
+[%=p.name%] = [%=p.value%]
+[%}%]

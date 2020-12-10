@@ -1,0 +1,4 @@
+rule Simulation {
+  template : "demo.generation.egl"
+  target : "../../tmp/simulation.txt"
+}
