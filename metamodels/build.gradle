@@ -20,14 +20,11 @@ repositories {
 dependencies {
   api "org.eclipse.emf:org.eclipse.emf.common:${emfCommonVersion}"
   api "org.eclipse.emf:org.eclipse.emf.ecore:${emfVersion}"
-  api "org.eclipse.emf:org.eclipse.emf.ecore.xmi:${emfVersion}"
+  api "org.eclipse.emf:org.eclipse.emf.ecore.xmi:${emfXmiVersion}"
 
   // Support for ATL transformations
   api "org.ow2.asm:asm:6.0-atlassian-1"
   api "org.eclipse.m2m.atl:org.eclipse.m2m.atl.common:${atlVersion}"
   api "org.eclipse.m2m.atl:org.eclipse.m2m.atl.emftvm:${atlVersion}"
   api "org.eclipse.m2m.atl:org.eclipse.m2m.atl.emftvm.trace:${atlVersion}"
-
-  // Support for loading Flexmi models
-  api "org.eclipse.epsilon:epsilon-emf:${epsilonEmfFlexmiVersion}"
 }

@@ -3,16 +3,14 @@ package com.rigiresearch.middleware.metamodels;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Optional;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.epsilon.flexmi.FlexmiResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +37,12 @@ public final class EmfResource {
     /**
      * The resource's metamodel
      */
-    private final Resource metamodel;
+    private final List<Resource> metamodels;
 
     /**
      * A factory to process the model.
      */
-    private final Resource.Factory factory;
+    private final Map<String, Resource.Factory> factories;
 
     /**
      * Loads the Flexmi model and returns the corresponding Ecore resource.
@@ -53,12 +51,15 @@ public final class EmfResource {
      */
     public Resource asResource() throws IOException {
         final ResourceSet set = new ResourceSetImpl();
-        final EPackage epackage = (EPackage) this.metamodel.getContents().get(0);
-        set.getPackageRegistry()
-            .put(epackage.getNsURI(), epackage);
+        this.metamodels.stream()
+            .map(resource -> (EPackage) resource.getContents().get(0))
+            .forEach(epackage ->
+                set.getPackageRegistry()
+                    .put(epackage.getNsURI(), epackage)
+            );
         set.getResourceFactoryRegistry()
             .getExtensionToFactoryMap()
-            .put("*", this.factory);
+            .putAll(this.factories);
         final Resource resource = set.createResource(
             URI.createFileURI(this.model.getAbsolutePath())
         );

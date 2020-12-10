@@ -24,9 +24,17 @@ dependencies {
     implementation "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
     implementation "org.eclipse.emf:org.eclipse.emf.common:${emfCommonVersion}"
     implementation "org.eclipse.emf:org.eclipse.emf.ecore:${emfVersion}"
-    implementation "org.eclipse.emf:org.eclipse.emf.ecore.xmi:${emfVersion}"
-    implementation "org.eclipse.emf:org.eclipse.emf.ecore.xcore:${ecoreXcoreVersion}"
+    implementation "org.eclipse.emf:org.eclipse.emf.ecore.xmi:${emfXmiVersion}"
+    implementation ("org.eclipse.emf:org.eclipse.emf.ecore.xcore:${ecoreXcoreVersion}") {
+        exclude group: "org.antlr", module: "antlr-runtime"
+    }
     implementation "org.eclipse.emf:org.eclipse.emf.ecore.xcore.lib:${ecoreXcoreLibVersion}"
+
+    // Support for Epsilon languages
+    implementation "org.eclipse.epsilon:org.eclipse.epsilon.flexmi:${epsilonVersion}"
+    implementation "org.eclipse.epsilon:org.eclipse.epsilon.emc.emf:${epsilonVersion}"
+    implementation "org.eclipse.epsilon:org.eclipse.epsilon.eol.engine:${epsilonVersion}"
+    implementation "org.eclipse.epsilon:org.eclipse.epsilon.etl.engine:${epsilonVersion}"
 
     // Xtend templates
     implementation "org.eclipse.xtend:org.eclipse.xtend.lib:2.18.0"

@@ -1,0 +1,6 @@
+Scenario.all.collect(s|s.name).first().
+    println("Scenario: ");
+
+for (v in Variable.all) {
+    (v.name + " (" + v.value + ")").println();
+}

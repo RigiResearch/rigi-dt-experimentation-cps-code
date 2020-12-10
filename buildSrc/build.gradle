@@ -17,7 +17,9 @@ dependencies {
   testImplementation gradleTestKit()
 
   // Xcore support
-  implementation "org.eclipse.emf:org.eclipse.emf.ecore.xcore:${ecoreXcoreVersion}"
+  implementation ("org.eclipse.emf:org.eclipse.emf.ecore.xcore:${ecoreXcoreVersion}") {
+    exclude group: "org.antlr", module: "antlr-runtime"
+  }
   implementation "org.eclipse.emf:org.eclipse.emf.ecore.xcore.lib:${ecoreXcoreLibVersion}"
 
   // Support for generating the .ecore and .genmodel files
