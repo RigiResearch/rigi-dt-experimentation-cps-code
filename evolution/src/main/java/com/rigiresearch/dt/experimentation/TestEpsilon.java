@@ -75,11 +75,6 @@ public class TestEpsilon {
         // Flexmi Must be registered globally
         TestEpsilon.register("flexmi", new FlexmiResourceFactory());
 
-        // Loads the EMF model
-        scenario.getResourceSet()
-            .getResourceFactoryRegistry()
-            .getExtensionToFactoryMap()
-            .put("ecore", new EcoreResourceFactoryImpl());
         EmfModel model = new EmfModel();
         model.setMetamodelFile("metamodels/scenario/model-gen/Scenario.ecore");
         // Set the URI to prevent a NullPointerException
