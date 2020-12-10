@@ -1,10 +1,8 @@
 plugins {
     id "application"
-    id "org.xtext.xtend"
 }
 
 repositories {
-    flatDir dirs: "lib"
     maven {
         url "https://repo.eclipse.org/content/repositories/atl-releases/"
     }
@@ -18,59 +16,13 @@ dependencies {
     implementation project(":metamodels")
     implementation project(":metamodels:graph")
     implementation project(":metamodels:monitoring")
-    implementation name: "edu.uoc.som.openapi-1.0.2.201804111106"
-    implementation name: "edu.uoc.som.openapi.io-1.0.3.201804111106"
-    implementation "com.google.code.gson:gson:2.8.5"
-    implementation "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
-    implementation "org.eclipse.emf:org.eclipse.emf.common:${emfCommonVersion}"
-    implementation "org.eclipse.emf:org.eclipse.emf.ecore:${emfVersion}"
-    implementation "org.eclipse.emf:org.eclipse.emf.ecore.xmi:${emfXmiVersion}"
-    implementation ("org.eclipse.emf:org.eclipse.emf.ecore.xcore:${ecoreXcoreVersion}") {
-        exclude group: "org.antlr", module: "antlr-runtime"
-    }
-    implementation "org.eclipse.emf:org.eclipse.emf.ecore.xcore.lib:${ecoreXcoreLibVersion}"
-
     // Support for Epsilon languages
     implementation "org.eclipse.epsilon:org.eclipse.epsilon.flexmi:${epsilonVersion}"
     implementation "org.eclipse.epsilon:org.eclipse.epsilon.emc.emf:${epsilonVersion}"
     implementation "org.eclipse.epsilon:org.eclipse.epsilon.eol.engine:${epsilonVersion}"
     implementation "org.eclipse.epsilon:org.eclipse.epsilon.etl.engine:${epsilonVersion}"
-
-    // Xtend templates
-    implementation "org.eclipse.xtend:org.eclipse.xtend.lib:2.18.0"
-    implementation "org.apache.commons:commons-configuration2:2.5"
-    runtime "commons-beanutils:commons-beanutils:1.9.3"
-    // Support for apache commons login
-    runtime "org.apache.logging.log4j:log4j-core:2.12.0"
-    runtime "org.apache.logging.log4j:log4j-jcl:2.12.0"
 }
 
 application {
     mainClassName = "com.rigiresearch.dt.experimentation.Application"
-}
-
-xtend {
-    generator {
-        //whether to generate @SuppressWarnings("all"), enabled by default
-        suppressWarningsAnnotation = false
-        //whether to generate the @Generated annotation, disabled by default
-        generatedAnnotation {
-            active = true
-            comment = "Copyright University of Victoria"
-            includeDate = true
-        }
-    }
-    debugger {
-        sourceInstaller = 'SMAP'
-        hideSyntheticVariables = true
-    }
-    validator {
-        // Available levels are error, warning, info and ignore
-        error 'org.eclipse.xtend.core.validation.IssueCodes.unused_private_member'
-    }
-}
-
-sourceSets {
-    main.xtendOutputDir = 'src/main/xtend-gen'
-    test.xtendOutputDir = 'test/xtend-gen'
 }

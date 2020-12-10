@@ -17,7 +17,7 @@ import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
 import org.eclipse.epsilon.flexmi.FlexmiResourceFactory;
 
 /**
- * Load and run Epsilon models.
+ * Wrapper methods to load and run Epsilon models.
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
  * @since 0.1.0

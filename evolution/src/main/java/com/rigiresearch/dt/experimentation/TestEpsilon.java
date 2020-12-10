@@ -25,14 +25,14 @@ public class TestEpsilon {
     private static final Logger LOGGER =
         LoggerFactory.getLogger(TestEpsilon.class);
 
-    private TestEpsilon() {
+    TestEpsilon() {
         // Nothing to do here
     }
 
-    public static void main(final String... args) throws Exception {
-        final String scenario = "metamodels/scenario/model-gen/Scenario.ecore";
-        final String simulation = "metamodels/simulation/model-gen/Simulation.ecore";
-        final String model = "evolution/model/demo.scenario.flexmi";
+    public void run() throws Exception {
+        final String scenario = "../metamodels/scenario/model-gen/Scenario.ecore";
+        final String simulation = "../metamodels/simulation/model-gen/Simulation.ecore";
+        final String model = "model/demo.scenario.flexmi";
         final Epsilon epsilon = new Epsilon();
 
         // 1. Load a Flexmi model and print it out
@@ -45,15 +45,15 @@ public class TestEpsilon {
         // 2. Load and run an EOL program
         TestEpsilon.LOGGER.info("Epsilon Object Language");
         EolRunConfiguration.Builder()
-            .withScript("evolution/model/demo.query.eol")
+            .withScript("model/demo.query.eol")
             .withModel(input)
             .build()
             .run();
 
         // 3. Load and run an ETL program
-        final EmfModel output = epsilon.output("Target", simulation, "tmp/simulation.xmi");
+        final EmfModel output = epsilon.output("Target", simulation, "../tmp/simulation.xmi");
         EtlRunConfiguration.Builder()
-            .withScript("evolution/model/demo.transformation.etl")
+            .withScript("model/demo.transformation.etl")
             .withModel(input)
             .withModel(output)
             .build()
@@ -66,7 +66,7 @@ public class TestEpsilon {
         // 4. Load and run an EGX program
         TestEpsilon.LOGGER.info("Epsilon Co-Ordination Language");
         EgxRunConfiguration.Builder()
-            .withScript("evolution/model/demo.coordination.egx")
+            .withScript("model/demo.coordination.egx")
             .withModel(output)
             .withParallelism(-1)
             .build()
