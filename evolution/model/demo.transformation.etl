@@ -1,0 +1,13 @@
+rule Scenario2Simulation
+    transform s : Source!Scenario
+    to t : Target!Simulation {
+    t.scenario = s.name;
+    t.parameters = s.variables.equivalent();
+}
+
+rule Variable2Parameter
+    transform s : Source!Variable
+    to t : Target!Parameter {
+    t.name = s.name;
+    t.value = s.value;
+}

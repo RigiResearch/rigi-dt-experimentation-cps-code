@@ -3,6 +3,7 @@ package com.rigiresearch.dt.experimentation;
 import com.rigiresearch.middleware.metamodels.EmfResource;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +17,6 @@ import org.eclipse.epsilon.emc.emf.EmfModel;
 import org.eclipse.epsilon.eol.EolModule;
 import org.eclipse.epsilon.eol.IEolModule;
 import org.eclipse.epsilon.eol.exceptions.models.EolModelLoadingException;
-import org.eclipse.epsilon.eol.models.CachedModel;
 import org.eclipse.epsilon.flexmi.FlexmiResourceFactory;
 
 /**
@@ -89,38 +89,55 @@ public final class Epsilon {
     /**
      * Runs an EOL program.
      * @param programPath The path to the EOL program
-     * @param inputs The input models to the program, if any
+     * @param arguments The input/output models of the program, if any
      * @throws Exception If there is a problem running the program
      */
-    public void eol(final String programPath, final Iterable<EmfModel> inputs)
+    public void eol(final String programPath, final Collection<EmfModel> arguments)
         throws Exception {
         final IEolModule module = new EolModule();
         module.parse(new File(programPath));
         // Make the input models available to the program
-        inputs.forEach(model -> module.getContext()
-            .getModelRepository()
-            .addModel(model));
+        module.getContext().getModelRepository().addModels(arguments);
         module.execute();
         // Saves any changes to the models and unloads them from memory
-        inputs.forEach(CachedModel::dispose);
+        module.getContext().getModelRepository().dispose();
     }
 
     /**
      * Instantiates an EMF model to serve as input of an Epsilon program.
+     * @param name The input name (as specified in the Epsilon program)
      * @param modelPath The path to the input model
-     * @param resource The already loaded model resource
+     * @param resource The model already loaded resource
      * @return The EMF model instance
      * @throws EolModelLoadingException If there is a problem loading the model
      */
-    public EmfModel inputModel(final String modelPath, final Resource resource)
-        throws EolModelLoadingException {
+    public EmfModel input(final String name, final String modelPath,
+        final Resource resource) throws EolModelLoadingException {
         this.register(Epsilon.FLEXMI_EXT, Epsilon.FLEXMI_FACTORY);
         final EmfModel model = new EmfModel();
+        model.setName(name);
         model.setMetamodelFile(this.metamodelPath);
-        // Set the URI to prevent a NullPointerException
         model.setModelFile(modelPath);
         model.setResource(resource);
         model.load();
+        return model;
+    }
+
+    /**
+     * Instantiates an EMF model to serve as output of an Epsilon program.
+     * @param name The input name (as specified in the Epsilon program)
+     * @param metamodelPath The path to the metamodel of the output model
+     * @param modelPath The path to the output model
+     * @return The EMF model instance
+     */
+    public EmfModel output(final String name, final String metamodelPath,
+        final String modelPath) {
+        final EmfModel model = new EmfModel();
+        model.setName(name);
+        model.setMetamodelFile(metamodelPath);
+        model.setModelFile(modelPath);
+        model.setReadOnLoad(false);
+        model.setStoredOnDisposal(true);
         return model;
     }
 
