@@ -1,8 +1,8 @@
 <?nsuri http://www.rigiresearch.com/dt/experimentation/scenario/1.0.0?>
-<scenario name="demo">
+<Scenario name="demo">
     <variable name="test1" value="0.5" />
     <variable name="test2" value="0.5" />
     <expectation variable="test">
         <increment percentage="0.2" />
     </expectation>
-</scenario>
+</Scenario>
