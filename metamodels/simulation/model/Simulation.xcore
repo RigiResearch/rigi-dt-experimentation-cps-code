@@ -1,0 +1,25 @@
+/*
+ * name: simulation
+ * domains: experimentation, BRT simulation
+ * authors: Miguel Jimenez (miguel@uvic.ca)
+ */
+@Ecore(
+    nsPrefix="simulation",
+    nsURI="http://www.rigiresearch.com/dt/experimentation/simulation/1.0.0"
+)
+@GenModel(
+    bundleManifest = "false",
+    modelDirectory = "model/build/xcore/main",
+    complianceLevel = "8.0"
+)
+package com.rigiresearch.dt.experimentation.simulation
+
+class Simulation {
+    id String scenario
+    contains Parameter[] parameters
+}
+
+class Parameter {
+    id String name
+    double value
+}
