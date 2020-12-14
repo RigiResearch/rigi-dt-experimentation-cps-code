@@ -1,5 +1,13 @@
 ## Continuous Digital Twin Evolution Driven by Experimentation
 
+#### Generate the .ecore and .genmodel files
+
+Beware that this task requires Java 1.8 and Gradle 5.3 (which has been included in this repository). Otherwise, the Ecore types generated will always be `EJavaObject`.
+
+```
+./gradlew xcoreProcess
+```
+
 #### Compile the Java code
 
 ```
