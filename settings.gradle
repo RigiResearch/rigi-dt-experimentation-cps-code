@@ -2,7 +2,6 @@ rootProject.name = 'dt-experimentation-code'
 
 include 'metamodels'
 include 'metamodels:graph'
-include 'metamodels:monitoring'
 include 'metamodels:scenario'
 include 'metamodels:simulation'
 include 'evolution'

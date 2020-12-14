@@ -15,7 +15,6 @@ dependencies {
     // Model and code generation
     implementation project(":metamodels")
     implementation project(":metamodels:graph")
-    implementation project(":metamodels:monitoring")
     // Support for Epsilon languages
     implementation "org.eclipse.epsilon:org.eclipse.epsilon.flexmi:${epsilonVersion}"
     implementation "org.eclipse.epsilon:org.eclipse.epsilon.emc.emf:${epsilonVersion}"
