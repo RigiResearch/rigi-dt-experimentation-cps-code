@@ -27,8 +27,7 @@ public final class Application {
      * @throws Exception If there is a problem running the Epsilon examples
      */
     public static void main(final String... args) throws Exception {
-        Application.LOGGER.info("Running Epsilon Examples");
-        new TestEpsilon().run();
+        Application.LOGGER.info("Nothing to do here...");
     }
 
 }
