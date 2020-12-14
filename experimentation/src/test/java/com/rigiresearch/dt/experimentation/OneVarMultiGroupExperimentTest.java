@@ -1,5 +1,5 @@
-import com.rigiresearch.dt.experimentation.Experiment;
-import com.rigiresearch.dt.experimentation.OneVarMultiGroupExperiment;
+package com.rigiresearch.dt.experimentation;
+
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
