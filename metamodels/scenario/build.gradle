@@ -5,6 +5,9 @@ plugins {
     id "org.xtext.builder"
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 def xcoreInput = "model/Scenario.xcore"
 def ecoreOutput = "model-gen/Scenario.ecore"
 def genmodelOutput = "model-gen/Scenario.genmodel"
