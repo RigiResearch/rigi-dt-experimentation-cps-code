@@ -42,6 +42,7 @@ Thumbs.db
 **/xcore-gen/*
 **/src-gen/*
 tmp/
+**/R.data
 
 ### Allow libraries ###
 !**/lib/*.jar

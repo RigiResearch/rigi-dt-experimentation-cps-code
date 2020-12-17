@@ -53,8 +53,7 @@ public final class OneVarMultiGroupExperiment implements Experiment {
             .reduce(true, (before, value) -> before && value);
         final Map<Mean, List<String>> clusters;
         if (normal) {
-            // TODO Implement Tukey HSD
-            clusters = new DunnTest(this.data, this.alpha).test();
+            clusters = new TukeyHSD(this.data, this.alpha).test();
         } else {
             clusters = new DunnTest(this.data, this.alpha).test();
         }
