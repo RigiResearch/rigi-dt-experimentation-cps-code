@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +39,6 @@ public final class OneVarMultiGroupExperiment implements Experiment {
      */
     private final double alpha;
 
-    @SneakyThrows
     @Override
     public ExperimentResult result() {
         if (!this.sameLength()) {
