@@ -4,7 +4,6 @@ import com.github.rcaller.datatypes.DataFrame;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -36,7 +35,7 @@ public final class EDataFrame {
      * @return A non-null, possibly empty dataframe
      */
     public DataFrame dataframe() {
-        final List<Entry<String, Double[]>> entries =
+        final List<Map.Entry<String, Double[]>> entries =
             new ArrayList<>(this.data.entrySet());
         final int records = entries.size() * entries.get(0).getValue().length;
         final Object[][] objects = new Object[2][records];
