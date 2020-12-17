@@ -22,10 +22,12 @@ class OneVarMultiGroupExperimentTest {
 
     @Test
     void dummyData() {
-        final Double[] treatment = {63.5, 81.3, 88.9, 63.5, 76.2};
+        final Double[] treatment1 = {45.5, 51.3, 42.9, 40.5, 55.2};
+        final Double[] treatment2 = {66.0, 64.8, 74.9, 81.3, 76.2};
         final Double[] control = {66.0, 64.8, 74.9, 81.3, 76.2};
         final Map<String, Double[]> samples = new HashMap<>(2);
-        samples.put("treatment", treatment);
+        samples.put("treat1", treatment1);
+        samples.put("treat2", treatment2);
         samples.put("control", control);
         final double alpha = 0.05;
         final Experiment experiment = new OneVarMultiGroupExperiment(samples, alpha);

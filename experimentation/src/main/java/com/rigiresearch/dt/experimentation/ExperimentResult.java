@@ -61,10 +61,10 @@ public final class ExperimentResult {
         ExperimentResult.appendTitle(builder, "Best Performant Cluster");
         best.ifPresent(entry ->
             ExperimentResult
-                .appendEntry(builder, entry, "Mean", "Groups")
+                .appendEntry(builder, entry, "Mean", "Cluster")
         );
         ExperimentResult.appendMap(this.means, builder, "Means", "Group", "Mean");
-        ExperimentResult.appendMap(this.clusters, builder, "Clusters", "Mean", "Groups");
+        ExperimentResult.appendMap(this.clusters, builder, "Clusters", "Mean", "Cluster");
         return builder.toString();
     }
 
@@ -96,9 +96,7 @@ public final class ExperimentResult {
         builder.append('\n');
         builder.append(title.toUpperCase(Locale.getDefault()));
         builder.append('\n');
-        for (int counter = 0; counter < title.length(); counter++) {
-            builder.append('=');
-        }
+        builder.append("=".repeat(title.length()));
         builder.append('\n');
     }
 
@@ -114,12 +112,10 @@ public final class ExperimentResult {
         builder.append(key);
         builder.append(": ");
         builder.append(entry.getKey());
-        builder.append('\n');
+        builder.append('\t');
         builder.append(value);
         builder.append(": ");
         builder.append(entry.getValue());
-        builder.append('\n');
-        builder.append("--");
         builder.append('\n');
     }
 }

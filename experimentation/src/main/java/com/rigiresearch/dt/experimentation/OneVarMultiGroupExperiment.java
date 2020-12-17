@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,19 +40,23 @@ public final class OneVarMultiGroupExperiment implements Experiment {
      */
     private final double alpha;
 
+    @SneakyThrows
     @Override
     public ExperimentResult result() {
+        if (!this.sameLength()) {
+            throw new IllegalArgumentException("Groups must be the same length");
+        }
         final Map<String, Boolean> normality = this.normality();
         final Map<String, Mean> means = this.means();
-        final Map<Mean, List<String>> clusters = new HashMap<>(this.data.size());
-        // Continue only if all groups are normally distributed and have the same length
-        final boolean length = this.sameLength();
         final boolean normal = normality.values()
             .stream()
             .reduce(true, (before, value) -> before && value);
-        if (length && normal) {
-            // 3. Find similar groups
-            // TODO Find a Java library for Dunn's test and Tukey HSD
+        final Map<Mean, List<String>> clusters;
+        if (normal) {
+            // TODO Implement Tukey HSD
+            clusters = new DunnTest(this.data, this.alpha).test();
+        } else {
+            clusters = new DunnTest(this.data, this.alpha).test();
         }
         return ExperimentResult.builder()
             .normal(normality)
@@ -92,7 +97,7 @@ public final class OneVarMultiGroupExperiment implements Experiment {
     private Map<String, Mean> means() {
         final Map<String, Mean> map = new HashMap<>(this.data.size());
         this.data.forEach((key, value) -> {
-            final Mean mean = new Mean(value, 1.0 - this.alpha);
+            final Mean mean = new Mean(value, this.alpha);
             map.put(key, mean);
         });
         return map;

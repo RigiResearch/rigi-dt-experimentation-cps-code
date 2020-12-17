@@ -1,5 +1,10 @@
 ## Continuous Digital Twin Evolution Driven by Experimentation
 
+### Prerequisites
+
+1. Install R so that it is accessible from the command line
+2. Install the R package "dunn.test" (i.e., `install.packages("dunn.test")`)
+
 #### Generate the .ecore and .genmodel files
 
 Beware that this task requires Java 1.8 and Gradle 5.3 (which has been included in this repository). Otherwise, the Ecore types generated will always be `EJavaObject`.
