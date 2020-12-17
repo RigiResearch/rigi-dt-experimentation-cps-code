@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -244,12 +243,12 @@ public final class DunnTest {
      * @return A non-null, possibly empty dataframe
      */
     private DataFrame dataframe() {
-        final List<Entry<String, Double[]>> entries =
+        final List<Map.Entry<String, Double[]>> entries =
             new ArrayList<>(this.data.entrySet());
         final int records = entries.size() * entries.get(0).getValue().length;
         final Object[][] objects = new Object[2][records];
         for (int i = 0, j = 0; i < entries.size() && j < records; i++) {
-            final Entry<String, Double[]> entry = entries.get(i);
+            final Map.Entry<String, Double[]> entry = entries.get(i);
             for (int k = 0; k < entry.getValue().length; k++, j++) {
                 objects[0][j] = entry.getKey();
                 objects[1][j] = entry.getValue()[k];
