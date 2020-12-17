@@ -32,14 +32,15 @@ public final class ExperimentResult {
     /**
      * Group ids grouped by mean.
      * <p>These clusters represent groups whose means are similar. That is,
-     * their difference is not statistically significant. The averages used as key are the average
-     * of the groups' averages.</p>
+     * their difference is not statistically significant. The averages used as
+     * key are the average of the groups' averages.</p>
      */
     private final Map<Mean, List<String>> clusters;
 
     /**
-     * Finds the best performing cluster based on the average. Note that this method assumes that
-     * the best cluster is the one with the smallest average.
+     * Finds the best performing cluster based on the average.
+     * Note that this method assumes that the best cluster is the one with the
+     * smallest average.
      * @return A possibly empty result
      */
     public Optional<Map.Entry<Mean, List<String>>> bestCluster() {
