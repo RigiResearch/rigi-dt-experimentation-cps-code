@@ -1,9 +1,9 @@
 package com.rigiresearch.dt.experimentation;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
@@ -35,7 +35,7 @@ public final class ExperimentResult {
      * their difference is not statistically significant. The averages used as
      * key are the average of the groups' averages.</p>
      */
-    private final Map<Mean, List<String>> clusters;
+    private final Map<Mean, Set<String>> clusters;
 
     /**
      * Finds the best performing cluster based on the average.
@@ -43,7 +43,7 @@ public final class ExperimentResult {
      * smallest average.
      * @return A possibly empty result
      */
-    public Optional<Map.Entry<Mean, List<String>>> bestCluster() {
+    public Optional<Map.Entry<Mean, Set<String>>> bestCluster() {
         return this.clusters.entrySet()
             .stream()
             .min(Map.Entry.comparingByKey());
@@ -55,7 +55,7 @@ public final class ExperimentResult {
      */
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        final Optional<Map.Entry<Mean, List<String>>> best =
+        final Optional<Map.Entry<Mean, Set<String>>> best =
             this.bestCluster();
         ExperimentResult.appendMap(
             this.normal, builder, "Normal distribution", "Group", "Normally distributed?");

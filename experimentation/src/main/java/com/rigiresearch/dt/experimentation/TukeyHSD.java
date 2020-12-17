@@ -4,8 +4,8 @@ import com.github.rcaller.rstuff.RCaller;
 import com.github.rcaller.rstuff.RCode;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -59,7 +59,7 @@ public final class TukeyHSD {
      * Runs the test and builds the mean clusters based on the results.
      * @return A non-null, possibly empty map
      */
-    public Map<Mean, List<String>> test() {
+    public Map<Mean, Set<String>> test() {
         final OutputStream useless = new ByteArrayOutputStream();
         final OutputStream output = new ByteArrayOutputStream();
         // We run the test twice to get the adjusted P values and the comparisons

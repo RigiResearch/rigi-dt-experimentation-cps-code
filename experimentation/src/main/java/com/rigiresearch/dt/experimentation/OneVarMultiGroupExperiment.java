@@ -1,6 +1,5 @@
 package com.rigiresearch.dt.experimentation;
 
-import com.datumbox.framework.common.dataobjects.AssociativeArray2D;
 import com.datumbox.framework.common.dataobjects.TransposeDataCollection;
 import com.datumbox.framework.core.statistics.anova.Anova;
 import com.datumbox.framework.core.statistics.nonparametrics.independentsamples.KruskalWallis;
@@ -8,6 +7,7 @@ import com.datumbox.framework.core.statistics.nonparametrics.onesample.ShapiroWi
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -45,19 +45,25 @@ public final class OneVarMultiGroupExperiment implements Experiment {
             throw new IllegalArgumentException("Groups must be the same length");
         }
         final Map<String, Boolean> normality = this.normality();
-        final Map<String, Mean> means = this.means();
+        final Map<Mean, Set<String>> clusters;
         final boolean normal = normality.values()
             .stream()
             .reduce(true, (before, value) -> before && value);
-        final Map<Mean, List<String>> clusters;
-        if (normal) {
-            clusters = new TukeyHSD(this.data, this.alpha).test();
+        if (this.significantDifference(normal)) {
+            if (normal) {
+                clusters = new TukeyHSD(this.data, this.alpha).test();
+            } else {
+                clusters = new DunnTest(this.data, this.alpha).test();
+            }
         } else {
-            clusters = new DunnTest(this.data, this.alpha).test();
+            OneVarMultiGroupExperiment.LOGGER.warn(
+                "There is no significant difference among groups"
+            );
+            clusters = new HashMap<>(0);
         }
         return ExperimentResult.builder()
             .normal(normality)
-            .means(means)
+            .means(this.means())
             .clusters(clusters)
             .build();
     }
@@ -117,22 +123,18 @@ public final class OneVarMultiGroupExperiment implements Experiment {
      * Note that this test assumes that only one variable was observed and that
      * the groups are independent.
      * @param normal Whether the data is normally distributed
-     * @param samples The collected samples
      * @return Either {@code true} or {@code false}
      */
-    private boolean isSignificantlyDifferent(final boolean normal,
-        final Map<String, Double[]> samples) {
+    private boolean significantDifference(final boolean normal) {
         final boolean  significant;
-        final TransposeDataCollection collection = Experiment.data(samples);
+        final TransposeDataCollection collection = Experiment.data(this.data);
         if (normal) {
             // A one-way ANOVA is a type of statistical test that compares the
             // variance in the group means within a sample whilst considering
             // only one independent variable or factor. It is a hypothesis-based
             // test, meaning that it aims to evaluate multiple mutually exclusive
             // theories about our data.
-            final AssociativeArray2D output = new AssociativeArray2D();
-            significant = Anova.oneWayTestEqualVars(collection, this.alpha, output);
-            OneVarMultiGroupExperiment.LOGGER.debug("Anova test output: {}", output);
+            significant = Anova.oneWayTestEqualVars(collection, this.alpha);
         } else {
             // The null hypothesis states that the population medians are all equal
             significant = KruskalWallis.test(collection, this.alpha);
