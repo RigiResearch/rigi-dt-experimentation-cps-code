@@ -1,4 +1,4 @@
-package com.rigiresearch.dt.experimentation;
+package com.rigiresearch.dt.experimentation.evolution;
 
 import com.rigiresearch.middleware.metamodels.EmfResource;
 import java.io.File;
@@ -9,7 +9,6 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.Resource.Factory;
 import org.eclipse.emf.ecore.xmi.impl.EcoreResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.epsilon.emc.emf.EmfModel;
@@ -64,7 +63,7 @@ public final class Epsilon {
      */
     public Resource flexmi(final String metamodelPath, final String modelPath)
         throws IOException {
-        final Map<String, Factory> factories = new HashMap<>(3);
+        final Map<String, Resource.Factory> factories = new HashMap<>(3);
         factories.put(Epsilon.ECORE_EXT, Epsilon.ECORE_FACTORY);
         factories.put(Epsilon.XMI_EXT, Epsilon.XMI_FACTORY);
         factories.put(Epsilon.FLEXMI_EXT, Epsilon.FLEXMI_FACTORY);

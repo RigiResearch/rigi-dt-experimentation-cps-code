@@ -1,11 +1,10 @@
-package com.rigiresearch.dt.experimentation;
+package com.rigiresearch.dt.experimentation.evolution;
 
 import com.datumbox.framework.common.dataobjects.TransposeDataCollection;
 import com.datumbox.framework.core.statistics.anova.Anova;
 import com.datumbox.framework.core.statistics.nonparametrics.independentsamples.KruskalWallis;
 import com.datumbox.framework.core.statistics.nonparametrics.onesample.ShapiroWilk;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;

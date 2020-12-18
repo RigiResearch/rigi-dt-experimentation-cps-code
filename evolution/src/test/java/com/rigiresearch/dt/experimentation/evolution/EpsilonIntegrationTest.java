@@ -1,4 +1,4 @@
-package com.rigiresearch.dt.experimentation;
+package com.rigiresearch.dt.experimentation.evolution;
 
 import com.rigiresearch.middleware.metamodels.EcorePrinter;
 import java.io.File;
