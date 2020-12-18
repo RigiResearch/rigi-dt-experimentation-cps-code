@@ -1,7 +1,5 @@
 package com.rigiresearch.dt.experimentation.evolution.fitness;
 
-import com.rigiresearch.dt.experimentation.evolution.fitness.CubicFitnessFunction.CubicFunctionArgument;
-import com.rigiresearch.dt.experimentation.evolution.fitness.NormalizedFitnessFunction.NormalizedFunctionArgument;
 import java.util.function.Function;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -28,7 +26,7 @@ class CompositeFitnessFunctionTest {
             .validate();
         final Function<Double, FitnessFunction.Argument[]> args = value ->
             new FitnessFunction.Argument[] {
-                new CubicFunctionArgument(value)
+                new CubicFitnessFunction.CubicFunctionArgument(value)
             };
         Assertions.assertTrue(
             0.0 - function.evaluate(args.apply(50.0))
@@ -55,8 +53,8 @@ class CompositeFitnessFunctionTest {
             .validate();
         final Function<Double[], FitnessFunction.Argument[]> args = values ->
             new FitnessFunction.Argument[] {
-                new CubicFunctionArgument(values[0]),
-                new NormalizedFunctionArgument(values[1])
+                new CubicFitnessFunction.CubicFunctionArgument(values[0]),
+                new NormalizedFitnessFunction.NormalizedFunctionArgument(values[1])
             };
         Assertions.assertTrue(
             0.0 - function.evaluate(args.apply(new Double[]{50.0, 30.0}))
