@@ -37,14 +37,14 @@ public interface FitnessFunction<T extends FitnessFunction.Argument> {
 
     /**
      * Evaluate this function.
-     * @param args The value(s) to evaluate
+     * @param args The arguments passed to this function
      * @return A positive or negative number, including 0
      */
     double evaluate(FitnessFunction.Argument... args);
 
     /**
      * Evaluate this function normalizing the output.
-     * @param args The value(s) to evaluate
+     * @param args The arguments passed to this function
      * @return A number between 0 and 1
      */
     double evaluateNormalized(FitnessFunction.Argument... args);
