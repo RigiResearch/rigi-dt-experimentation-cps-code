@@ -1,4 +1,4 @@
-package com.rigiresearch.dt.experimentation.evolution;
+package com.rigiresearch.dt.experimentation.evolution.fitness;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

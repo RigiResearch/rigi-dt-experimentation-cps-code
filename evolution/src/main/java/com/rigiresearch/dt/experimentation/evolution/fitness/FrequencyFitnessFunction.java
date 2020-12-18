@@ -1,4 +1,4 @@
-package com.rigiresearch.dt.experimentation.evolution;
+package com.rigiresearch.dt.experimentation.evolution.fitness;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

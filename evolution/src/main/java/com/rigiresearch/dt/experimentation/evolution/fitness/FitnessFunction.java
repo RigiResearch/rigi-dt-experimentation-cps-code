@@ -1,4 +1,4 @@
-package com.rigiresearch.dt.experimentation.evolution;
+package com.rigiresearch.dt.experimentation.evolution.fitness;
 
 /**
  * A fitness function to either minimize or maximize a value.
