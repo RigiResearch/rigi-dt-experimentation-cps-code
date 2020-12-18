@@ -2,7 +2,7 @@ package com.rigiresearch.dt.experimentation.evolution.fitness;
 
 /**
  * A fitness function to either minimize or maximize a value.
- * @param <T> The type of input value
+ * @param <T> The type of input argument
  *
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
