@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests {@link FitnessFunction}.
+ * Tests {@link FrequencyFitnessFunction}.
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
  * @since 0.1.0
  */
-class FitnessFunctionTest {
+class FrequencyFitnessFunctionTest {
 
     /**
      * A small number to compare doubles.
@@ -18,9 +18,9 @@ class FitnessFunctionTest {
 
     @Test
     void testNonNormalized() {
-        final FitnessFunction function = new FitnessFunction(20.0);
+        final FrequencyFitnessFunction function = new FrequencyFitnessFunction(20.0);
         Assertions.assertTrue(
-            function.evaluate(10.0) - 0.0 < FitnessFunctionTest.EPSILON,
+            function.evaluate(10.0) - 0.0 < FrequencyFitnessFunctionTest.EPSILON,
             "Should be technically 0"
         );
         Assertions.assertTrue(
@@ -44,20 +44,20 @@ class FitnessFunctionTest {
     @Test
     void testNormalized() {
         final double b = 10.0;
-        final FitnessFunction function = new FitnessFunction(b);
+        final FrequencyFitnessFunction function = new FrequencyFitnessFunction(b);
         Assertions.assertTrue(
             function.evaluateNormalized(b/2.0) - 0.5 <
-                FitnessFunctionTest.EPSILON,
+                FrequencyFitnessFunctionTest.EPSILON,
             "Should be technically 0.5"
         );
         Assertions.assertTrue(
             function.evaluateNormalized(b) - 0.0 <
-                FitnessFunctionTest.EPSILON,
+                FrequencyFitnessFunctionTest.EPSILON,
             "Should be technically 0"
         );
         Assertions.assertTrue(
             function.evaluateNormalized(0.0) - 1.0 <
-                FitnessFunctionTest.EPSILON,
+                FrequencyFitnessFunctionTest.EPSILON,
             "Should be technically 1"
         );
     }
