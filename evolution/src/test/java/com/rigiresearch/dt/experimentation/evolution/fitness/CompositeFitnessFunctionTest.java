@@ -2,6 +2,7 @@ package com.rigiresearch.dt.experimentation.evolution.fitness;
 
 import java.util.function.Function;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
  * @version $Id$
  * @since 0.1.0
  */
+@Tag("integration")
 class CompositeFitnessFunctionTest {
 
     /**
