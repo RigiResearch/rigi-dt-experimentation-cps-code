@@ -30,6 +30,15 @@ public final class NormalizedFitnessFunction
         return this.evaluateNormalized(args);
     }
 
+    /**
+     * Evaluates the function {@code -x+1}, where {@code 0<=x<=max}. f(x) is
+     * greater when {@code x} tends to 0, and is smaller when it tends to
+     * {@code max}.
+     * <p>Visit https://www.wolframalpha.com/input/?i=plot+-x+%2B+1+from+0+to+1
+     * to see a plot of this function.</p>
+     * @param args The arguments passed to this function
+     * @return
+     */
     @Override
     public double evaluateNormalized(final double... args) {
         this.checkArguments(args);

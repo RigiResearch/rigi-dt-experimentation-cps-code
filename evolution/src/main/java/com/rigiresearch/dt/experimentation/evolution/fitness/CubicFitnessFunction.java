@@ -25,10 +25,11 @@ public final class CubicFitnessFunction
     private final double b;
 
     /**
-     * Evaluates the function -1/a(x-a)^3, where 0<=x<=b and a=b/2.
-     * This function translates -X^3 to the right and stretches it so that
-     * f(x) is a positive number and is greater when x tends to 0, and is a
-     * negative number and smaller when x tends to b.
+     * Evaluates the function {@code -1/a(x-a)^3}, where {@code 0<=x<=b} and
+     * {@code a=b/2}. This function translates {@code -X^3} to the right and
+     * stretches it so that {@code f(x)} is a positive number and is greater
+     * when {@code x} tends to 0, and is a negative number and smaller when it
+     * tends to {@code b}.
      *
      * <p>Visit https://www.wolframalpha.com/input/?i=plot+-1%2F10%28x-10%29%5E3+from+0+to+20
      * to see a plot of this function.</p>
