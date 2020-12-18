@@ -1,6 +1,7 @@
 package com.rigiresearch.dt.experimentation.evolution;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -9,17 +10,37 @@ import lombok.experimental.Accessors;
  * @version $Id$
  * @since 0.1.0
  */
+@RequiredArgsConstructor
 public final class ExcessWaitingTimeFitnessFunction
     implements FitnessFunction<ExcessWaitingTimeFitnessFunction.TimeArgument> {
 
+    /**
+     * The maximum acceptable value.
+     */
+    private final double max;
+
     @Override
     public double evaluate(final double... args) {
-        throw new UnsupportedOperationException("#evaluate()");
+        this.checkArguments(args);
+        return this.evaluateNormalized(args);
     }
 
     @Override
     public double evaluateNormalized(final double... args) {
-        throw new UnsupportedOperationException("#evaluateNormalized()");
+        this.checkArguments(args);
+        return FitnessFunction.normalize(args[0], 0.0, this.max);
+    }
+
+    /**
+     * Checks preconditions on the arguments.
+     * @param args The arguments
+     */
+    private void checkArguments(final double... args) {
+        if (args[0] > this.max || args[0] < 0.0) {
+            throw new IllegalArgumentException(
+                String.format("Value %f is out of bounds", args[0])
+            );
+        }
     }
 
     @Override

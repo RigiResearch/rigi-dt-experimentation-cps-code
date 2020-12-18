@@ -65,7 +65,7 @@ public final class CompositeFitnessFunction
             map.putIfAbsent(clazz, 0);
             map.put(clazz, map.get(clazz) + 1);
         }
-        if (1.0 - sum > CompositeFitnessFunction.EPSILON) {
+        if (Math.abs(1.0 - sum) > CompositeFitnessFunction.EPSILON) {
             throw new IllegalStateException(
                 String.format("The weights must sum 1.0. Current value is %f", sum)
             );
