@@ -26,36 +26,28 @@ public interface FitnessFunction<T extends FitnessFunction.Argument> {
      * @param args The arguments passed to this function
      * @return A positive or negative number, including 0
      */
-    default double evaluate(final double... args) {
-        return 0.0;
-    }
+    double evaluate(double... args);
 
     /**
      * Evaluate this function normalizing the output.
      * @param args The arguments passed to this function
      * @return A number between 0 and 1
      */
-    default double evaluateNormalized(final double... args) {
-        return 0.0;
-    }
+    double evaluateNormalized(double... args);
 
     /**
      * Evaluate this function.
      * @param args The value(s) to evaluate
      * @return A positive or negative number, including 0
      */
-    default double evaluate(final FitnessFunction.Argument... args) {
-        return 0.0;
-    }
+    double evaluate(FitnessFunction.Argument... args);
 
     /**
      * Evaluate this function normalizing the output.
      * @param args The value(s) to evaluate
      * @return A number between 0 and 1
      */
-    default double evaluateNormalized(final FitnessFunction.Argument... args) {
-        return 0.0;
-    }
+    double evaluateNormalized(FitnessFunction.Argument... args);
 
     /**
      * The type of argument accepted by this function.

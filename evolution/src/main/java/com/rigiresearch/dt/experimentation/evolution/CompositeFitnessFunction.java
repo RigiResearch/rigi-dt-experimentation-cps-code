@@ -18,6 +18,11 @@ public final class CompositeFitnessFunction
     implements FitnessFunction<CompositeFitnessFunction.CompositeArgument> {
 
     /**
+     * Error message for unimplemented methods.
+     */
+    private static final String ERROR = "Not implemented on purpose";
+
+    /**
      * Initial capacity based on the expected number of fitness functions.
      */
     private static final int INITIAL_CAPACITY = 5;
@@ -76,6 +81,16 @@ public final class CompositeFitnessFunction
             );
         }
         return this;
+    }
+
+    @Override
+    public double evaluate(final double... args) {
+        throw new UnsupportedOperationException(CompositeFitnessFunction.ERROR);
+    }
+
+    @Override
+    public double evaluateNormalized(final double... args) {
+        throw new UnsupportedOperationException(CompositeFitnessFunction.ERROR);
     }
 
     @Override

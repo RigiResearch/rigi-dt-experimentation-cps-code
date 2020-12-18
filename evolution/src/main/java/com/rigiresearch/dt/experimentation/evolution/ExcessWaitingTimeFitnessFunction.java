@@ -15,6 +15,11 @@ public final class ExcessWaitingTimeFitnessFunction
     implements FitnessFunction<ExcessWaitingTimeFitnessFunction.TimeArgument> {
 
     /**
+     * Error message for unimplemented methods.
+     */
+    private static final String ERROR = "Not implemented on purpose";
+
+    /**
      * The maximum acceptable value.
      */
     private final double max;
@@ -29,6 +34,20 @@ public final class ExcessWaitingTimeFitnessFunction
     public double evaluateNormalized(final double... args) {
         this.checkArguments(args);
         return FitnessFunction.normalize(args[0], 0.0, this.max);
+    }
+
+    @Override
+    public double evaluate(final FitnessFunction.Argument... args) {
+        throw new UnsupportedOperationException(
+            ExcessWaitingTimeFitnessFunction.ERROR
+        );
+    }
+
+    @Override
+    public double evaluateNormalized(final FitnessFunction.Argument... args) {
+        throw new UnsupportedOperationException(
+            ExcessWaitingTimeFitnessFunction.ERROR
+        );
     }
 
     /**

@@ -15,6 +15,11 @@ public final class FrequencyFitnessFunction
     implements FitnessFunction<FrequencyFitnessFunction.FrequencyArgument> {
 
     /**
+     * Error message for unimplemented methods.
+     */
+    private static final String ERROR = "Not implemented on purpose";
+
+    /**
      * The upper bound in the x axis.
      */
     private final double b;
@@ -52,6 +57,16 @@ public final class FrequencyFitnessFunction
         final double max = this.evaluate(0.0);
         // Switch min and max so that when x=0, y=1 and when x=b, y=0
         return FitnessFunction.normalize(y, max, min);
+    }
+
+    @Override
+    public double evaluate(final FitnessFunction.Argument... args) {
+        throw new UnsupportedOperationException(FrequencyFitnessFunction.ERROR);
+    }
+
+    @Override
+    public double evaluateNormalized(final FitnessFunction.Argument... args) {
+        throw new UnsupportedOperationException(FrequencyFitnessFunction.ERROR);
     }
 
     @Override
