@@ -5,14 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * Defines the fitness function to reward minimizing the bus frequency.
+ * Defines a cubic fitness function to reward minimizing certain variable.
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
  * @since 0.1.0
  */
 @RequiredArgsConstructor
-public final class FrequencyFitnessFunction
-    implements FitnessFunction<FrequencyFitnessFunction.FrequencyArgument> {
+public final class CubicFitnessFunction
+    implements FitnessFunction<CubicFitnessFunction.CubicFunctionArgument> {
 
     /**
      * Error message for unimplemented methods.
@@ -61,17 +61,17 @@ public final class FrequencyFitnessFunction
 
     @Override
     public double evaluate(final FitnessFunction.Argument... args) {
-        throw new UnsupportedOperationException(FrequencyFitnessFunction.ERROR);
+        throw new UnsupportedOperationException(CubicFitnessFunction.ERROR);
     }
 
     @Override
     public double evaluateNormalized(final FitnessFunction.Argument... args) {
-        throw new UnsupportedOperationException(FrequencyFitnessFunction.ERROR);
+        throw new UnsupportedOperationException(CubicFitnessFunction.ERROR);
     }
 
     @Override
-    public Class<FrequencyFitnessFunction.FrequencyArgument> argumentType() {
-        return FrequencyFitnessFunction.FrequencyArgument.class;
+    public Class<CubicFitnessFunction.CubicFunctionArgument> argumentType() {
+        return CubicFitnessFunction.CubicFunctionArgument.class;
     }
 
     /**
@@ -79,7 +79,7 @@ public final class FrequencyFitnessFunction
      */
     @Accessors(fluent = true)
     @Getter
-    public static final class FrequencyArgument
+    public static final class CubicFunctionArgument
         implements FitnessFunction.Argument {
 
         /**
@@ -91,7 +91,7 @@ public final class FrequencyFitnessFunction
          * Default constructor.
          * @param values Valid argument values
          */
-        public FrequencyArgument(final double... values) {
+        public CubicFunctionArgument(final double... values) {
             this.values = values;
         }
 

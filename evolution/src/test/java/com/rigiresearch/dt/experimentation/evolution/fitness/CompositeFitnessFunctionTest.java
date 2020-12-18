@@ -1,5 +1,7 @@
 package com.rigiresearch.dt.experimentation.evolution.fitness;
 
+import com.rigiresearch.dt.experimentation.evolution.fitness.CubicFitnessFunction.CubicFunctionArgument;
+import com.rigiresearch.dt.experimentation.evolution.fitness.NormalizedFitnessFunction.NormalizedFunctionArgument;
 import java.util.function.Function;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Tag;
@@ -22,11 +24,11 @@ class CompositeFitnessFunctionTest {
     @Test
     void testWithASingleFunction() {
         final CompositeFitnessFunction function = new CompositeFitnessFunction()
-            .withFunction(new FrequencyFitnessFunction(50.0), 1.0)
+            .withFunction(new CubicFitnessFunction(50.0), 1.0)
             .validate();
         final Function<Double, FitnessFunction.Argument[]> args = value ->
             new FitnessFunction.Argument[] {
-                new FrequencyFitnessFunction.FrequencyArgument(value)
+                new CubicFunctionArgument(value)
             };
         Assertions.assertTrue(
             0.0 - function.evaluate(args.apply(50.0))
@@ -48,13 +50,13 @@ class CompositeFitnessFunctionTest {
     @Test
     void testWithTwoFunctions() {
         final CompositeFitnessFunction function = new CompositeFitnessFunction()
-            .withFunction(new FrequencyFitnessFunction(50.0), 0.4)
-            .withFunction(new ExcessWaitingTimeFitnessFunction(30.0), 0.6)
+            .withFunction(new CubicFitnessFunction(50.0), 0.4)
+            .withFunction(new NormalizedFitnessFunction(30.0), 0.6)
             .validate();
         final Function<Double[], FitnessFunction.Argument[]> args = values ->
             new FitnessFunction.Argument[] {
-                new FrequencyFitnessFunction.FrequencyArgument(values[0]),
-                new ExcessWaitingTimeFitnessFunction.TimeArgument(values[1])
+                new CubicFunctionArgument(values[0]),
+                new NormalizedFunctionArgument(values[1])
             };
         Assertions.assertTrue(
             0.0 - function.evaluate(args.apply(new Double[]{50.0, 30.0}))
@@ -77,13 +79,13 @@ class CompositeFitnessFunctionTest {
     void testWithWrongWeights() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             new CompositeFitnessFunction()
-                .withFunction(new FrequencyFitnessFunction(25.0), 0.9)
+                .withFunction(new CubicFitnessFunction(25.0), 0.9)
                 .validate();
         });
         Assertions.assertThrows(IllegalStateException.class, () -> {
             new CompositeFitnessFunction()
-                .withFunction(new FrequencyFitnessFunction(25.0), 0.7)
-                .withFunction(new ExcessWaitingTimeFitnessFunction(10.0), 0.6)
+                .withFunction(new CubicFitnessFunction(25.0), 0.7)
+                .withFunction(new NormalizedFitnessFunction(10.0), 0.6)
                 .validate();
         });
     }
@@ -92,9 +94,9 @@ class CompositeFitnessFunctionTest {
     void testWithDuplicateFunctions() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             new CompositeFitnessFunction()
-                .withFunction(new FrequencyFitnessFunction(50.0), 0.3)
-                .withFunction(new FrequencyFitnessFunction(25.0), 0.3)
-                .withFunction(new ExcessWaitingTimeFitnessFunction(10.0), 0.4)
+                .withFunction(new CubicFitnessFunction(50.0), 0.3)
+                .withFunction(new CubicFitnessFunction(25.0), 0.3)
+                .withFunction(new NormalizedFitnessFunction(10.0), 0.4)
                 .validate();
         });
     }

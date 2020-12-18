@@ -4,12 +4,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests {@link FrequencyFitnessFunction}.
+ * Tests {@link CubicFitnessFunction}.
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
  * @since 0.1.0
  */
-class FrequencyFitnessFunctionTest {
+class CubicFitnessFunctionTest {
 
     /**
      * A small number to compare doubles.
@@ -18,9 +18,9 @@ class FrequencyFitnessFunctionTest {
 
     @Test
     void testNonNormalized() {
-        final FrequencyFitnessFunction function = new FrequencyFitnessFunction(20.0);
+        final CubicFitnessFunction function = new CubicFitnessFunction(20.0);
         Assertions.assertTrue(
-            function.evaluate(10.0) - 0.0 < FrequencyFitnessFunctionTest.EPSILON,
+            function.evaluate(10.0) - 0.0 < CubicFitnessFunctionTest.EPSILON,
             "Should be technically 0"
         );
         Assertions.assertTrue(
@@ -44,20 +44,20 @@ class FrequencyFitnessFunctionTest {
     @Test
     void testNormalized() {
         final double b = 10.0;
-        final FrequencyFitnessFunction function = new FrequencyFitnessFunction(b);
+        final CubicFitnessFunction function = new CubicFitnessFunction(b);
         Assertions.assertTrue(
             function.evaluateNormalized(b/2.0) - 0.5 <
-                FrequencyFitnessFunctionTest.EPSILON,
+                CubicFitnessFunctionTest.EPSILON,
             "Should be technically 0.5"
         );
         Assertions.assertTrue(
             function.evaluateNormalized(b) - 0.0 <
-                FrequencyFitnessFunctionTest.EPSILON,
+                CubicFitnessFunctionTest.EPSILON,
             "Should be technically 0"
         );
         Assertions.assertTrue(
             function.evaluateNormalized(0.0) - 1.0 <
-                FrequencyFitnessFunctionTest.EPSILON,
+                CubicFitnessFunctionTest.EPSILON,
             "Should be technically 1"
         );
     }

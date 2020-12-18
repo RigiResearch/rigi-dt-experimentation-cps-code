@@ -5,14 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
- * Defines the fitness function to reward minimizing the excess waiting time.
+ * Defines a normalized fitness function to reward minimizing certain variable.
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
  * @since 0.1.0
  */
 @RequiredArgsConstructor
-public final class ExcessWaitingTimeFitnessFunction
-    implements FitnessFunction<ExcessWaitingTimeFitnessFunction.TimeArgument> {
+public final class NormalizedFitnessFunction
+    implements FitnessFunction<NormalizedFitnessFunction.NormalizedFunctionArgument> {
 
     /**
      * Error message for unimplemented methods.
@@ -39,14 +39,14 @@ public final class ExcessWaitingTimeFitnessFunction
     @Override
     public double evaluate(final FitnessFunction.Argument... args) {
         throw new UnsupportedOperationException(
-            ExcessWaitingTimeFitnessFunction.ERROR
+            NormalizedFitnessFunction.ERROR
         );
     }
 
     @Override
     public double evaluateNormalized(final FitnessFunction.Argument... args) {
         throw new UnsupportedOperationException(
-            ExcessWaitingTimeFitnessFunction.ERROR
+            NormalizedFitnessFunction.ERROR
         );
     }
 
@@ -63,8 +63,8 @@ public final class ExcessWaitingTimeFitnessFunction
     }
 
     @Override
-    public Class<ExcessWaitingTimeFitnessFunction.TimeArgument> argumentType() {
-        return ExcessWaitingTimeFitnessFunction.TimeArgument.class;
+    public Class<NormalizedFitnessFunction.NormalizedFunctionArgument> argumentType() {
+        return NormalizedFitnessFunction.NormalizedFunctionArgument.class;
     }
 
     /**
@@ -72,7 +72,7 @@ public final class ExcessWaitingTimeFitnessFunction
      */
     @Accessors(fluent = true)
     @Getter
-    public static final class TimeArgument
+    public static final class NormalizedFunctionArgument
         implements FitnessFunction.Argument {
 
         /**
@@ -84,7 +84,7 @@ public final class ExcessWaitingTimeFitnessFunction
          * Default constructor.
          * @param values Valid argument values
          */
-        public TimeArgument(final double... values) {
+        public NormalizedFunctionArgument(final double... values) {
             this.values = values;
         }
 
