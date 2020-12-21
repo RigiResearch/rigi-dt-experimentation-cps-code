@@ -62,4 +62,26 @@ class CubicFitnessFunctionTest {
         );
     }
 
+    @Test
+    void testXIsOutsideTheDomain() {
+        final double a = 18.0;
+        final double b = 24.0;
+        final CubicFitnessFunction function = new CubicFitnessFunction(a, b);
+        Assertions.assertEquals(
+            Double.NEGATIVE_INFINITY,
+            function.evaluate(-1.0),
+            "Should be negative infinitive"
+        );
+        Assertions.assertEquals(
+            Double.POSITIVE_INFINITY,
+            function.evaluate(b + 1.0),
+            "Should be positive infinitive"
+        );
+        Assertions.assertTrue(
+            function.evaluateNormalized(-1.0) - 0.0 <
+                CubicFitnessFunctionTest.EPSILON,
+            "Should be technically 0.0"
+        );
+    }
+
 }

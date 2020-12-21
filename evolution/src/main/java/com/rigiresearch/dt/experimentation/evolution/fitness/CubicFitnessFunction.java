@@ -36,6 +36,9 @@ public final class CubicFitnessFunction
      * when {@code x} tends to 0, and is a negative number and smaller when it
      * tends to {@code b}.
      *
+     * <p>When {@code x<0} or {@code x>b}, this function returns negative or
+     * positive infinity, respectively.</p>
+     *
      * <p>Visit https://www.wolframalpha.com/input/?i=plot+-10%28x-18%29%5E3+from+0+to+36
      * to see a plot of this function.</p>
      *
@@ -45,23 +48,37 @@ public final class CubicFitnessFunction
     @Override
     public double evaluate(final double... args) {
         final double x = args[0];
-        final double y = -10.0 * StrictMath.pow(x-this.a, 3.0);
+        final double y;
+        if (0.0 <= x && x <= this.b) {
+            y = -10.0 * StrictMath.pow(x-this.a, 3.0);
+        } else if (x < 0.0) {
+            y = Double.NEGATIVE_INFINITY;
+        } else {
+            y = Double.POSITIVE_INFINITY;
+        }
         return y;
     }
 
     /**
-     * Same as {@link #evaluate(double[])} but normalized.
+     * Same as {@link #evaluate(double[])} but normalized. When {@code x<0} or
+     * {@code x>b}, this function returns 0.
      * @param args One value on the x axis to evaluate the function
      * @return A number between 0 and 1
      */
     @Override
     public double evaluateNormalized(final double... args) {
         final double x = args[0];
-        final double y = this.evaluate(x);
-        final double min = this.evaluate(this.b);
-        final double max = this.evaluate(0.0);
-        // Switch min and max so that when x=0, y=1 and when x=b, y=0
-        return FitnessFunction.normalize(y, max, min);
+        final double normalized;
+        if (0.0 <= x && x <= this.b) {
+            final double y = this.evaluate(x);
+            final double min = this.evaluate(this.b);
+            final double max = this.evaluate(0.0);
+            // Switch min and max so that when x=0, y=1 and when x=b, y=0
+            normalized = FitnessFunction.normalize(y, max, min);
+        } else {
+            normalized = 0.0;
+        }
+        return normalized;
     }
 
     @Override
