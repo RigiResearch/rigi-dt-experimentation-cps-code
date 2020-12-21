@@ -20,18 +20,23 @@ public final class CubicFitnessFunction
     private static final String ERROR = "Not implemented on purpose";
 
     /**
+     * A value between 0 and b;
+     */
+    private final double a;
+
+    /**
      * The upper bound in the x axis.
      */
     private final double b;
 
     /**
-     * Evaluates the function {@code -1/a(x-a)^3}, where {@code 0<=x<=b} and
-     * {@code a=b/2}. This function translates {@code -X^3} to the right and
+     * Evaluates the function {@code -10(x-a)^3}, where {@code 0<=x<=b} and
+     * {@code 0<=a<=b}. This function translates {@code -X^3} to the right and
      * stretches it so that {@code f(x)} is a positive number and is greater
      * when {@code x} tends to 0, and is a negative number and smaller when it
      * tends to {@code b}.
      *
-     * <p>Visit https://www.wolframalpha.com/input/?i=plot+-1%2F10%28x-10%29%5E3+from+0+to+20
+     * <p>Visit https://www.wolframalpha.com/input/?i=plot+-10%28x-18%29%5E3+from+0+to+36
      * to see a plot of this function.</p>
      *
      * @param args One value on the x axis to evaluate the function
@@ -40,8 +45,7 @@ public final class CubicFitnessFunction
     @Override
     public double evaluate(final double... args) {
         final double x = args[0];
-        final double a = this.b/2.0;
-        final double y = -(1.0/a)* StrictMath.pow(x-a, 3.0);
+        final double y = -10.0 * StrictMath.pow(x-this.a, 3.0);
         return y;
     }
 

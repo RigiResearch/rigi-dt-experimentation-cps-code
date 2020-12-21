@@ -18,7 +18,7 @@ class CubicFitnessFunctionTest {
 
     @Test
     void testNonNormalized() {
-        final CubicFitnessFunction function = new CubicFitnessFunction(20.0);
+        final CubicFitnessFunction function = new CubicFitnessFunction(10.0, 20.0);
         Assertions.assertTrue(
             function.evaluate(10.0) - 0.0 < CubicFitnessFunctionTest.EPSILON,
             "Should be technically 0"
@@ -44,7 +44,7 @@ class CubicFitnessFunctionTest {
     @Test
     void testNormalized() {
         final double b = 10.0;
-        final CubicFitnessFunction function = new CubicFitnessFunction(b);
+        final CubicFitnessFunction function = new CubicFitnessFunction(b/2.0, b);
         Assertions.assertTrue(
             function.evaluateNormalized(b/2.0) - 0.5 <
                 CubicFitnessFunctionTest.EPSILON,
