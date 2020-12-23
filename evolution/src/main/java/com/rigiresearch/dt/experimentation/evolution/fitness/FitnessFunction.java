@@ -57,11 +57,11 @@ public interface FitnessFunction<T extends FitnessFunction.Argument> {
 
     /**
      * Calculates a value between 0 and 1, given the precondition that value
-     * is between min and max. 0 means value = max, and 1 means value = min.
+     * is between min and max.
      * @param value The value to scale
      * @param min The minimum value in the domain
      * @param max The maximum value in the domain
-     * @return A double between 0 and 1
+     * @return A double between 0.0 and 1.0
      */
     static double normalize(final double value, final double min,
         final double max) {
