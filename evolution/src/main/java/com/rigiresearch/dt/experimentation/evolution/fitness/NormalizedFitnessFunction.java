@@ -47,7 +47,7 @@ public final class NormalizedFitnessFunction
     @Override
     public double evaluateNormalized(final double... args) {
         this.checkArguments(args);
-        return FitnessFunction.normalize(args[0], this.min, this.max);
+        return FitnessFunction.normalize(args[0], this.max, this.min);
     }
 
     @Override
