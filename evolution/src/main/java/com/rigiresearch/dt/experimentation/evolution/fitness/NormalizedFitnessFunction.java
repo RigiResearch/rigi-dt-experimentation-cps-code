@@ -20,6 +20,11 @@ public final class NormalizedFitnessFunction
     private static final String ERROR = "Not implemented on purpose";
 
     /**
+     * The minimum acceptable value.
+     */
+    private final double min;
+
+    /**
      * The maximum acceptable value.
      */
     private final double max;
@@ -37,12 +42,12 @@ public final class NormalizedFitnessFunction
      * <p>Visit https://www.wolframalpha.com/input/?i=plot+-x+%2B+1+from+0+to+1
      * to see a plot of this function.</p>
      * @param args The arguments passed to this function
-     * @return
+     * @return a double value between 0.0 and 1.0
      */
     @Override
     public double evaluateNormalized(final double... args) {
         this.checkArguments(args);
-        return FitnessFunction.normalize(args[0], 0.0, this.max);
+        return FitnessFunction.normalize(args[0], this.min, this.max);
     }
 
     @Override

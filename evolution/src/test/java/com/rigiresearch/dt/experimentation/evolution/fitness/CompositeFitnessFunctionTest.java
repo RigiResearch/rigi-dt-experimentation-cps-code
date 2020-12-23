@@ -49,7 +49,7 @@ class CompositeFitnessFunctionTest {
     void testWithTwoFunctions() {
         final CompositeFitnessFunction function = new CompositeFitnessFunction()
             .withFunction(new CubicFitnessFunction(0.0, 25.0, 50.0), 0.4)
-            .withFunction(new NormalizedFitnessFunction(30.0), 0.6)
+            .withFunction(new NormalizedFitnessFunction(0.0, 30.0), 0.6)
             .validate();
         final Function<Double[], FitnessFunction.Argument[]> args = values ->
             new FitnessFunction.Argument[] {
@@ -75,28 +75,28 @@ class CompositeFitnessFunctionTest {
 
     @Test
     void testWithWrongWeights() {
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        Assertions.assertThrows(IllegalStateException.class, () ->
             new CompositeFitnessFunction()
                 .withFunction(new CubicFitnessFunction(0.0, 12.5, 25.0), 0.9)
-                .validate();
-        });
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+                .validate()
+        );
+        Assertions.assertThrows(IllegalStateException.class, () ->
             new CompositeFitnessFunction()
                 .withFunction(new CubicFitnessFunction(0.0, 12.5, 25.0), 0.7)
-                .withFunction(new NormalizedFitnessFunction(10.0), 0.6)
-                .validate();
-        });
+                .withFunction(new NormalizedFitnessFunction(0.0, 10.0), 0.6)
+                .validate()
+        );
     }
 
     @Test
     void testWithDuplicateFunctions() {
-        Assertions.assertThrows(IllegalStateException.class, () -> {
+        Assertions.assertThrows(IllegalStateException.class, () ->
             new CompositeFitnessFunction()
                 .withFunction(new CubicFitnessFunction(0.0, 25.0, 50.0), 0.3)
                 .withFunction(new CubicFitnessFunction(0.0, 12.5, 25.0), 0.3)
-                .withFunction(new NormalizedFitnessFunction(10.0), 0.4)
-                .validate();
-        });
+                .withFunction(new NormalizedFitnessFunction(0.0, 10.0), 0.4)
+                .validate()
+        );
     }
 
 }

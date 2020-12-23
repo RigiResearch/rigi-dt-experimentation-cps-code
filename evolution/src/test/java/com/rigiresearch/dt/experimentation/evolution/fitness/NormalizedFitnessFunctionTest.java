@@ -19,7 +19,7 @@ class NormalizedFitnessFunctionTest {
     @Test
     void simpleTest() {
         final FitnessFunction<?> function =
-            new NormalizedFitnessFunction(30.0);
+            new NormalizedFitnessFunction(0.0, 30.0);
         Assertions.assertTrue(
             1.0 - function.evaluate(0.0)
                 < NormalizedFitnessFunctionTest.EPSILON,
