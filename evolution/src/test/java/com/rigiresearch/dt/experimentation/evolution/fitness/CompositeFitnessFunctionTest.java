@@ -22,7 +22,7 @@ class CompositeFitnessFunctionTest {
     @Test
     void testWithASingleFunction() {
         final CompositeFitnessFunction function = new CompositeFitnessFunction()
-            .withFunction(new CubicFitnessFunction(25.0, 50.0), 1.0)
+            .withFunction(new CubicFitnessFunction(0.0, 25.0, 50.0), 1.0)
             .validate();
         final Function<Double, FitnessFunction.Argument[]> args = value ->
             new FitnessFunction.Argument[] {
@@ -48,7 +48,7 @@ class CompositeFitnessFunctionTest {
     @Test
     void testWithTwoFunctions() {
         final CompositeFitnessFunction function = new CompositeFitnessFunction()
-            .withFunction(new CubicFitnessFunction(25.0, 50.0), 0.4)
+            .withFunction(new CubicFitnessFunction(0.0, 25.0, 50.0), 0.4)
             .withFunction(new NormalizedFitnessFunction(30.0), 0.6)
             .validate();
         final Function<Double[], FitnessFunction.Argument[]> args = values ->
@@ -77,12 +77,12 @@ class CompositeFitnessFunctionTest {
     void testWithWrongWeights() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             new CompositeFitnessFunction()
-                .withFunction(new CubicFitnessFunction(12.5, 25.0), 0.9)
+                .withFunction(new CubicFitnessFunction(0.0, 12.5, 25.0), 0.9)
                 .validate();
         });
         Assertions.assertThrows(IllegalStateException.class, () -> {
             new CompositeFitnessFunction()
-                .withFunction(new CubicFitnessFunction(12.5, 25.0), 0.7)
+                .withFunction(new CubicFitnessFunction(0.0, 12.5, 25.0), 0.7)
                 .withFunction(new NormalizedFitnessFunction(10.0), 0.6)
                 .validate();
         });
@@ -92,8 +92,8 @@ class CompositeFitnessFunctionTest {
     void testWithDuplicateFunctions() {
         Assertions.assertThrows(IllegalStateException.class, () -> {
             new CompositeFitnessFunction()
-                .withFunction(new CubicFitnessFunction(25.0, 50.0), 0.3)
-                .withFunction(new CubicFitnessFunction(12.5, 25.0), 0.3)
+                .withFunction(new CubicFitnessFunction(0.0, 25.0, 50.0), 0.3)
+                .withFunction(new CubicFitnessFunction(0.0, 12.5, 25.0), 0.3)
                 .withFunction(new NormalizedFitnessFunction(10.0), 0.4)
                 .validate();
         });

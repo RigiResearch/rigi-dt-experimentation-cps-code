@@ -18,7 +18,8 @@ class CubicFitnessFunctionTest {
 
     @Test
     void testNonNormalized() {
-        final CubicFitnessFunction function = new CubicFitnessFunction(10.0, 20.0);
+        final CubicFitnessFunction function =
+            new CubicFitnessFunction(0.0, 10.0, 20.0);
         Assertions.assertTrue(
             function.evaluate(10.0) - 0.0 < CubicFitnessFunctionTest.EPSILON,
             "Should be technically 0"
@@ -43,15 +44,16 @@ class CubicFitnessFunctionTest {
 
     @Test
     void testNormalized() {
-        final double b = 10.0;
-        final CubicFitnessFunction function = new CubicFitnessFunction(b/2.0, b);
+        final double c = 10.0;
+        final CubicFitnessFunction function =
+            new CubicFitnessFunction(0.0, c/2.0, c);
         Assertions.assertTrue(
-            function.evaluateNormalized(b/2.0) - 0.5 <
+            function.evaluateNormalized(c/2.0) - 0.5 <
                 CubicFitnessFunctionTest.EPSILON,
             "Should be technically 0.5"
         );
         Assertions.assertTrue(
-            function.evaluateNormalized(b) - 0.0 <
+            function.evaluateNormalized(c) - 0.0 <
                 CubicFitnessFunctionTest.EPSILON,
             "Should be technically 0"
         );
@@ -64,9 +66,10 @@ class CubicFitnessFunctionTest {
 
     @Test
     void testXIsOutsideTheDomain() {
-        final double a = 18.0;
-        final double b = 24.0;
-        final CubicFitnessFunction function = new CubicFitnessFunction(a, b);
+        final double a = 0.0;
+        final double b = 18.0;
+        final double c = 24.0;
+        final CubicFitnessFunction function = new CubicFitnessFunction(a, b, c);
         Assertions.assertEquals(
             Double.NEGATIVE_INFINITY,
             function.evaluate(-1.0),
@@ -74,7 +77,7 @@ class CubicFitnessFunctionTest {
         );
         Assertions.assertEquals(
             Double.POSITIVE_INFINITY,
-            function.evaluate(b + 1.0),
+            function.evaluate(c + 1.0),
             "Should be positive infinitive"
         );
         Assertions.assertTrue(
