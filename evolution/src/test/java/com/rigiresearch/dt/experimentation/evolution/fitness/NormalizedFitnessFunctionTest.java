@@ -26,14 +26,14 @@ class NormalizedFitnessFunctionTest {
             "Should be technically 1.0"
         );
         Assertions.assertTrue(
-            0.5 - function.evaluate(15.0)
-                < NormalizedFitnessFunctionTest.EPSILON,
-            "Should be technically 0.5"
-        );
-        Assertions.assertTrue(
-            0.0 - function.evaluate(30.0)
+            0.0 - function.evaluate(15.0)
                 < NormalizedFitnessFunctionTest.EPSILON,
             "Should be technically 0.0"
+        );
+        Assertions.assertTrue(
+            1.0 + function.evaluate(30.0)
+                < NormalizedFitnessFunctionTest.EPSILON,
+            "Should be technically -1.0"
         );
     }
 

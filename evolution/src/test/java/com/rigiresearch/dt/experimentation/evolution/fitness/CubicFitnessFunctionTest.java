@@ -48,17 +48,17 @@ class CubicFitnessFunctionTest {
         final CubicFitnessFunction function =
             new CubicFitnessFunction(0.0, c/2.0, c);
         Assertions.assertTrue(
-            function.evaluateNormalized(c/2.0) - 0.5 <
+            0.0 - function.evaluateNormalized(c/2.0) <
                 CubicFitnessFunctionTest.EPSILON,
-            "Should be technically 0.5"
+            "Should be technically 0.0"
         );
         Assertions.assertTrue(
-            function.evaluateNormalized(c) - 0.0 <
+            1.0 + function.evaluateNormalized(c) <
                 CubicFitnessFunctionTest.EPSILON,
-            "Should be technically 0"
+            "Should be technically -1.0"
         );
         Assertions.assertTrue(
-            function.evaluateNormalized(0.0) - 1.0 <
+            1.0 - function.evaluateNormalized(0.0) <
                 CubicFitnessFunctionTest.EPSILON,
             "Should be technically 1"
         );
@@ -81,9 +81,9 @@ class CubicFitnessFunctionTest {
             "Should be positive infinitive"
         );
         Assertions.assertTrue(
-            function.evaluateNormalized(-1.0) - 0.0 <
+            1.0 + function.evaluateNormalized(-1.0) <
                 CubicFitnessFunctionTest.EPSILON,
-            "Should be technically 0.0"
+            "Should be technically -1.0"
         );
     }
 

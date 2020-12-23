@@ -29,14 +29,14 @@ class CompositeFitnessFunctionTest {
                 new CubicFitnessFunction.CubicFunctionArgument(value)
             };
         Assertions.assertTrue(
-            0.0 - function.evaluate(args.apply(50.0))
+            1.0 + function.evaluate(args.apply(50.0))
                 < CompositeFitnessFunctionTest.EPSILON,
-            "Should be technically 0.0"
+            "Should be technically -1.0"
         );
         Assertions.assertTrue(
-            0.5 - function.evaluate(args.apply(25.0))
+            0.0 - function.evaluate(args.apply(25.0))
                 < CompositeFitnessFunctionTest.EPSILON,
-            "Should be technically 0.5"
+            "Should be technically 0.0"
         );
         Assertions.assertTrue(
             1.0 - function.evaluate(args.apply(0.0))
@@ -57,9 +57,9 @@ class CompositeFitnessFunctionTest {
                 new NormalizedFitnessFunction.NormalizedFunctionArgument(values[1])
             };
         Assertions.assertTrue(
-            0.0 - function.evaluate(args.apply(new Double[]{50.0, 30.0}))
+            1.0 + function.evaluate(args.apply(new Double[]{50.0, 30.0}))
                 < CompositeFitnessFunctionTest.EPSILON,
-            "Should be technically 0.0"
+            "Should be technically -1.0"
         );
         Assertions.assertTrue(
             1.0 - function.evaluate(args.apply(new Double[]{0.0, 0.0}))
@@ -67,9 +67,9 @@ class CompositeFitnessFunctionTest {
             "Should be technically 1.0"
         );
         Assertions.assertTrue(
-            0.5 - function.evaluate(args.apply(new Double[]{25.0, 15.0}))
+            0.0 - function.evaluate(args.apply(new Double[]{25.0, 15.0}))
                 < CompositeFitnessFunctionTest.EPSILON,
-            "Should be technically 0.5"
+            "Should be technically 0.0"
         );
     }
 

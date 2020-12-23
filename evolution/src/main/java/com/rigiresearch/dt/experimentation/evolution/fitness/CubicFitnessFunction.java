@@ -78,10 +78,10 @@ public final class CubicFitnessFunction
             final double y = this.evaluate(x);
             final double min = this.evaluate(this.a);
             final double max = this.evaluate(this.c);
-            // Switch min and max so that when x=a, y=1 and when x=c, y=0
-            normalized = FitnessFunction.normalize(y, max, min);
+            // Switch min and max so that when x=a, y=1 and when x=c, y=-1
+            normalized = FitnessFunction.normalizeInRange(y, max, min, -1.0, 1.0);
         } else {
-            normalized = 0.0;
+            normalized = -1.0;
         }
         return normalized;
     }
