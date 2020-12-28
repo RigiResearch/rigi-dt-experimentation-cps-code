@@ -1,7 +1,7 @@
 package com.rigiresearch.dt.experimentation.evolution.fitness;
 
+import java.math.BigDecimal;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 
 /**
@@ -10,7 +10,6 @@ import lombok.experimental.Accessors;
  * @version $Id$
  * @since 0.1.0
  */
-@RequiredArgsConstructor
 public final class CubicFitnessFunction
     implements FitnessFunction<CubicFitnessFunction.CubicFunctionArgument> {
 
@@ -20,24 +19,32 @@ public final class CubicFitnessFunction
     private static final String ERROR = "Not implemented on purpose";
 
     /**
-     * A constant to compare double values.
-     */
-    private static final double EPSILON = 0.000001;
-
-    /**
      * The lower bound in the x axis.
      */
-    private final double a;
+    private final BigDecimal a;
 
     /**
      * A value between a and c;
      */
-    private final double b;
+    private final BigDecimal b;
 
     /**
      * The upper bound in the x axis.
      */
-    private final double c;
+    private final BigDecimal c;
+
+    /**
+     * Default constructor.
+     * @param a The lower bound in the x axis.
+     * @param b A value between a and c;
+     * @param c The upper bound in the x axis.
+     */
+    public CubicFitnessFunction(final double a, final double b,
+        final double c) {
+        this.a = new BigDecimal(a);
+        this.b = new BigDecimal(b);
+        this.c = new BigDecimal(c);
+    }
 
     /**
      * Evaluates the function {@code -10(x-b)^3}, where {@code a<=x<=c} and
@@ -57,11 +64,12 @@ public final class CubicFitnessFunction
      */
     @Override
     public double evaluate(final double... args) {
-        final double x = args[0];
+        final BigDecimal x = BigDecimal.valueOf(args[0]);
         final double y;
-        if (this.a <= x && x <= this.c) {
-            y = -10.0 * StrictMath.pow(x-this.b, 3.0);
-        } else if (x < this.a) {
+        if (CubicFitnessFunction.lessThanOrEqual(this.a, x) &&
+            CubicFitnessFunction.lessThanOrEqual(x, this.c)) {
+            y = -10.0 * StrictMath.pow(x.subtract(this.b).doubleValue(), 3.0);
+        } else if (x.compareTo(this.a) < 0) {
             y = Double.NEGATIVE_INFINITY;
         } else {
             y = Double.POSITIVE_INFINITY;
@@ -87,17 +95,19 @@ public final class CubicFitnessFunction
      */
     @Override
     public double evaluateNormalized(final double... args) {
-        final double x = args[0];
-        final double y = this.evaluate(x);
+        final BigDecimal x = BigDecimal.valueOf(args[0]);
+        final double y = this.evaluate(args[0]);
         final double normalized;
-        if (this.a <= x && x <= this.b) {
-            final double min = this.evaluate(this.a);
-            final double max = this.evaluate(this.b);
+        if (CubicFitnessFunction.lessThanOrEqual(this.a, x) &&
+            CubicFitnessFunction.lessThanOrEqual(x, this.b)) {
+            final double min = this.evaluate(this.a.doubleValue());
+            final double max = this.evaluate(this.b.doubleValue());
             // Switch min and max so that when x=a, y=1 and when x=b, y=0
             normalized = FitnessFunction.normalizeInRange(y, max, min, 0.0, 1.0);
-        } else if (this.b <= x && x <= this.c) {
-            final double min = this.evaluate(this.b);
-            final double max = this.evaluate(this.c);
+        } else if (CubicFitnessFunction.lessThanOrEqual(this.b, x) &&
+            CubicFitnessFunction.lessThanOrEqual(x, this.c)) {
+            final double min = this.evaluate(this.b.doubleValue());
+            final double max = this.evaluate(this.c.doubleValue());
             // Switch min and max so that when x=b, y=0 and when x=c, y=-1
             normalized = FitnessFunction.normalizeInRange(y, max, min, -1.0, 0.0);
         } else {
@@ -119,6 +129,18 @@ public final class CubicFitnessFunction
     @Override
     public Class<CubicFitnessFunction.CubicFunctionArgument> argumentType() {
         return CubicFitnessFunction.CubicFunctionArgument.class;
+    }
+
+    /**
+     * The less-than-or-equal relational operator.
+     * @param first The first argument of the relational operator
+     * @param second The second argument of the relational operator
+     * @return first <= second
+     */
+    private static boolean lessThanOrEqual(final BigDecimal first,
+        final BigDecimal second) {
+        final int result = first.compareTo(second);
+        return result < 0 || result == 0;
     }
 
     /**
