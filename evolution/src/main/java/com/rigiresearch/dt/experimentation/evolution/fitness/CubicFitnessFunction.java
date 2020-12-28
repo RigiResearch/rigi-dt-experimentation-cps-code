@@ -20,6 +20,11 @@ public final class CubicFitnessFunction
     private static final String ERROR = "Not implemented on purpose";
 
     /**
+     * A constant to compare double values.
+     */
+    private static final double EPSILON = 0.000001;
+
+    /**
      * The lower bound in the x axis.
      */
     private final double a;
@@ -65,21 +70,36 @@ public final class CubicFitnessFunction
     }
 
     /**
-     * Same as {@link #evaluate(double[])} but normalized. When {@code x<a} or
-     * {@code x>b}, this function returns 0.
+     * Same as {@link #evaluate(double[])} but normalized. Since {@code b}
+     * represents no change with respect to the initial plan (i.e., {@code x<b}
+     * is improvement and {@code x>b} is decline), {@code normalized(f(x))=0}
+     * when {@code x=b}. Therefore, this function is defined by parts:
+     * <pre>
+     *     f(x) = {
+     *       normalized(f(x)) between (0, 1], when a<=x<=b
+     *       0, when x=b
+     *       normalized(f(x)) between [-1, 0), when b<=x<=c
+     *     }
+     * </pre>
+     * <p>When {@code x<a} or {@code x>b}, this function returns -1.</p>
      * @param args One value on the x axis to evaluate the function
-     * @return A number between 0 and 1
+     * @return A number between -1 and 1
      */
     @Override
     public double evaluateNormalized(final double... args) {
         final double x = args[0];
+        final double y = this.evaluate(x);
         final double normalized;
-        if (this.a <= x && x <= this.c) {
-            final double y = this.evaluate(x);
+        if (this.a <= x && x <= this.b) {
             final double min = this.evaluate(this.a);
+            final double max = this.evaluate(this.b);
+            // Switch min and max so that when x=a, y=1 and when x=b, y=0
+            normalized = FitnessFunction.normalizeInRange(y, max, min, 0.0, 1.0);
+        } else if (this.b <= x && x <= this.c) {
+            final double min = this.evaluate(this.b);
             final double max = this.evaluate(this.c);
-            // Switch min and max so that when x=a, y=1 and when x=c, y=-1
-            normalized = FitnessFunction.normalizeInRange(y, max, min, -1.0, 1.0);
+            // Switch min and max so that when x=b, y=0 and when x=c, y=-1
+            normalized = FitnessFunction.normalizeInRange(y, max, min, -1.0, 0.0);
         } else {
             normalized = -1.0;
         }

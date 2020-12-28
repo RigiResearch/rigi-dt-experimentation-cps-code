@@ -46,9 +46,9 @@ class CubicFitnessFunctionTest {
     void testNormalized() {
         final double c = 10.0;
         final CubicFitnessFunction function =
-            new CubicFitnessFunction(0.0, c/2.0, c);
+            new CubicFitnessFunction(0.0, c/3.0, c);
         Assertions.assertTrue(
-            0.0 - function.evaluateNormalized(c/2.0) <
+            0.0 - function.evaluateNormalized(c/3.0) <
                 CubicFitnessFunctionTest.EPSILON,
             "Should be technically 0.0"
         );
