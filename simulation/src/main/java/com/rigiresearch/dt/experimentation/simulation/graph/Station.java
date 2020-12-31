@@ -4,7 +4,9 @@ import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.Node;
 import com.rigiresearch.middleware.graph.Parameter;
 import com.rigiresearch.middleware.graph.Property;
+import java.util.Collection;
 import java.util.Set;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlType;
 
 /**
@@ -40,6 +42,31 @@ public final class Station extends Node {
     public Station(final String name, final Set<Parameter> stops,
         final Set<Property> segments) {
         super(name, stops, segments);
+        this.updateStops(stops);
+    }
+
+    /**
+     * Updates the stops' reference to this station.
+     * @param stops This station's bus stops
+     */
+    private void updateStops(final Collection<Parameter> stops) {
+        stops.stream()
+            .filter(Stop.class::isInstance)
+            .map(Stop.class::cast)
+            .forEach(stop -> stop.setStation(this));
+    }
+
+    /**
+     * Updates the stops after unmarshall.
+     * @param unmarshaller The XML unmarshaller
+     */
+    @SuppressWarnings({
+        "PMD.UnusedFormalParameter",
+        "PMD.UnusedPrivateMethod"
+    })
+    private void afterUnmarshal(final Unmarshaller unmarshaller,
+        final Object parent) {
+        this.updateStops(this.getParameters(false));
     }
 
     /**

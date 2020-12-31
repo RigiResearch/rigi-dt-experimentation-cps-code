@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
@@ -61,6 +62,27 @@ class GraphBindingsTest {
         );
     }
 
+    @Test
+    void testStopsKnowTheirStation() throws JAXBException {
+        final Optional<Node> station = new GraphParser()
+            .withBindings(GraphBindingsTest.BINDINGS)
+            .instance(GraphBindingsTest.xml())
+            .getNodes()
+            .stream()
+            .findFirst();
+        Assertions.assertTrue(
+            station.isPresent(),
+            "Station should be present"
+        );
+        Assertions.assertNotEquals(
+            "",
+            station.get()
+                .getParameter(false, "FP1", Stop.class)
+                .getStation(),
+            "The stop should know its station"
+        );
+    }
+
     /**
      * Loads the demo graph from the resources.
      * @return An XML-formatted graph
@@ -98,7 +120,6 @@ class GraphBindingsTest {
                 new Segment(
                     salomia.getParameter(false, "SP1", Stop.class),
                     flora.getParameter(false, "FP1", Stop.class),
-                    flora,
                     T31n
                 )
             );
@@ -107,7 +128,6 @@ class GraphBindingsTest {
                 new Segment(
                     flora.getParameter(false, "FP1", Stop.class),
                     salomia.getParameter(false, "SP1", Stop.class),
-                    salomia,
                     T31s
                 )
             );

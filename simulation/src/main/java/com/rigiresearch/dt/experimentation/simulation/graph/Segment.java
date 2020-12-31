@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
 
 /**
  * A line segment definition.
@@ -18,11 +17,10 @@ import lombok.ToString;
 @XmlType(
     name = "segment",
     namespace = Graph.NAMESPACE,
-    propOrder = {"from", "to", "station", "line"}
+    propOrder = {"from", "to", "line"}
 )
 @EqualsAndHashCode(callSuper = false)
 @Getter
-@ToString(of = {"from", "to", "station", "line"})
 public final class Segment extends Property {
 
     /**
@@ -34,11 +32,6 @@ public final class Segment extends Property {
      * Object to recognize the "null" stop.
      */
     private static Stop STOP_PILL = new Stop();
-
-    /**
-     * Object to recognize the "null" station.
-     */
-    private static Station STATION_PILL = new Station();
 
     /**
      * Object to recognize the "null" line.
@@ -60,13 +53,6 @@ public final class Segment extends Property {
     private final Stop to;
 
     /**
-     * The station where segment ends.
-     */
-    @XmlIDREF
-    @XmlAttribute
-    private final Station station;
-
-    /**
      * The line associated with this segment.
      */
     @XmlIDREF
@@ -80,7 +66,6 @@ public final class Segment extends Property {
         super();
         this.from = Segment.STOP_PILL;
         this.to = Segment.STOP_PILL;
-        this.station = Segment.STATION_PILL;
         this.line = Segment.LINE_PILL;
     }
 
@@ -88,16 +73,29 @@ public final class Segment extends Property {
      * Default constructor.
      * @param from The stop where the segment starts
      * @param to The stop where the segment ends
-     * @param station The station where segment ends
      * @param line The line associated with this segment
      */
-    public Segment(final Stop from, final Stop to, final Station station,
-        final Line line) {
+    public Segment(final Stop from, final Stop to, final Line line) {
         super();
         this.from = from;
         this.to = to;
-        this.station = station;
         this.line = line;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "%s(from: %s.%s, to: %s.%s, line: %s)",
+            this.getClass()
+                .getSimpleName(),
+            this.from.getStation()
+                .getName(),
+            this.from.getName(),
+            this.to.getStation()
+                .getName(),
+            this.to.getName(),
+            this.line.getName()
+        );
     }
 
 }

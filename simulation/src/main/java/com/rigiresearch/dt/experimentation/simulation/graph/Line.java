@@ -81,9 +81,9 @@ public final class Line extends Node {
             .append('(')
             .append(this.getName())
             .append(", from: ")
-            .append(this.from)
+            .append(this.from.getName())
             .append(", to: ")
-            .append(this.to)
+            .append(this.to.getName())
             .append(')')
             .toString();
     }
