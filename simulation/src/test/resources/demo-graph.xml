@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graph xmlns="http://www.rigiresearch.com/middleware/graph/1.0.0">
+   <station name="Flora Industrial">
+      <stop name="FP1"/>
+      <stop name="FP2"/>
+      <segments>
+         <segment from="FP1" to="SP1" station="Salomia" line="T31s"/>
+      </segments>
+   </station>
+   <station name="Salomia">
+      <stop name="SP1"/>
+      <stop name="SP2"/>
+      <segments>
+         <segment from="SP1" to="FP1" station="Flora Industrial" line="T31n"/>
+      </segments>
+   </station>
+   <line name="T31n" from="Salomia" to="Flora Industrial"/>
+   <line name="T31s" from="Flora Industrial" to="Salomia"/>
+</graph>
+

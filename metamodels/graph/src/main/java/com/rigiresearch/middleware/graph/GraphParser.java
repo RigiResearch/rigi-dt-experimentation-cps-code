@@ -2,8 +2,11 @@ package com.rigiresearch.middleware.graph;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,15 +133,29 @@ public final class GraphParser {
      * @param file The target file
      * @param <T> The subtype of {@link Node}
      * @throws JAXBException If there is an error marshalling the graph
+     * @throws FileNotFoundException If the file does not exist
      */
     public <T extends Node> void write(final Graph<T> graph, final File file)
+        throws JAXBException, FileNotFoundException {
+        this.write(graph, new FileOutputStream(file));
+    }
+
+    /**
+     * Marshalls a graph instance into an XML file.
+     * @param graph The graph instance
+     * @param output The target output stream
+     * @param <T> The subtype of {@link Node}
+     * @throws JAXBException If there is an error marshalling the graph
+     */
+    public <T extends Node> void write(final Graph<T> graph,
+        final OutputStream output)
         throws JAXBException {
         final Marshaller marshaller = JAXBContext.newInstance(
             GraphParser.CLASS,
             this.properties
         ).createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        marshaller.marshal(graph, file);
+        marshaller.marshal(graph, output);
     }
 
 }

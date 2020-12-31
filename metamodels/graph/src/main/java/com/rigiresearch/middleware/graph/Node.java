@@ -210,9 +210,7 @@ public class Node implements Serializable, Comparable<Node> {
     public int hashCode() {
         return Objects.hash(
             this.name,
-            this.template,
-            this.parameters,
-            this.metadata
+            this.template
         );
     }
 
