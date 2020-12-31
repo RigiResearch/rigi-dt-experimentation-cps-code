@@ -26,12 +26,22 @@ import org.junit.jupiter.api.Test;
  */
 class GraphBindingsTest {
 
+    /**
+     * The name of the bindings resource.
+     */
+    private static final String BINDINGS = "bindings.xml";
+
+    /**
+     * The name of the demo graph resource.
+     */
+    private static final String RESOURCE = "demo-graph.xml";
+
     @Test
     void testGeneratingADemoGraph() throws JAXBException {
         final Graph<Node> graph = GraphBindingsTest.graph();
         final OutputStream output = new ByteArrayOutputStream();
         new GraphParser()
-            .withBindings("bindings.xml")
+            .withBindings(GraphBindingsTest.BINDINGS)
             .write(graph, output);
         Assertions.assertEquals(
             GraphBindingsTest.xml(),
@@ -45,7 +55,7 @@ class GraphBindingsTest {
         Assertions.assertEquals(
             GraphBindingsTest.graph(),
             new GraphParser()
-                .withBindings("bindings.xml")
+                .withBindings(GraphBindingsTest.BINDINGS)
                 .instance(GraphBindingsTest.xml()),
             "The loaded graph should be equal to the graph instance"
         );
@@ -61,7 +71,7 @@ class GraphBindingsTest {
                 Objects.requireNonNull(
                     Thread.currentThread()
                         .getContextClassLoader()
-                        .getResourceAsStream("demo-graph.xml")
+                        .getResourceAsStream(GraphBindingsTest.RESOURCE)
                 ),
                 StandardCharsets.UTF_8)
         )
