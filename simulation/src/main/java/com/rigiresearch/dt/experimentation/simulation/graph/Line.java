@@ -3,6 +3,8 @@ package com.rigiresearch.dt.experimentation.simulation.graph;
 import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.Node;
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Optional;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlIDREF;
 import javax.xml.bind.annotation.XmlType;
@@ -72,6 +74,41 @@ public final class Line extends Node {
         super(name, Collections.emptySet(), Collections.emptySet());
         this.from = from;
         this.to = to;
+    }
+
+    /**
+     * Constructs a sequence of stops that represent this line's journey from
+     * {@code from} to {@code to}.
+     * @return
+     */
+    public LinkedList<Stop> journey() {
+        final LinkedList<Stop> list = new LinkedList<>();
+        Optional<Segment> segment = this.stop(this.from);
+        segment.ifPresent(value -> list.add(value.getFrom()));
+        while (segment.isPresent()) {
+            list.add(segment.get().getTo());
+            segment = this.stop(segment.get().getTo().getStation());
+        }
+        if (!list.getLast().getStation().equals(this.to)) {
+            throw new IllegalStateException(
+                String.format("Incomplete journey for line %s", this.getName())
+            );
+        }
+        return list;
+    }
+
+    /**
+     * Finds a segment containing this line at given station.
+     * @param station The station
+     * @return The segment, or empty if the line does not stop at the given station
+     */
+    private Optional<Segment> stop(final Station station) {
+        return station.getMetadata()
+            .stream()
+            .filter(Segment.class::isInstance)
+            .map(Segment.class::cast)
+            .filter(tmp -> tmp.getLine().equals(this))
+            .findFirst();
     }
 
     @Override

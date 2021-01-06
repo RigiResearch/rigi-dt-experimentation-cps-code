@@ -1,8 +1,14 @@
 package com.rigiresearch.dt.experimentation.simulation;
 
-import com.rigiresearch.dt.experimentation.simulation.graph.Segment;
+import com.rigiresearch.dt.experimentation.simulation.graph.Station;
 import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.Node;
+import java.security.SecureRandom;
+import java.util.Random;
+import jsl.simulation.Simulation;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.configuration2.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * @version $Id$
  * @since 0.1.0
  */
-public final class DtSimulation {
+public final class DtSimulation extends Simulation {
 
     /**
      * The logger.
@@ -21,20 +27,45 @@ public final class DtSimulation {
         LoggerFactory.getLogger(DtSimulation.class);
 
     /**
-     * Runs the simulation.
-     * @param graph The input graph
+     * A random number generator.
      */
-    public void run(final Graph<Node> graph) {
+    public static final Random RANDOM = new SecureRandom("seed".getBytes());
+
+    /**
+     * Default constructor.
+     * @param graph The input graph
+     * @param config The configuration options
+     */
+    public DtSimulation(final Graph<Node> graph, final Configuration config) {
+        super("DT Simulation");
         graph.getNodes()
-            .forEach(node ->
-                node.getMetadata()
-                    .stream()
-                    .filter(Segment.class::isInstance)
-                    .map(Segment.class::cast)
-                    .forEach(segment ->
-                        DtSimulation.LOGGER.info("{}", new StationModel(segment))
-                    )
-            );
+            .stream()
+            .filter(Station.class::isInstance)
+            .map(Station.class::cast)
+            .forEach(station -> {
+                final StationSchedulingElement element =
+                    new StationSchedulingElement(this.getModel(), station, config);
+                DtSimulation.LOGGER.info("Instantiated station model {}", element.getName());
+            });
+    }
+
+    /**
+     * Constants for the configured variables.
+     */
+    @Getter
+    @RequiredArgsConstructor
+    public enum VariableType {
+        BUS_ARRIVAL("arrival"),
+        CAPACITY("capacity"),
+        FLEET("fleet"),
+        PASSENGER_ARRIVAL("passenger"),
+        SERVICE_TIME("service"),
+        TRANSPORTATION_TIME("transportation");
+
+        /**
+         * A user-friendly name for this type of variable.
+         */
+        private final String name;
     }
 
 }

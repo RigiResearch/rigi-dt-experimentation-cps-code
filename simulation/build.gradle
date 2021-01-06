@@ -11,4 +11,8 @@ repositories {
 dependencies {
     api project(":metamodels:graph")
     api "edu.uark.jsl:JSLCore:R1.0.4"
+    api "org.apache.commons:commons-configuration2:2.7"
+    runtime "org.apache.commons:commons-lang3:3.11"
+    runtime "commons-beanutils:commons-beanutils:1.9.4"
+    runtime "commons-logging:commons-logging:1.2"
 }
