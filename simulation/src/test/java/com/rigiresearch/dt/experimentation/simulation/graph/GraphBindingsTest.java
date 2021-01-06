@@ -110,7 +110,7 @@ class GraphBindingsTest {
         final Line T31s = new Line("T31s");
         final Set<Node> nodes = new HashSet<>(3);
         final Station salomia = GraphBindingsTest.station("Salomia");
-        final Station flora = GraphBindingsTest.station("Flora Industrial");
+        final Station flora = GraphBindingsTest.station("Flora");
         T31n.setFrom(salomia);
         T31n.setTo(flora);
         T31s.setFrom(flora);

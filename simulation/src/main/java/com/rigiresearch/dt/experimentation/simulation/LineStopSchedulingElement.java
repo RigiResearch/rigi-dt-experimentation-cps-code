@@ -1,6 +1,7 @@
 package com.rigiresearch.dt.experimentation.simulation;
 
 import com.rigiresearch.dt.experimentation.simulation.graph.Segment;
+import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.modeling.queue.Queue;
 import jsl.simulation.JSLEvent;
@@ -40,6 +41,11 @@ public final class LineStopSchedulingElement extends SchedulingElement {
     private final Queue<Passenger> wait;
 
     /**
+     * The graph node.
+     */
+    private final Stop node;
+
+    /**
      * Default constructor.
      * @param parent The parent model
      * @param segment The segment representing this model
@@ -55,6 +61,7 @@ public final class LineStopSchedulingElement extends SchedulingElement {
                 segment.getFrom().getStation().getName()
             )
         );
+        this.node = segment.getFrom();
         this.passengers = RandomVariableFactory.get(
             segment.getLine(),
             DtSimulation.VariableType.PASSENGER_ARRIVAL.getName(),
@@ -85,19 +92,25 @@ public final class LineStopSchedulingElement extends SchedulingElement {
         final int boarding = 10;
         final int leaving = 2;
         bus.updateOccupation(boarding, leaving);
-        LineStopSchedulingElement.LOGGER.debug(
-            "{} passengers just got onboard, and {} passengers left bus {} at stop {} (time: {})",
+        DtSimulation.log(
+            LineStopSchedulingElement.LOGGER,
+            this.getTime(),
+            bus.getLine(),
+            this.node.getStation(),
+            this.node,
+            "%d passengers just got onboard, and %d passengers left bus %s",
             boarding,
             leaving,
-            bus.getName(),
-            this.getName(),
-            this.getTime()
+            bus.getName()
         );
-        LineStopSchedulingElement.LOGGER.debug(
-            "Bus {} is ready to depart from stop {} (time: {})",
-            bus.getName(),
-            this.getName(),
-            this.getTime()
+        DtSimulation.log(
+            LineStopSchedulingElement.LOGGER,
+            this.getTime(),
+            bus.getLine(),
+            this.node.getStation(),
+            this.node,
+            "Bus %s is ready to depart",
+            bus.getName()
         );
         this.scheduleEvent(
             this::handleBusArrivalAtNextStop,
@@ -112,10 +125,15 @@ public final class LineStopSchedulingElement extends SchedulingElement {
      * @param event The event containing the simulated bus
      */
     private void handleBusArrivalAtNextStop(final JSLEvent<Bus> event) {
-        LineStopSchedulingElement.LOGGER.debug(
-            "Bus {} just arrived at its next stop (time: {})",
-            event.getMessage().getName(),
-            this.getTime()
+        final Bus bus = event.getMessage();
+        DtSimulation.log(
+            LineStopSchedulingElement.LOGGER,
+            this.getTime(),
+            bus.getLine(),
+            this.node.getStation(),
+            this.node,
+            "Bus %s just arrived at its next stop",
+            bus.getName()
         );
         // TODO Send the bus to the next stop (not line-stop) in the bus's journey
         event.getMessage().dispose();

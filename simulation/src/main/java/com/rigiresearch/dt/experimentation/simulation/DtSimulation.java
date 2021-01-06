@@ -1,6 +1,8 @@
 package com.rigiresearch.dt.experimentation.simulation;
 
+import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import com.rigiresearch.dt.experimentation.simulation.graph.Station;
+import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.Node;
 import java.security.SecureRandom;
@@ -45,8 +47,52 @@ public final class DtSimulation extends Simulation {
             .forEach(station -> {
                 final StationSchedulingElement element =
                     new StationSchedulingElement(this.getModel(), station, config);
-                DtSimulation.LOGGER.info("Instantiated station model {}", element.getName());
+                DtSimulation.LOGGER.debug("Instantiated station model {}", element.getName());
             });
+    }
+
+    /**
+     * Logs information using a standard format.
+     * @param logger The logger being used
+     * @param time The current simulation time
+     * @param line The line associated with the log trace
+     * @param station The station associated with the log trace
+     * @param stop The stop associated with the log trace
+     * @param format A format string
+     * @param args Arguments to use in the format string
+     */
+    public static void log(final Logger logger, final double time,
+        final Line line, final Station station, final Stop stop,
+        final String format, final Object... args) {
+        logger.debug(
+            "[{}]\t{}\t{}\t{}\t{}",
+            time,
+            line.getName(),
+            station.getName(),
+            stop.getName(),
+            String.format(format, args)
+        );
+    }
+
+    /**
+     * Logs information using a standard format.
+     * @param logger The logger being used
+     * @param time The current simulation time
+     * @param line The line associated with the log trace
+     * @param station The station associated with the log trace
+     * @param format A format string
+     * @param args Arguments to use in the format string
+     */
+    public static void log(final Logger logger, final double time,
+        final Line line, final Station station, final String format,
+        final Object... args) {
+        logger.debug(
+            "[{}]\t{}\t{}\t\t{}",
+            time,
+            line.getName(),
+            station.getName(),
+            String.format(format, args)
+        );
     }
 
     /**

@@ -33,17 +33,12 @@ public final class Bus extends Entity {
      * Default constructor.
      * @param type The type associated with this entity
      * @param line The line with which this bus is associated
+     * @param name A unique name
      * @param capacity The maximum passenger capacity
      */
-    public Bus(final EntityType type, final Line line, final int capacity) {
-        super(
-            type,
-            String.format(
-                "%s-%d",
-                line.getName(),
-                DtSimulation.RANDOM.nextInt()
-            )
-        );
+    public Bus(final EntityType type, final Line line, final String name,
+        final int capacity) {
+        super(type, name);
         this.line = line;
         this.capacity = capacity;
     }

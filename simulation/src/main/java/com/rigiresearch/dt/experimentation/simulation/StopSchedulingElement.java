@@ -91,12 +91,14 @@ public final class StopSchedulingElement extends SchedulingElement {
      * @param bus The arriving bus
      */
     public void handleBusArrival(final Bus bus) {
-        StopSchedulingElement.LOGGER.debug(
-            "Bus {} arrived at stop {} (Station: {}, time: {})",
-            bus.getName(),
-            this.getName(),
-            this.node.getStation().getName(),
-            this.getTime()
+        DtSimulation.log(
+            StopSchedulingElement.LOGGER,
+            this.getTime(),
+            bus.getLine(),
+            this.node.getStation(),
+            this.node,
+            "Bus %s is ready to onboard passengers",
+            bus.getName()
         );
         this.service.enqueue(bus);
         this.scheduleEvent(
@@ -112,13 +114,6 @@ public final class StopSchedulingElement extends SchedulingElement {
      */
     public void handleBusDeparture(final JSLEvent<Bus> event) {
         final Bus bus = event.getMessage();
-        StopSchedulingElement.LOGGER.debug(
-            "Bus {} is ready to onboard passengers at stop {} (Station: {}, time: {})",
-            bus.getName(),
-            this.getName(),
-            this.node.getStation().getName(),
-            this.getTime()
-        );
         if (this.service.isNotEmpty()) {
             final Bus next = this.service.removeNext();
             if (bus.equals(next)) {

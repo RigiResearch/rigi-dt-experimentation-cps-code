@@ -51,6 +51,11 @@ public final class StationSchedulingElement extends SchedulingElement {
     private final Configuration config;
 
     /**
+     * The graph node.
+     */
+    private final Station node;
+
+    /**
      * Default constructor.
      * @param parent The parent model
      * @param station The station's graph node
@@ -60,6 +65,7 @@ public final class StationSchedulingElement extends SchedulingElement {
         final Configuration config) {
         super(parent, station.getName());
         this.config = config;
+        this.node = station;
         final List<Segment> segments = station.getMetadata()
             .stream()
             .filter(Segment.class::isInstance)
@@ -91,6 +97,13 @@ public final class StationSchedulingElement extends SchedulingElement {
                 Collectors.toMap(
                     Segment::getLine,
                     segment -> {
+                        DtSimulation.log(
+                            StationSchedulingElement.LOGGER,
+                            this.getTime(),
+                            segment.getLine(),
+                            this.node,
+                            "Creating bus fleet"
+                        );
                         final int fleet = this.config.getInt(
                             String.format(
                                 "%s.%s",
@@ -100,17 +113,19 @@ public final class StationSchedulingElement extends SchedulingElement {
                         );
                         final LinkedList<Bus> list = new LinkedList<>();
                         for (int count = 1; count <= fleet; count++) {
+                            final String name = String.format(
+                                "%s-bus-%d",
+                                segment.getLine().getName(),
+                                count
+                            );
                             list.add(
                                 new Bus(
                                     new EntityType(
                                         this,
-                                        String.format(
-                                            "%s-bus-%d",
-                                            segment.getLine().getName(),
-                                            count
-                                        )
+                                        name
                                     ),
                                     segment.getLine(),
+                                    name,
                                     this.config.getInt(
                                         String.format(
                                             "%s.%s",
@@ -141,10 +156,12 @@ public final class StationSchedulingElement extends SchedulingElement {
                         DtSimulation.VariableType.CAPACITY.getName()
                     )
                 );
-                StationSchedulingElement.LOGGER.debug(
-                    "Scheduling buses for line {} at station {} (capacity: {})",
-                    line.getName(),
-                    this.getName(),
+                DtSimulation.log(
+                    StationSchedulingElement.LOGGER,
+                    this.getTime(),
+                    line,
+                    this.node,
+                    "Scheduling buses width capacity %d",
                     capacity
                 );
                 this.scheduleEvent(
@@ -162,11 +179,13 @@ public final class StationSchedulingElement extends SchedulingElement {
      */
     private void handleBusArrival(final JSLEvent<Bus> event) {
         final Bus bus = event.getMessage();
-        StationSchedulingElement.LOGGER.debug(
-            "Bus {} arrived at station {} (time: {})",
-            bus.getName(),
-            this.getName(),
-            this.getTime()
+        DtSimulation.log(
+            StationSchedulingElement.LOGGER,
+            this.getTime(),
+            bus.getLine(),
+            this.node,
+            "Bus %s arrived",
+            bus.getName()
         );
         this.stops.get(bus.getLine())
             .handleBusArrival(bus);
