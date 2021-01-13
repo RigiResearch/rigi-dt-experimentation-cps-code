@@ -6,6 +6,8 @@ import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.Node;
 import java.security.SecureRandom;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import jsl.simulation.Simulation;
 import lombok.Getter;
@@ -34,21 +36,38 @@ public final class DtSimulation extends Simulation {
     public static final Random RANDOM = new SecureRandom("seed".getBytes());
 
     /**
+     * Map of station-models.
+     */
+    private final Map<Station, StationSchedulingElement> models;
+
+    /**
      * Default constructor.
      * @param graph The input graph
      * @param config The configuration options
      */
     public DtSimulation(final Graph<Node> graph, final Configuration config) {
         super("DT Simulation");
+        this.models = new HashMap<>(graph.getNodes().size());
         graph.getNodes()
             .stream()
             .filter(Station.class::isInstance)
             .map(Station.class::cast)
             .forEach(station -> {
-                final StationSchedulingElement element =
-                    new StationSchedulingElement(this.getModel(), station, config);
-                DtSimulation.LOGGER.debug("Instantiated station model {}", element.getName());
+                final StationSchedulingElement model =
+                    new StationSchedulingElement(this, station, config);
+                DtSimulation.LOGGER.debug("Instantiated station model {}", model.getName());
+                this.models.put(station, model);
             });
+        this.models.values().forEach(StationSchedulingElement::updateLinks);
+    }
+
+    /**
+     * Get a station model.
+     * @param station The station node
+     * @return The model or null
+     */
+    public StationSchedulingElement model(final Station station) {
+        return this.models.get(station);
     }
 
     /**

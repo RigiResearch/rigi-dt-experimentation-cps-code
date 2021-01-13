@@ -1,12 +1,12 @@
 package com.rigiresearch.dt.experimentation.simulation;
 
 import com.rigiresearch.dt.experimentation.simulation.graph.Segment;
-import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.modeling.queue.Queue;
 import jsl.simulation.JSLEvent;
-import jsl.simulation.ModelElement;
 import jsl.simulation.SchedulingElement;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.configuration2.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,20 @@ public final class LineStopSchedulingElement extends SchedulingElement {
     /**
      * The graph node.
      */
-    private final Stop node;
+    @Getter
+    private final Segment node;
+
+    /**
+     * The parent model.
+     */
+    @Getter
+    private final StopSchedulingElement parent;
+
+    /**
+     * The next stop.
+     */
+    @Setter
+    private StationSchedulingElement next;
 
     /**
      * Default constructor.
@@ -51,24 +64,28 @@ public final class LineStopSchedulingElement extends SchedulingElement {
      * @param segment The segment representing this model
      * @param config The simulation configuration
      */
-    public LineStopSchedulingElement(final ModelElement parent,
+    public LineStopSchedulingElement(final StopSchedulingElement parent,
         final Segment segment, final Configuration config) {
         super(
             parent,
             String.format(
-                "%s-%s",
+                "%s-%s-%s",
                 segment.getLine().getName(),
-                segment.getFrom().getStation().getName()
+                segment.getFrom().getStation().getName(),
+                segment.getFrom().getName()
             )
         );
-        this.node = segment.getFrom();
+        this.parent = parent;
+        this.node = segment;
         this.passengers = RandomVariableFactory.get(
             segment.getLine(),
+            segment.getFrom(),
             DtSimulation.VariableType.PASSENGER_ARRIVAL.getName(),
             config
         ).apply(this);
         this.transportation = RandomVariableFactory.get(
             segment.getLine(),
+            segment.getFrom(),
             DtSimulation.VariableType.TRANSPORTATION_TIME.getName(),
             config
         ).apply(this);
@@ -96,19 +113,20 @@ public final class LineStopSchedulingElement extends SchedulingElement {
             LineStopSchedulingElement.LOGGER,
             this.getTime(),
             bus.getLine(),
-            this.node.getStation(),
-            this.node,
-            "%d passengers just got onboard, and %d passengers left bus %s",
+            this.node.getFrom().getStation(),
+            this.node.getFrom(),
+            "%d passengers just got onboard, and %d passengers left bus %s (new occupation: %d)",
             boarding,
             leaving,
-            bus.getName()
+            bus.getName(),
+            bus.getOccupation()
         );
         DtSimulation.log(
             LineStopSchedulingElement.LOGGER,
             this.getTime(),
             bus.getLine(),
-            this.node.getStation(),
-            this.node,
+            this.node.getFrom().getStation(),
+            this.node.getFrom(),
             "Bus %s is ready to depart",
             bus.getName()
         );
@@ -126,17 +144,22 @@ public final class LineStopSchedulingElement extends SchedulingElement {
      */
     private void handleBusArrivalAtNextStop(final JSLEvent<Bus> event) {
         final Bus bus = event.getMessage();
-        DtSimulation.log(
-            LineStopSchedulingElement.LOGGER,
-            this.getTime(),
-            bus.getLine(),
-            this.node.getStation(),
-            this.node,
-            "Bus %s just arrived at its next stop",
-            bus.getName()
-        );
-        // TODO Send the bus to the next stop (not line-stop) in the bus's journey
-        event.getMessage().dispose();
+        if (this.next == null) {
+            DtSimulation.log(
+                LineStopSchedulingElement.LOGGER,
+                this.getTime(),
+                bus.getLine(),
+                this.node.getFrom().getStation(),
+                this.node.getFrom(),
+                "Bus %s finished its journey",
+                bus.getName()
+            );
+            // TODO Is this the correct way to end the journey?
+            event.getMessage().dispose();
+        } else {
+            // Send the bus to the next station
+            this.next.handleBusArrival(bus);
+        }
     }
 
     @Override
@@ -146,6 +169,10 @@ public final class LineStopSchedulingElement extends SchedulingElement {
         builder.append('(');
         builder.append("serviceQ: ");
         builder.append(this.wait.getName());
+        if (this.next != null) {
+            builder.append(", next: ");
+            builder.append(this.next.getName());
+        }
         builder.append(')');
         return builder.toString();
     }

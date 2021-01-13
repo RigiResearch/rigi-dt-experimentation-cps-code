@@ -1,8 +1,10 @@
 package com.rigiresearch.middleware.graph;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,7 +42,7 @@ public class Node implements Serializable, Comparable<Node> {
      * Object to recognize whether a node is based on a template.
      */
     private static final Node TEMPLATE_PILL =
-        new Node("", null, Collections.emptySet(), Collections.emptySet());
+        new Node("", null, Collections.emptySet(), Collections.emptyList());
 
     /**
      * A unique name within the graph.
@@ -78,13 +80,13 @@ public class Node implements Serializable, Comparable<Node> {
      */
     @XmlElement(name = "property")
     @XmlElementWrapper(name = "metadata")
-    private Set<Property> metadata;
+    private List<Property> metadata;
 
     /**
      * Empty constructor.
      */
     public Node() {
-        this("", Node.TEMPLATE_PILL, new TreeSet<>(), new TreeSet<>());
+        this("", Node.TEMPLATE_PILL, new TreeSet<>(), new ArrayList<>());
     }
 
     /**
@@ -94,7 +96,7 @@ public class Node implements Serializable, Comparable<Node> {
      * @param metadata Metadata properties associated with this node
      */
     public Node(final String name, final Set<Parameter> parameters,
-        final Set<Property> metadata) {
+        final List<Property> metadata) {
         this(name, Node.TEMPLATE_PILL, parameters, metadata);
     }
 
@@ -107,11 +109,11 @@ public class Node implements Serializable, Comparable<Node> {
      */
     @SuppressWarnings("checkstyle:ParameterNumber")
     public Node(final String name, final Node template,
-        final Set<Parameter> parameters, final Set<Property> metadata) {
+        final Set<Parameter> parameters, final List<Property> metadata) {
         this.name = name;
         this.template = template;
         this.parameters = new TreeSet<>(parameters);
-        this.metadata = new TreeSet<>(metadata);
+        this.metadata = new ArrayList<>(metadata);
     }
 
     /**
@@ -158,7 +160,7 @@ public class Node implements Serializable, Comparable<Node> {
             this.template = Node.TEMPLATE_PILL;
         }
         if (this.metadata == null) {
-            this.metadata = new TreeSet<>();
+            this.metadata = new ArrayList<>();
         }
     }
 
@@ -330,7 +332,7 @@ public class Node implements Serializable, Comparable<Node> {
      * Metadata properties associated with this node.
      * @return A non-null set
      */
-    public Set<Property> getMetadata() {
+    public List<Property> getMetadata() {
         return this.metadata;
     }
 }

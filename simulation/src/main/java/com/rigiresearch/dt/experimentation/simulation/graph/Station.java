@@ -5,6 +5,7 @@ import com.rigiresearch.middleware.graph.Node;
 import com.rigiresearch.middleware.graph.Parameter;
 import com.rigiresearch.middleware.graph.Property;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlType;
@@ -40,7 +41,7 @@ public final class Station extends Node {
      * @param segments The segments connecting this station with other stations
      */
     public Station(final String name, final Set<Parameter> stops,
-        final Set<Property> segments) {
+        final List<Property> segments) {
         super(name, stops, segments);
         this.updateStops(stops);
     }

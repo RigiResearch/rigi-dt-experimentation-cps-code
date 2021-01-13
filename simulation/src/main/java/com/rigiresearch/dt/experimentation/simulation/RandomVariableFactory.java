@@ -1,6 +1,7 @@
 package com.rigiresearch.dt.experimentation.simulation;
 
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
+import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import java.util.function.Function;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.ModelElement;
@@ -27,14 +28,20 @@ public final class RandomVariableFactory {
     /**
      * Creates a random variable based on the specified line and variable.
      * @param line The graph node
+     * @param stop The graph node
      * @param variable The variable name to load from the properties configuration
      * @param config The configuration options
      * @return A function that will instantiate the variable based on a given
      *  model element
      */
     public static Function<ModelElement, RandomVariable> get(final Line line,
-        final String variable, final Configuration config) {
-        final String name = String.format("RV-%s-%s", variable, line.getName());
+        final Stop stop, final String variable, final Configuration config) {
+        final String name = String.format(
+            "RV-%s-%s-%s",
+            variable,
+            line.getName(),
+            stop.getName()
+        );
         final String key = String.format(
             "%s.%s.distribution",
             line.getName(),

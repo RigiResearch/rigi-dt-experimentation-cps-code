@@ -10,7 +10,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -111,10 +113,10 @@ class GraphBindingsTest {
         final Set<Node> nodes = new HashSet<>(3);
         final Station salomia = GraphBindingsTest.station("Salomia");
         final Station flora = GraphBindingsTest.station("Flora");
-        T31n.setFrom(salomia);
-        T31n.setTo(flora);
-        T31s.setFrom(flora);
-        T31s.setTo(salomia);
+        // T31n.setFrom(salomia);
+        // T31n.setTo(flora);
+        // T31s.setFrom(flora);
+        // T31s.setTo(salomia);
         salomia.getMetadata()
             .add(
                 new Segment(
@@ -147,7 +149,7 @@ class GraphBindingsTest {
         final Set<Parameter> stops = new HashSet<>(2);
         stops.add(new Stop(String.format("%sP1", name.charAt(0))));
         stops.add(new Stop(String.format("%sP2", name.charAt(0))));
-        final Set<Property> segments = new HashSet<>(2);
+        final List<Property> segments = new ArrayList<>(2);
         return new Station(name, stops, segments);
     }
 

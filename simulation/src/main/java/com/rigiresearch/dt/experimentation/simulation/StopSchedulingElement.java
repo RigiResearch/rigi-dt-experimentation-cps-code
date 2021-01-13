@@ -3,18 +3,17 @@ package com.rigiresearch.dt.experimentation.simulation;
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import com.rigiresearch.dt.experimentation.simulation.graph.Segment;
 import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.modeling.queue.Queue;
 import jsl.simulation.JSLEvent;
-import jsl.simulation.ModelElement;
 import jsl.simulation.SchedulingElement;
+import lombok.Getter;
 import org.apache.commons.configuration2.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +51,7 @@ public final class StopSchedulingElement extends SchedulingElement {
     /**
      * Line-Stop models encapsulated in this stop model.
      */
-    private final Map<Line, List<LineStopSchedulingElement>> models;
+    private final Map<Line, LineStopSchedulingElement> models;
 
     /**
      * Random variables based on the lines' service time distributions.
@@ -60,30 +59,77 @@ public final class StopSchedulingElement extends SchedulingElement {
     private final Map<Line, RandomVariable> services;
 
     /**
+     * The parent model.
+     */
+    @Getter
+    private final StationSchedulingElement parent;
+
+    /**
      * Default constructor.
      * @param parent The parent model
      * @param stop The stop's graph node
      * @param config The simulation configuration
      */
-    public StopSchedulingElement(final ModelElement parent, final Stop stop,
-        final Configuration config) {
+    public StopSchedulingElement(final StationSchedulingElement parent,
+        final Stop stop, final Configuration config) {
         super(parent, stop.getName());
+        this.parent = parent;
         this.config = config;
         this.node = stop;
         this.service =
             new Queue<>(this, String.format("ST-%s", stop.getName()));
         // First, find lines stopping at this stop
-        final List<Line> lines = stop.getStation()
+        final Set<Line> lines = stop.getStation()
             .getMetadata()
             .stream()
             .filter(Segment.class::isInstance)
             .map(Segment.class::cast)
             .filter(tmp -> tmp.getFrom().equals(stop))
             .map(Segment::getLine)
-            .collect(Collectors.toList());
-        // TODO Set the next stop for each model
+            .collect(Collectors.toSet());
         this.models = this.initializeModels(lines);
         this.services = this.initializeServiceTimeVars(lines);
+    }
+
+    /**
+     * Updates the next stop for each model, so that they can simulate the bus
+     * arrival.
+     */
+    public void updateLinks() {
+        for (final LineStopSchedulingElement model : this.models.values()) {
+            final Segment segment = model.getNode();
+            // Get the next segment from the line
+            final Optional<Segment> next = segment.getLine().segment(segment.getTo());
+            // Then, get the model corresponding to that stop and update the current model
+            next.ifPresent(value -> {
+                final StationSchedulingElement stationModel = this.getParent()
+                    .getParent()
+                    .model(
+                        value.getFrom()
+                            .getStation()
+                    );
+                System.out.println(stationModel);
+                final StopSchedulingElement stopModel = stationModel.getStops()
+                    .get(value.getLine());
+                System.out.println(stopModel);
+                final LineStopSchedulingElement tmp = stopModel.models.get(value.getFrom());
+                System.out.println("Line: " + tmp + " (" + value.getFrom().getName() + ") this = " + this.node.getName());
+                System.out.println("Next segment " + value);
+                // obtener el modelo de la otra estacion, y decirle al de esta estaciion que ese es el proximo
+                if (tmp != null) {
+                    model.setNext(tmp.getParent().parent);
+                    System.out.println(segment.getLine().getName() + ": " + segment + " --> " + value);
+                }
+                final Optional<Segment> nextNext = segment.getLine().segment(value.getTo());
+                if (!nextNext.isPresent()) {
+                    // This is the end of the line
+                    final LineStopSchedulingElement tmp2 = this.models.get(value.getTo());
+                    if (tmp2 != null) {
+                        tmp.setNext(tmp2.getParent().parent);
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -118,7 +164,6 @@ public final class StopSchedulingElement extends SchedulingElement {
             final Bus next = this.service.removeNext();
             if (bus.equals(next)) {
                 this.models.get(bus.getLine())
-                    .get(0)
                     .handleBusDeparture(bus);
             } else {
                 throw new IllegalStateException(
@@ -135,43 +180,20 @@ public final class StopSchedulingElement extends SchedulingElement {
     }
 
     /**
-     * Creates a line-stop model for each line that stops at this stop. Each
-     * model will be in charge of handling bus and passenger arrivals for the
-     * corresponding line, as well as transportation time to the next stop. Once
-     * a bus reaches the next stop, the model will invoke the given callback, so
-     * that the next model in the line's journey can schedule the bus (i.e.,
-     * record its arrival). Based on this, only the first stop needs to know the
-     * buses' arrival time. Subsequent stops only need to know their service and
-     * transportation times.
+     * Creates a line-stop model for each line that stops at this stop.
      * @param lines The lines stopping at this stop
      * @return A list of line-stop models
      */
-    private Map<Line, List<LineStopSchedulingElement>> initializeModels(
-        final List<Line> lines) {
+    private Map<Line, LineStopSchedulingElement> initializeModels(
+        final Collection<Line> lines) {
         return lines.stream().collect(
             Collectors.toMap(
                 Function.identity(),
-                line -> {
-                    // Create a line-stop model for each pair of stops in
-                    //  the line's journey
-                    final LinkedList<Stop> journey = line.journey();
-                    final List<LineStopSchedulingElement> list =
-                        new ArrayList<>(journey.size());
-                    Stop from = journey.poll();
-                    Stop to = journey.poll();
-                    while (from != null && to != null) {
-                        list.add(
-                            new LineStopSchedulingElement(
-                                this,
-                                new Segment(from, to, line),
-                                this.config
-                            )
-                        );
-                        from = journey.poll();
-                        to = journey.poll();
-                    }
-                    return list;
-                }
+                line -> new LineStopSchedulingElement(
+                    this,
+                    line.segment(this.node).get(),
+                    this.config
+                )
             )
         );
     }
@@ -189,7 +211,7 @@ public final class StopSchedulingElement extends SchedulingElement {
                 Collectors.toMap(
                     Function.identity(),
                     line -> RandomVariableFactory
-                        .get(line, name, this.config)
+                        .get(line, this.node, name, this.config)
                         .apply(this)
                 )
             );
@@ -202,15 +224,19 @@ public final class StopSchedulingElement extends SchedulingElement {
         builder.append('(');
         builder.append("serviceQ: ");
         builder.append(this.service.getName());
-        builder.append(')');
-        builder.append('\n');
-        this.models.forEach((line, stops) -> {
+        builder.append(", models: ");
+        this.models.forEach((line, model) -> {
             builder.append(line);
             builder.append('\n');
-            stops.forEach(builder::append);
+            builder.append(model);
         });
-        builder.append('\n');
-        return builder.toString();
+        builder.append(')');
+        // return builder.toString();
+        return String.format(
+            "%s(%s)",
+            this.getClass().getSimpleName(),
+            this.node.getName()
+        );
     }
 
 }

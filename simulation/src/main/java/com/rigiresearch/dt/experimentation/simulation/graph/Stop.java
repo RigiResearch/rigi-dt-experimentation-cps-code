@@ -4,7 +4,6 @@ import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.Parameter;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import lombok.Getter;
 
 /**
  * A bus stop within a station.
@@ -16,7 +15,6 @@ import lombok.Getter;
     name = "stop",
     namespace = Graph.NAMESPACE
 )
-@Getter
 public final class Stop extends Parameter {
 
     /**
@@ -45,7 +43,7 @@ public final class Stop extends Parameter {
      * Default constructor.
      * @param name This stop's unique name
      */
-    public Stop (final String name) {
+    public Stop(final String name) {
         super(name);
         this.station = Stop.STATION_PILL;
     }
@@ -65,6 +63,10 @@ public final class Stop extends Parameter {
     @XmlTransient
     public void setStation(final Station station) {
         this.station = station;
+    }
+
+    public Station getStation() {
+        return this.station;
     }
 
     @Override
