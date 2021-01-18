@@ -88,9 +88,11 @@ class DtSimulationTest {
             graph,
             DtSimulationTest.config()
         );
-        simulation.setLengthOfReplication(50.0);
-        simulation.setLengthOfWarmUp(50.0);
+        simulation.setLengthOfReplication(100.0);
+        simulation.setLengthOfWarmUp(100.0);
+        // simulation.setNumberOfReplications(5);
         simulation.run();
+        simulation.printHalfWidthSummaryReport();
     }
 
     /**
