@@ -95,9 +95,9 @@ public final class StationSchedulingElement extends SchedulingElement {
                     segment -> RandomVariableFactory
                         .get(
                             segment.getLine(),
-                            segment.getFrom(),
                             DtSimulation.VariableType.BUS_ARRIVAL.getName(),
-                            config
+                            config,
+                            this.node.getName()
                         )
                         .apply(this)
                 )
@@ -232,8 +232,8 @@ public final class StationSchedulingElement extends SchedulingElement {
                 line,
                 this.node,
                 last,
-                "End of line for bus %s",
-                bus.getName()
+                "End of line - %s",
+                bus
             );
             bus.dispose();
             // TODO Put the bus back to the list of buses for the corresponding line

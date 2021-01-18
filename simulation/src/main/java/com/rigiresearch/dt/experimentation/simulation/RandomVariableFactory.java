@@ -28,6 +28,35 @@ public final class RandomVariableFactory {
     /**
      * Creates a random variable based on the specified line and variable.
      * @param line The graph node
+     * @param variable The variable name to load from the properties configuration
+     * @param config The configuration options
+     * @param suffix A suffix to make the variable name unique
+     * @return A function that will instantiate the variable based on a given
+     *  model element
+     */
+    public static Function<ModelElement, RandomVariable> get(final Line line,
+        final String variable, final Configuration config, final String suffix) {
+        final String name = String.format(
+            "RV-%s-%s-%s",
+            variable,
+            line.getName(),
+            suffix
+        );
+        final String key = String.format(
+            "%s.%s.distribution",
+            line.getName(),
+            variable
+        );
+        return RandomVariableFactory.get(
+            Distribution.from(config.getString(key)),
+            config.subset(key),
+            name
+        );
+    }
+
+    /**
+     * Creates a random variable based on the specified line, stop and variable.
+     * @param line The graph node
      * @param stop The graph node
      * @param variable The variable name to load from the properties configuration
      * @param config The configuration options
@@ -43,8 +72,9 @@ public final class RandomVariableFactory {
             stop.getName()
         );
         final String key = String.format(
-            "%s.%s.distribution",
+            "%s.%s.%s.distribution",
             line.getName(),
+            stop.getName(),
             variable
         );
         return RandomVariableFactory.get(

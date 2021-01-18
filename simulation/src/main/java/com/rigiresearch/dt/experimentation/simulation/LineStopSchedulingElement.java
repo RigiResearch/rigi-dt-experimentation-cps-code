@@ -106,8 +106,8 @@ public final class LineStopSchedulingElement extends SchedulingElement {
      */
     public void handleBusDeparture(final Bus bus) {
         // TODO Update the current occupation of the bus
-        final int boarding = 10;
-        final int leaving = 2;
+        final int boarding = (int) this.passengers.getValue();
+        final int leaving = 0;
         bus.updateOccupation(boarding, leaving);
         DtSimulation.log(
             LineStopSchedulingElement.LOGGER,

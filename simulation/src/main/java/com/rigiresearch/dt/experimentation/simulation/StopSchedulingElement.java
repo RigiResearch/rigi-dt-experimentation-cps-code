@@ -230,7 +230,7 @@ public final class StopSchedulingElement extends SchedulingElement {
                 Collectors.toMap(
                     Function.identity(),
                     line -> RandomVariableFactory
-                        .get(line, this.node, name, this.config)
+                        .get(line, name, this.config, this.node.getName())
                         .apply(this)
                 )
             );
@@ -238,19 +238,6 @@ public final class StopSchedulingElement extends SchedulingElement {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(this.getClass().getSimpleName());
-        builder.append('(');
-        builder.append("serviceQ: ");
-        builder.append(this.service.getName());
-        builder.append(", models: ");
-        this.models.forEach((line, model) -> {
-            builder.append(line);
-            builder.append('\n');
-            builder.append(model);
-        });
-        builder.append(')');
-        // return builder.toString();
         return String.format(
             "%s(%s)",
             this.getClass().getSimpleName(),
