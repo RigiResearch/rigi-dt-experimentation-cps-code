@@ -42,7 +42,7 @@ public final class NormalizedFitnessFunction
      * <p>Visit https://www.wolframalpha.com/input/?i=plot+-x+%2B+1+from+0+to+1
      * to see a plot of this function.</p>
      * @param args The arguments passed to this function
-     * @return a double value between 0.0 and 1.0
+     * @return a double value between -1.0 and 1.0
      */
     @Override
     public double evaluateNormalized(final double... args) {

@@ -78,6 +78,7 @@ public final class StopSchedulingElement extends SchedulingElement {
         this.node = stop;
         this.service =
             new Queue<>(this, String.format("ST-%s", stop.getName()));
+        this.service.setInitialDiscipline(Queue.Discipline.FIFO);
         // First, find lines stopping at this stop
         final Set<Line> lines = stop.getStation()
             .getMetadata()
@@ -102,31 +103,23 @@ public final class StopSchedulingElement extends SchedulingElement {
             final Optional<Segment> next = segment.getLine().segment(segment.getTo());
             // Then, get the model corresponding to that stop and update the current model
             next.ifPresent(value -> {
-                final StationSchedulingElement stationModel = this.getParent()
-                    .getParent()
-                    .model(
-                        value.getFrom()
-                            .getStation()
-                    );
-                System.out.println(stationModel);
-                final StopSchedulingElement stopModel = stationModel.getStops()
+                final LineStopSchedulingElement tmp = this.parent.getParent()
+                    .model(value.getFrom().getStation())
+                    .getStops()
+                    .get(value.getLine())
+                    .models
                     .get(value.getLine());
-                System.out.println(stopModel);
-                final LineStopSchedulingElement tmp = stopModel.models.get(value.getFrom());
-                System.out.println("Line: " + tmp + " (" + value.getFrom().getName() + ") this = " + this.node.getName());
-                System.out.println("Next segment " + value);
-                // obtener el modelo de la otra estacion, y decirle al de esta estaciion que ese es el proximo
                 if (tmp != null) {
                     model.setNext(tmp.getParent().parent);
-                    System.out.println(segment.getLine().getName() + ": " + segment + " --> " + value);
                 }
-                final Optional<Segment> nextNext = segment.getLine().segment(value.getTo());
-                if (!nextNext.isPresent()) {
+                final Optional<Segment> last = tmp.getNode()
+                    .getLine()
+                    .segment(tmp.getNode().getTo());
+                if (!last.isPresent()) {
                     // This is the end of the line
-                    final LineStopSchedulingElement tmp2 = this.models.get(value.getTo());
-                    if (tmp2 != null) {
-                        tmp.setNext(tmp2.getParent().parent);
-                    }
+                    // Take the next station from the same segment
+                    tmp.setNext(this.parent.getParent()
+                        .model(value.getTo().getStation()));
                 }
             });
         }
@@ -137,21 +130,24 @@ public final class StopSchedulingElement extends SchedulingElement {
      * @param bus The arriving bus
      */
     public void handleBusArrival(final Bus bus) {
-        DtSimulation.log(
-            StopSchedulingElement.LOGGER,
-            this.getTime(),
-            bus.getLine(),
-            this.node.getStation(),
-            this.node,
-            "Bus %s is ready to onboard passengers",
-            bus.getName()
-        );
+        final boolean empty = this.service.isEmpty();
         this.service.enqueue(bus);
-        this.scheduleEvent(
-            this::handleBusDeparture,
-            this.services.get(bus.getLine()),
-            bus
-        );
+        if (empty) {
+            DtSimulation.log(
+                StopSchedulingElement.LOGGER,
+                this.getTime(),
+                bus.getLine(),
+                this.node.getStation(),
+                this.node,
+                "Bus %s is ready to onboard passengers",
+                bus.getName()
+            );
+            this.scheduleEvent(
+                this::handleBusDeparture,
+                this.services.get(bus.getLine()),
+                bus
+            );
+        }
     }
 
     /**
@@ -161,10 +157,26 @@ public final class StopSchedulingElement extends SchedulingElement {
     public void handleBusDeparture(final JSLEvent<Bus> event) {
         final Bus bus = event.getMessage();
         if (this.service.isNotEmpty()) {
-            final Bus next = this.service.removeNext();
+            final Bus next = this.service.removeFirst();
             if (bus.equals(next)) {
                 this.models.get(bus.getLine())
                     .handleBusDeparture(bus);
+                if (this.service.isNotEmpty()) {
+                    DtSimulation.log(
+                        StopSchedulingElement.LOGGER,
+                        this.getTime(),
+                        this.service.peekFirst().getLine(),
+                        this.node.getStation(),
+                        this.node,
+                        "Bus %s is ready to onboard passengers",
+                        this.service.peekFirst().getName()
+                    );
+                    this.scheduleEvent(
+                        this::handleBusDeparture,
+                        this.services.get(this.service.peekFirst().getLine()),
+                        this.service.peekFirst()
+                    );
+                }
             } else {
                 throw new IllegalStateException(
                     String.format(
@@ -176,6 +188,13 @@ public final class StopSchedulingElement extends SchedulingElement {
                     )
                 );
             }
+        } else {
+            throw new IllegalStateException(
+                String.format(
+                    "Bus %s arrived but the service queue was empty",
+                    bus
+                )
+            );
         }
     }
 

@@ -3,6 +3,7 @@ package com.rigiresearch.dt.experimentation.simulation;
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import com.rigiresearch.dt.experimentation.simulation.graph.Segment;
 import com.rigiresearch.dt.experimentation.simulation.graph.Station;
+import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -189,11 +190,21 @@ public final class StationSchedulingElement extends SchedulingElement {
     }
 
     /**
-     * Handles bus arrival according to the associated line.
+     * Handles bus arrival according to the associated line and schedules the
+     * next bus.
      * @param event The event containing the bus arriving at this station
      */
     private void handleBusArrival(final JSLEvent<Bus> event) {
-        this.handleBusArrival(event.getMessage());
+        final Bus bus = event.getMessage();
+        this.handleBusArrival(bus);
+        final LinkedList<Bus> list = this.buses.get(bus.getLine());
+        if (!list.isEmpty()) {
+            this.scheduleEvent(
+                this::handleBusArrival,
+                this.arrivals.get(bus.getLine()),
+                list.poll()
+            );
+        }
     }
 
     /**
@@ -209,8 +220,24 @@ public final class StationSchedulingElement extends SchedulingElement {
             "Bus %s arrived",
             bus.getName()
         );
-        this.stops.get(bus.getLine())
-            .handleBusArrival(bus);
+        final StopSchedulingElement model = this.stops.get(bus.getLine());
+        if (model != null) {
+            model.handleBusArrival(bus);
+        } else {
+            final Line line = bus.getLine();
+            final Stop last = line.journey().getLast();
+            DtSimulation.log(
+                StationSchedulingElement.LOGGER,
+                this.getTime(),
+                line,
+                this.node,
+                last,
+                "End of line for bus %s",
+                bus.getName()
+            );
+            bus.dispose();
+            // TODO Put the bus back to the list of buses for the corresponding line
+        }
     }
 
     @Override

@@ -154,7 +154,6 @@ public final class LineStopSchedulingElement extends SchedulingElement {
                 "Bus %s finished its journey",
                 bus.getName()
             );
-            // TODO Is this the correct way to end the journey?
             event.getMessage().dispose();
         } else {
             // Send the bus to the next station
