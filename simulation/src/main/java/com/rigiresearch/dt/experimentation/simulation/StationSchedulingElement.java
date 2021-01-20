@@ -7,6 +7,7 @@ import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import jsl.modeling.elements.entity.EntityType;
 import jsl.modeling.elements.variable.RandomVariable;
@@ -49,6 +50,12 @@ public final class StationSchedulingElement extends SchedulingElement {
     private final Map<Line, LinkedList<Bus>> buses;
 
     /**
+     * Statistics for the observed headway.
+     */
+    @Getter
+    private final Map<Line, Statistic> headways;
+
+    /**
      * The simulation configuration.
      */
     private final Configuration config;
@@ -81,6 +88,15 @@ public final class StationSchedulingElement extends SchedulingElement {
             .filter(Segment.class::isInstance)
             .map(Segment.class::cast)
             .collect(Collectors.toSet());
+        this.headways = segments.stream()
+            .map(Segment::getLine)
+            .filter(line -> line.getFrom().equals(this.node))
+            .collect(
+                Collectors.toMap(
+                    Function.identity(),
+                    line -> new Statistic("HD-" + line.getName())
+                )
+            );
         this.stops = segments.stream()
             .collect(
                 Collectors.toMap(
@@ -182,12 +198,22 @@ public final class StationSchedulingElement extends SchedulingElement {
                     this.node,
                     "Scheduling buses"
                 );
-                this.scheduleEvent(
-                    this::handleBusArrival,
-                    this.arrivals.get(line),
-                    this.buses.get(line).poll()
-                );
+                this.scheduleBus(line);
             }
+        );
+    }
+
+    /**
+     * Schedules a bus for a particular line.
+     * @param line The line
+     */
+    private void scheduleBus(final Line line) {
+        final double value = this.arrivals.get(line).getValue();
+        this.headways.get(line).collect(value);
+        this.scheduleEvent(
+            this::handleBusArrival,
+            value,
+            this.buses.get(line).poll()
         );
     }
 
@@ -199,13 +225,8 @@ public final class StationSchedulingElement extends SchedulingElement {
     private void handleBusArrival(final JSLEvent<Bus> event) {
         final Bus bus = event.getMessage();
         this.handleBusArrival(bus);
-        final LinkedList<Bus> list = this.buses.get(bus.getLine());
-        if (!list.isEmpty()) {
-            this.scheduleEvent(
-                this::handleBusArrival,
-                this.arrivals.get(bus.getLine()),
-                list.poll()
-            );
+        if (!this.buses.get(bus.getLine()).isEmpty()) {
+            this.scheduleBus(bus.getLine());
         }
     }
 

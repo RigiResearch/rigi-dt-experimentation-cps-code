@@ -94,6 +94,17 @@ class DtSimulationTest {
         // simulation.setNumberOfReplications(5);
         simulation.run();
 
+        // Print out headway times for each line
+        System.out.println("Observed headway times per line:");
+        simulation.headwayTimes()
+            .forEach((key, value) -> {
+                System.out.printf(
+                    "%s: %s\n",
+                    key.getName(),
+                    value.getAverage()
+                );
+            });
+
         // Print out passenger waiting times for each line
         System.out.println("Passenger waiting times per line/stop:");
         simulation.waitingTimes()

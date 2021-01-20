@@ -81,6 +81,16 @@ public final class DtSimulation extends Simulation {
     }
 
     /**
+     * Returns the observed headway times per line.
+     * @return A non-null, possibly empty map
+     */
+    public Map<Line, Statistic> headwayTimes() {
+        final Map<Line, Statistic> statistics = new HashMap<>();
+        this.models.values().forEach(model -> statistics.putAll(model.getHeadways()));
+        return statistics;
+    }
+
+    /**
      * Get a station model.
      * @param station The station node
      * @return The model or null
