@@ -9,6 +9,7 @@ import jsl.modeling.elements.variable.RandomVariable;
 import jsl.modeling.queue.Queue;
 import jsl.simulation.JSLEvent;
 import jsl.simulation.SchedulingElement;
+import jsl.utilities.statistic.Statistic;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.configuration2.Configuration;
@@ -50,6 +51,12 @@ public final class LineStopSchedulingElement extends SchedulingElement {
      * Queue for passenger waiting times.
      */
     private final Queue<Passenger> wait;
+
+    /**
+     * Passenger waiting time statistic.
+     */
+    @Getter
+    private final Statistic wt;
 
     /**
      * The graph node.
@@ -100,14 +107,13 @@ public final class LineStopSchedulingElement extends SchedulingElement {
             DtSimulation.VariableType.TRANSPORTATION_TIME.getName(),
             config
         ).apply(this);
-        this.wait = new Queue<>(
-            this,
-            String.format(
-                "WT-%s-%s",
-                segment.getFrom().getName(),
-                segment.getLine().getName()
-            )
+        final String name = String.format(
+            "WT-%s-%s",
+            segment.getFrom().getName(),
+            segment.getLine().getName()
         );
+        this.wait = new Queue<>(this, name);
+        this.wt = new Statistic(name);
         // TODO The number of passengers to create could be a config property
         this.passengers = this.createPassengers(100);
     }
@@ -183,7 +189,9 @@ public final class LineStopSchedulingElement extends SchedulingElement {
             if (this.wait.isEmpty()) {
                 break;
             }
-            next.add(this.wait.removeNext());
+            final Passenger passenger = this.wait.removeNext();
+            this.wt.collect(passenger.getTimeInQueue());
+            next.add(passenger);
         }
         return next;
     }

@@ -13,6 +13,7 @@ import jsl.modeling.elements.variable.RandomVariable;
 import jsl.modeling.queue.Queue;
 import jsl.simulation.JSLEvent;
 import jsl.simulation.SchedulingElement;
+import jsl.utilities.statistic.Statistic;
 import lombok.Getter;
 import org.apache.commons.configuration2.Configuration;
 import org.slf4j.Logger;
@@ -232,6 +233,21 @@ public final class StopSchedulingElement extends SchedulingElement {
                     line -> RandomVariableFactory
                         .get(line, name, this.config, this.node.getName())
                         .apply(this)
+                )
+            );
+    }
+
+    /**
+     * Returns the waiting time statistics for each line passing through this stop.
+     * @return A non-null, possibly empty map
+     */
+    public Map<Line, Statistic> waitingTimes() {
+        return this.models.entrySet()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    Map.Entry::getKey,
+                    entry -> entry.getValue().getWt()
                 )
             );
     }

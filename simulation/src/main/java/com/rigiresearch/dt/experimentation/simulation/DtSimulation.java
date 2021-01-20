@@ -6,10 +6,13 @@ import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.Node;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import jsl.simulation.Simulation;
+import jsl.utilities.statistic.Statistic;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.configuration2.Configuration;
@@ -59,6 +62,22 @@ public final class DtSimulation extends Simulation {
                 this.models.put(station, model);
             });
         this.models.values().forEach(StationSchedulingElement::updateLinks);
+    }
+
+    /**
+     * Returns the passenger waiting times per line.
+     * @return A non-null, possibly empty map
+     */
+    public Map<Line, List<Statistic>> waitingTimes() {
+        final Map<Line, List<Statistic>> statistics = new HashMap<>(this.models.size());
+        this.models.values().forEach(model -> {
+            final Map<Line, Statistic> map = model.waitingTimes();
+            map.forEach((key, value) -> {
+                statistics.putIfAbsent(key, new ArrayList<>());
+                statistics.get(key).add(value);
+            });
+        });
+        return statistics;
     }
 
     /**

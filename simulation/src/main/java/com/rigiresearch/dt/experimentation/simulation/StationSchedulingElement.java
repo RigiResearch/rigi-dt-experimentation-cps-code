@@ -12,6 +12,7 @@ import jsl.modeling.elements.entity.EntityType;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.JSLEvent;
 import jsl.simulation.SchedulingElement;
+import jsl.utilities.statistic.Statistic;
 import lombok.Getter;
 import org.apache.commons.configuration2.Configuration;
 import org.slf4j.Logger;
@@ -240,6 +241,23 @@ public final class StationSchedulingElement extends SchedulingElement {
             bus.dispose();
             // TODO Put the bus back to the list of buses for the corresponding line
         }
+    }
+
+    /**
+     * Returns the waiting time statistics for each line passing through this station.
+     * @return A non-null, possibly empty map
+     */
+    public Map<Line, Statistic> waitingTimes() {
+        return this.stops.values()
+            .stream()
+            .map(StopSchedulingElement::waitingTimes)
+            .flatMap(map -> map.entrySet().stream())
+            .collect(
+                Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue
+                )
+            );
     }
 
     @Override

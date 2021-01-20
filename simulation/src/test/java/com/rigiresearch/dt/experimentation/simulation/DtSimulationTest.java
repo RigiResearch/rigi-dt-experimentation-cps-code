@@ -8,8 +8,9 @@ import com.rigiresearch.middleware.graph.Node;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
-import jsl.simulation.Simulation;
+import jsl.utilities.statistic.Statistic;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -84,7 +85,7 @@ class DtSimulationTest {
                 .sum(),
             "Expected 4 segments"
         );
-        final Simulation simulation = new DtSimulation(
+        final DtSimulation simulation = new DtSimulation(
             graph,
             DtSimulationTest.config()
         );
@@ -92,7 +93,19 @@ class DtSimulationTest {
         simulation.setLengthOfWarmUp(100.0);
         // simulation.setNumberOfReplications(5);
         simulation.run();
-        simulation.printHalfWidthSummaryReport();
+
+        // Print out passenger waiting times for each line
+        System.out.println("Passenger waiting times per line/stop:");
+        simulation.waitingTimes()
+            .forEach((key, value) -> {
+                System.out.printf(
+                    "%s: %s\n",
+                    key.getName(),
+                    value.stream()
+                        .map(Statistic::getAverage)
+                        .collect(Collectors.toList())
+                );
+            });
     }
 
     /**
