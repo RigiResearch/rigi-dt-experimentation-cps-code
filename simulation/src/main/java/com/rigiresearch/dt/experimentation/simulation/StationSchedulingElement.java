@@ -159,7 +159,8 @@ public final class StationSchedulingElement extends SchedulingElement {
      * Updates the links of each stop.
      */
     public void updateLinks() {
-        this.stops.values().forEach(StopSchedulingElement::updateLinks);
+        this.stops.values()
+            .forEach(StopSchedulingElement::updateLinks);
     }
 
     /**
@@ -235,6 +236,7 @@ public final class StationSchedulingElement extends SchedulingElement {
                 "End of line - %s",
                 bus
             );
+            bus.disposePassengers();
             bus.dispose();
             // TODO Put the bus back to the list of buses for the corresponding line
         }

@@ -1,6 +1,10 @@
 package com.rigiresearch.dt.experimentation.simulation;
 
 import com.rigiresearch.dt.experimentation.simulation.graph.Segment;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import jsl.modeling.elements.entity.EntityType;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.modeling.queue.Queue;
 import jsl.simulation.JSLEvent;
@@ -26,9 +30,16 @@ public final class LineStopSchedulingElement extends SchedulingElement {
         LoggerFactory.getLogger(LineStopSchedulingElement.class);
 
     /**
+     * A bag of passengers created during the initialization phase, to be used
+     * while the simulation is running. This is a limitation of the simulation
+     * library.
+     */
+    private final LinkedList<Passenger> passengers;
+
+    /**
      * Variable following the distribution of passenger arrival times.
      */
-    private final RandomVariable passengers;
+    private final RandomVariable passenger;
 
     /**
      * Variable following the distribution of bus transportation times.
@@ -77,7 +88,7 @@ public final class LineStopSchedulingElement extends SchedulingElement {
         );
         this.parent = parent;
         this.node = segment;
-        this.passengers = RandomVariableFactory.get(
+        this.passenger = RandomVariableFactory.get(
             segment.getLine(),
             segment.getFrom(),
             DtSimulation.VariableType.PASSENGER_ARRIVAL.getName(),
@@ -97,6 +108,33 @@ public final class LineStopSchedulingElement extends SchedulingElement {
                 segment.getLine().getName()
             )
         );
+        // TODO The number of passengers to create could be a config property
+        this.passengers = this.createPassengers(100);
+    }
+
+    @Override
+    public void initialize() {
+        this.schedulePassenger();
+    }
+
+    /**
+     * Handles a passenger arrival.
+     * @param event The JSL event
+     */
+    private void passengerArrival(final JSLEvent<Passenger> event) {
+        this.wait.enqueue(event.getMessage());
+        this.schedulePassenger();
+    }
+
+    /**
+     * Schedules a passenger.
+     */
+    private void schedulePassenger() {
+        this.scheduleEvent(
+            this::passengerArrival,
+            this.passenger,
+            this.passengers.remove()
+        );
     }
 
     /**
@@ -105,21 +143,18 @@ public final class LineStopSchedulingElement extends SchedulingElement {
      * @param bus The simulated bus
      */
     public void handleBusDeparture(final Bus bus) {
-        // TODO Update the current occupation of the bus
-        final int boarding = (int) this.passengers.getValue();
-        final int leaving = 0;
-        bus.updateOccupation(boarding, leaving);
+        final List<Passenger> boarding = this.nextPassengers(bus.availableSeats());
+        bus.updateOccupation(boarding);
         DtSimulation.log(
             LineStopSchedulingElement.LOGGER,
             this.getTime(),
             bus.getLine(),
             this.node.getFrom().getStation(),
             this.node.getFrom(),
-            "%d passengers just got onboard, and %d passengers left bus %s (new occupation: %d)",
-            boarding,
-            leaving,
+            "%d passengers just got onboard bus %s (new occupation: %d)",
+            boarding.size(),
             bus.getName(),
-            bus.getOccupation()
+            bus.occupation()
         );
         DtSimulation.log(
             LineStopSchedulingElement.LOGGER,
@@ -135,6 +170,40 @@ public final class LineStopSchedulingElement extends SchedulingElement {
             this.transportation,
             bus
         );
+    }
+
+    /**
+     * Dequeues passengers according to the available seats.
+     * @param availableSeats Current number of available seats for the current bus
+     * @return A non-null, possibly empty list of passengers
+     */
+    private List<Passenger> nextPassengers(final int availableSeats) {
+        final List<Passenger> next = new ArrayList<>(availableSeats);
+        for (int i = 0; i < availableSeats; i++) {
+            if (this.wait.isEmpty()) {
+                break;
+            }
+            next.add(this.wait.removeNext());
+        }
+        return next;
+    }
+
+    /**
+     * Creates passengers for this line/stop.
+     * @return A non-null, non-empty linked list of passengers.
+     */
+    private LinkedList<Passenger> createPassengers(final int n) {
+        final LinkedList<Passenger> list = new LinkedList<>();
+        for (int count = 1; count <= n; count++) {
+            final String name = String.format(
+                "passenger-%s-%s-%d",
+                this.node.getLine().getName(),
+                this.node.getFrom().getName(),
+                count
+            );
+            list.add(new Passenger(new EntityType(this, name)));
+        }
+        return list;
     }
 
     /**
@@ -154,6 +223,7 @@ public final class LineStopSchedulingElement extends SchedulingElement {
                 "Bus %s finished its journey",
                 bus.getName()
             );
+            event.getMessage().disposePassengers();
             event.getMessage().dispose();
         } else {
             // Send the bus to the next station

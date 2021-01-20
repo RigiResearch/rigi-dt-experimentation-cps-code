@@ -1,6 +1,5 @@
 package com.rigiresearch.dt.experimentation.simulation;
 
-import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import jsl.modeling.elements.entity.Entity;
 import jsl.modeling.elements.entity.EntityType;
 
@@ -15,17 +14,9 @@ public final class Passenger extends Entity {
     /**
      * Default constructor.
      * @param type The type associated with this entity
-     * @param line The line associated with this passenger
      */
-    public Passenger(final EntityType type, final Line line) {
-        super(
-            type,
-            String.format(
-                "P-%s-%d",
-                line.getName(),
-                DtSimulation.RANDOM.nextInt()
-            )
-        );
+    public Passenger(final EntityType type) {
+        super(type, type.getName());
     }
 
     @Override

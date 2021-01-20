@@ -1,6 +1,9 @@
 package com.rigiresearch.dt.experimentation.simulation;
 
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import jsl.modeling.elements.entity.Entity;
 import jsl.modeling.elements.entity.EntityType;
 import lombok.Getter;
@@ -25,9 +28,9 @@ public final class Bus extends Entity {
     private final int capacity;
 
     /**
-     * The current occupation.
+     * The passengers in this bus.
      */
-    private int occupation = 0;
+    private List<Passenger> passengers;
 
     /**
      * Default constructor.
@@ -41,16 +44,18 @@ public final class Bus extends Entity {
         super(type, name);
         this.line = line;
         this.capacity = capacity;
+        this.passengers = new ArrayList<>(capacity);
     }
 
     /**
-     * Updates the current capacity of the bus
-     * @param boarding The number of passengers boarding this bus
-     * @param leaving The number of passengers getting off the bus
+     * Updates the passengers of the bus
+     * @param boarding The passengers boarding this bus
      */
-    public void updateOccupation(final int boarding, final int leaving) {
-        this.occupation += boarding;
-        this.occupation -= leaving;
+    public void updateOccupation(final Collection<Passenger> boarding) {
+        if (this.passengers.size() + boarding.size() > this.capacity) {
+            throw new IllegalArgumentException("Too many passengers");
+        }
+        this.passengers.addAll(boarding);
     }
 
     @Override
@@ -60,8 +65,30 @@ public final class Bus extends Entity {
             this.getClass().getSimpleName(),
             this.getName(),
             this.capacity,
-            this.occupation
+            this.occupation()
         );
     }
 
+    /**
+     * The current occupation of this bus.
+     * @return A positive number
+     */
+    public int occupation() {
+        return this.passengers.size();
+    }
+
+    /**
+     * The current availability of this bus.
+     * @return A positive number
+     */
+    public int availableSeats() {
+        return this.capacity - this.occupation();
+    }
+
+    /**
+     * Calls the dispose method on all passengers.
+     */
+    public void disposePassengers() {
+        this.passengers.forEach(Passenger::dispose);
+    }
 }
