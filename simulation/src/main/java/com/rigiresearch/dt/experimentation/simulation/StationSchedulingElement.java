@@ -7,7 +7,6 @@ import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import jsl.modeling.elements.entity.EntityType;
 import jsl.modeling.elements.variable.RandomVariable;
@@ -50,12 +49,6 @@ public final class StationSchedulingElement extends SchedulingElement {
     private final Map<Line, LinkedList<Bus>> buses;
 
     /**
-     * Statistics for the observed headway.
-     */
-    @Getter
-    private final Map<Line, Statistic> headways;
-
-    /**
      * The simulation configuration.
      */
     private final Configuration config;
@@ -88,15 +81,6 @@ public final class StationSchedulingElement extends SchedulingElement {
             .filter(Segment.class::isInstance)
             .map(Segment.class::cast)
             .collect(Collectors.toSet());
-        this.headways = segments.stream()
-            .map(Segment::getLine)
-            .filter(line -> line.getFrom().equals(this.node))
-            .collect(
-                Collectors.toMap(
-                    Function.identity(),
-                    line -> new Statistic("HD-" + line.getName())
-                )
-            );
         this.stops = segments.stream()
             .collect(
                 Collectors.toMap(
@@ -208,11 +192,9 @@ public final class StationSchedulingElement extends SchedulingElement {
      * @param line The line
      */
     private void scheduleBus(final Line line) {
-        final double value = this.arrivals.get(line).getValue();
-        this.headways.get(line).collect(value);
         this.scheduleEvent(
             this::handleBusArrival,
-            value,
+            this.arrivals.get(line).getValue(),
             this.buses.get(line).poll()
         );
     }
@@ -265,13 +247,32 @@ public final class StationSchedulingElement extends SchedulingElement {
     }
 
     /**
-     * Returns the waiting time statistics for each line passing through this station.
+     * Returns the waiting time statistics for each line passing through this
+     * station.
      * @return A non-null, possibly empty map
      */
-    public Map<Line, Statistic> waitingTimes() {
+    public Map<Line, Statistic> observedWaitingTimes() {
         return this.stops.values()
             .stream()
-            .map(StopSchedulingElement::waitingTimes)
+            .map(StopSchedulingElement::observedWaitingTimes)
+            .flatMap(map -> map.entrySet().stream())
+            .collect(
+                Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue
+                )
+            );
+    }
+
+    /**
+     * Returns the observed headway statistics for each line passing through this
+     * station.
+     * @return A non-null, possibly empty map
+     */
+    public Map<Line, Statistic> observedHeadways() {
+        return this.stops.values()
+            .stream()
+            .map(StopSchedulingElement::observedHeadways)
             .flatMap(map -> map.entrySet().stream())
             .collect(
                 Collectors.toMap(

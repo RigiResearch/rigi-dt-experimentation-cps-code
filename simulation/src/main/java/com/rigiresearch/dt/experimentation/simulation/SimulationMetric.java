@@ -35,7 +35,7 @@ public interface SimulationMetric {
      * @param statistics The list of statistics
      * @return A non-null statistics
      */
-    public static Statistic consolidated(final Iterable<Statistic> statistics) {
+    static Statistic consolidated(final Iterable<Statistic> statistics) {
         final List<Double> samples = new ArrayList<>();
         statistics.forEach(statistic ->
             samples.addAll(

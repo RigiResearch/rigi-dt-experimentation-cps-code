@@ -100,16 +100,7 @@ class DtSimulationTest {
         // simulation.setNumberOfReplications(5);
         simulation.run();
 
-        // Print out headway times for each line
-        System.out.println("Observed headway times per line:");
-        simulation.headwayTimes()
-            .forEach((key, value) -> {
-                System.out.printf(
-                    "%s: %s\n",
-                    key.getName(),
-                    value.getAverage()
-                );
-            });
+        DtSimulationTest.LOGGER.info("{}", new ObservedLineHeadway(simulation));
         DtSimulationTest.LOGGER.info("{}", new ObservedWaitingTime(simulation));
     }
 

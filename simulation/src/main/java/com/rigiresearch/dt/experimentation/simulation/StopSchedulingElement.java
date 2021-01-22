@@ -4,6 +4,7 @@ import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import com.rigiresearch.dt.experimentation.simulation.graph.Segment;
 import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -66,6 +67,16 @@ public final class StopSchedulingElement extends SchedulingElement {
     private final StationSchedulingElement parent;
 
     /**
+     * A map for registering the last time a bus stopped at this stop.
+     */
+    private Map<Line, Double> times;
+
+    /**
+     * A statistic per line for collecting observed headways.
+     */
+    private Map<Line, Statistic> headways;
+
+    /**
      * Default constructor.
      * @param parent The parent model
      * @param stop The stop's graph node
@@ -91,6 +102,25 @@ public final class StopSchedulingElement extends SchedulingElement {
             .collect(Collectors.toSet());
         this.models = this.initializeModels(lines);
         this.services = this.initializeServiceTimeVars(lines);
+        this.times = lines.stream()
+            .collect(
+                Collectors.toMap(
+                    Function.identity(),
+                    line -> 0.0d
+                )
+            );
+        this.headways = lines.stream()
+            .collect(
+                Collectors.toMap(
+                    Function.identity(),
+                    line -> {
+                        final Statistic tmp =
+                            new Statistic(String.format("OH-%s", line.getName()));
+                        tmp.setSaveOption(true);
+                        return tmp;
+                    }
+                )
+            );
     }
 
     /**
@@ -133,6 +163,7 @@ public final class StopSchedulingElement extends SchedulingElement {
     public void handleBusArrival(final Bus bus) {
         final boolean empty = this.service.isEmpty();
         this.service.enqueue(bus);
+        this.computeObservedHeadway(bus.getLine());
         if (empty) {
             DtSimulation.log(
                 StopSchedulingElement.LOGGER,
@@ -149,6 +180,19 @@ public final class StopSchedulingElement extends SchedulingElement {
                 bus
             );
         }
+    }
+
+    /**
+     * Computes the observed headway based on the last registered time for the
+     * current bus's line.
+     * @param line The current bus's line
+     */
+    private void computeObservedHeadway(final Line line) {
+        final Double last = this.times.get(line);
+        final Double now = this.getTime();
+        this.headways.get(line)
+            .collect(now - last);
+        this.times.put(line, now);
     }
 
     /**
@@ -241,7 +285,7 @@ public final class StopSchedulingElement extends SchedulingElement {
      * Returns the waiting time statistics for each line passing through this stop.
      * @return A non-null, possibly empty map
      */
-    public Map<Line, Statistic> waitingTimes() {
+    public Map<Line, Statistic> observedWaitingTimes() {
         return this.models.entrySet()
             .stream()
             .collect(
@@ -250,6 +294,15 @@ public final class StopSchedulingElement extends SchedulingElement {
                     entry -> entry.getValue().getWt()
                 )
             );
+    }
+
+    /**
+     * Returns the observed headway statistics for each line passing through this
+     * stop.
+     * @return A non-null, possibly empty map
+     */
+    public Map<Line, Statistic> observedHeadways() {
+        return Collections.unmodifiableMap(this.headways);
     }
 
     @Override

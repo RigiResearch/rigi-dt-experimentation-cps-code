@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import jsl.simulation.Simulation;
 import jsl.utilities.statistic.Statistic;
 import lombok.Getter;
@@ -74,24 +75,32 @@ public final class DtSimulation extends Simulation {
      * @return A non-null, possibly empty map
      */
     public Map<Line, List<Statistic>> waitingTimes() {
-        final Map<Line, List<Statistic>> statistics = new HashMap<>(this.models.size());
-        this.models.values().forEach(model -> {
-            final Map<Line, Statistic> map = model.waitingTimes();
-            map.forEach((key, value) -> {
-                statistics.putIfAbsent(key, new ArrayList<>());
-                statistics.get(key).add(value);
-            });
-        });
-        return statistics;
+        return this.modelToMap(StationSchedulingElement::observedWaitingTimes);
     }
 
     /**
      * Returns the observed headway times per line.
      * @return A non-null, possibly empty map
      */
-    public Map<Line, Statistic> headwayTimes() {
-        final Map<Line, Statistic> statistics = new HashMap<>();
-        this.models.values().forEach(model -> statistics.putAll(model.getHeadways()));
+    public Map<Line, List<Statistic>> observedHeadways() {
+        return this.modelToMap(StationSchedulingElement::observedHeadways);
+    }
+
+    /**
+     * Returns the statistics collected from lines passing through each model.
+     * @param function The function mapping from model to statistics per line
+     * @return A non-null, possibly empty map
+     */
+    private Map<Line, List<Statistic>> modelToMap(
+        Function<StationSchedulingElement, Map<Line, Statistic>> function) {
+        final Map<Line, List<Statistic>> statistics = new HashMap<>(this.models.size());
+        this.models.values().forEach(model -> {
+            final Map<Line, Statistic> map = function.apply(model);
+            map.forEach((line, statistic) -> {
+                statistics.putIfAbsent(line, new ArrayList<>());
+                statistics.get(line).add(statistic);
+            });
+        });
         return statistics;
     }
 
