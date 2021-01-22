@@ -71,6 +71,29 @@ class CompositeFitnessFunctionTest {
     }
 
     @Test
+    void testWithComposedFunctions() {
+        final CompositeFitnessFunction function1 = new CompositeFitnessFunction()
+            .withFunction(new CubicFitnessFunction(0.0, 25.0, 50.0, "x1"), 0.4)
+            .withFunction(new NormalizedFitnessFunction(0.0, 30.0, "y1"), 0.6)
+            .validate();
+        final CompositeFitnessFunction function2 = new CompositeFitnessFunction()
+            .withFunction(new CubicFitnessFunction(0.0, 25.0, 50.0, "x2"), 0.4)
+            .withFunction(new NormalizedFitnessFunction(0.0, 30.0, "y2"), 0.6)
+            .validate();
+        final CompositeFitnessFunction function = new CompositeFitnessFunction()
+            .withFunction(function1, 0.3)
+            .withFunction(function2, 0.7)
+            .validate();
+        final double value = function.evaluate(
+            new FitnessFunction.NamedArgument("x1", 0.0),
+            new FitnessFunction.NamedArgument("y1", 0.0),
+            new FitnessFunction.NamedArgument("x2", 0.0),
+            new FitnessFunction.NamedArgument("y2", 0.0)
+        );
+        System.out.println(value);
+    }
+
+    @Test
     void testWithWrongWeights() {
         Assertions.assertThrows(IllegalStateException.class, () ->
             new CompositeFitnessFunction()
