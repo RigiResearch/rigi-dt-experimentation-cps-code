@@ -2,6 +2,7 @@ package com.rigiresearch.dt.experimentation.simulation;
 
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import com.rigiresearch.dt.experimentation.simulation.graph.Station;
+import com.rigiresearch.dt.experimentation.simulation.metrics.ExcessWaitingTime;
 import com.rigiresearch.dt.experimentation.simulation.metrics.HeadwayCoefficientOfVariation;
 import com.rigiresearch.dt.experimentation.simulation.metrics.ObservedLineHeadway;
 import com.rigiresearch.dt.experimentation.simulation.metrics.ObservedWaitingTime;
@@ -10,7 +11,10 @@ import com.rigiresearch.middleware.graph.GraphParser;
 import com.rigiresearch.middleware.graph.Node;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
@@ -94,15 +98,26 @@ class DtSimulationTest {
                 .sum(),
             "Expected 4 segments"
         );
-        final DtSimulation simulation = new DtSimulation(
-            graph,
-            DtSimulationTest.config()
-        );
+        final Configuration config = DtSimulationTest.config();
+        final DtSimulation simulation = new DtSimulation(graph, config);
         simulation.setLengthOfReplication(100.0);
         simulation.setLengthOfWarmUp(100.0);
         // simulation.setNumberOfReplications(5);
         simulation.run();
 
+        final Map<Line, Double> headways = graph.getNodes()
+            .stream()
+            .filter(Line.class::isInstance)
+            .map(Line.class::cast)
+            .collect(
+                Collectors.toMap(
+                    Function.identity(),
+                    line -> config.getDouble(
+                        String.format("%s.headway", line.getName())
+                    )
+                )
+            );
+        DtSimulationTest.LOGGER.info("{}", new ExcessWaitingTime(simulation, headways));
         DtSimulationTest.LOGGER.info("{}", new HeadwayCoefficientOfVariation(simulation));
         DtSimulationTest.LOGGER.info("{}", new ObservedLineHeadway(simulation));
         DtSimulationTest.LOGGER.info("{}", new ObservedWaitingTime(simulation));
