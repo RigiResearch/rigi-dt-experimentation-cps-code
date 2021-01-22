@@ -44,7 +44,6 @@ public final class ExcessWaitingTime implements SimulationMetric<Statistic> {
 
     @Override
     public Statistic value(final Line line) {
-        final int stops = line.journey().size();
         final double headway = this.headways.get(line);
         final double[] data = this.observed.values(line)
             .stream()
