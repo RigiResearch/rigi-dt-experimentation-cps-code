@@ -13,7 +13,7 @@ import jsl.utilities.statistic.Statistic;
  * @version $Id$
  * @since 0.1.0
  */
-public final class ExcessWaitingTime implements SimulationMetric<Double> {
+public final class ExcessWaitingTime implements SimulationMetric<Statistic> {
 
     /**
      * The simulation from which this metric is computed.
@@ -43,12 +43,13 @@ public final class ExcessWaitingTime implements SimulationMetric<Double> {
     }
 
     @Override
-    public Double value(final Line line) {
+    public Statistic value(final Line line) {
         final int stops = line.journey().size();
         final double headway = this.headways.get(line);
-        final double factor = this.observed.values(line)
+        final double[] data = this.observed.values(line)
             .stream()
             .map(statistic -> {
+                // Data per stop
                 final double[] ratios = Arrays.stream(statistic.getSavedData())
                     .mapToObj(Double.class::cast)
                     .map(value -> value / headway * 100.0)
@@ -61,12 +62,14 @@ public final class ExcessWaitingTime implements SimulationMetric<Double> {
                 return VHrb / (2.0 * UHrb * 100.0) * hob;
             })
             .mapToDouble(value -> value)
-            .sum();
-        return 1.0 / (double) stops * factor;
+            .toArray();
+        final Statistic tmp = new Statistic(data);
+        tmp.setSaveOption(true);
+        return tmp;
     }
 
     @Override
-    public List<Double> values(final Line line) {
+    public List<Statistic> values(final Line line) {
         throw new UnsupportedOperationException(
             "The excess waiting time is not defined for a single stop"
         );
@@ -83,9 +86,15 @@ public final class ExcessWaitingTime implements SimulationMetric<Double> {
             .filter(Line.class::isInstance)
             .map(Line.class::cast)
             .forEach(line -> {
+                final Statistic statistic = this.value(line);
                 builder.append(line.getName());
-                builder.append(": ");
-                builder.append(this.value(line));
+                builder.append('\n');
+                builder.append("Average: ");
+                builder.append(statistic.getAverage());
+                builder.append('\n');
+                builder.append("Variance: ");
+                builder.append(statistic.getVariance());
+                builder.append('\n');
                 builder.append('\n');
             });
         return builder.toString();
