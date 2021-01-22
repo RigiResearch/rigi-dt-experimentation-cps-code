@@ -26,7 +26,7 @@ public interface SimulationMetric<T> {
     T value(Line line);
 
     /**
-     * Computes this metric per stop for the given line.
+     * Computes this metric per stop for the given line, if defined.
      * @param line The line of interest
      * @return A list of computed values
      */
@@ -47,6 +47,7 @@ public interface SimulationMetric<T> {
             )
         );
         final Statistic statistic = new Statistic();
+        statistic.setSaveOption(true);
         final Double[] boxed = samples.toArray(DtSimulation.EMPTY_ARRAY);
         final double[] unboxed = Stream.of(boxed)
             .mapToDouble(Double::doubleValue)

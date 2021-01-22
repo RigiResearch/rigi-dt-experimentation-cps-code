@@ -2,6 +2,7 @@ package com.rigiresearch.dt.experimentation.simulation.metrics;
 
 import com.rigiresearch.dt.experimentation.simulation.DtSimulation;
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
+import java.util.Arrays;
 import java.util.List;
 import jsl.utilities.statistic.Statistic;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,9 @@ public final class ObservedLineHeadway implements SimulationMetric<Statistic> {
                 builder.append('\n');
                 builder.append("Standard deviation: ");
                 builder.append(statistic.getStandardDeviation());
+                builder.append('\n');
+                builder.append("Samples: ");
+                builder.append(Arrays.toString(statistic.getSavedData()));
                 builder.append('\n');
                 builder.append('\n');
             });
