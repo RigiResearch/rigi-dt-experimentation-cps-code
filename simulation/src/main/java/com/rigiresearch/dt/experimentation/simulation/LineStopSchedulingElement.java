@@ -114,6 +114,7 @@ public final class LineStopSchedulingElement extends SchedulingElement {
         );
         this.wait = new Queue<>(this, name);
         this.wt = new Statistic(name);
+        this.wt.setSaveOption(true);
         // TODO The number of passengers to create could be a config property
         this.passengers = this.createPassengers(100);
     }

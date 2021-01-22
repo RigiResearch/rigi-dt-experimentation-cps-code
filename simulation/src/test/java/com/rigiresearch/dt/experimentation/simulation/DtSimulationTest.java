@@ -8,9 +8,7 @@ import com.rigiresearch.middleware.graph.Node;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
-import jsl.utilities.statistic.Statistic;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -20,6 +18,8 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.commons.configuration2.io.FileHandler;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests {@link DtSimulation}.
@@ -28,6 +28,12 @@ import org.junit.jupiter.api.Test;
  * @since 0.1.0
  */
 class DtSimulationTest {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(DtSimulationTest.class);
 
     /**
      * The name of the bindings resource.
@@ -104,19 +110,7 @@ class DtSimulationTest {
                     value.getAverage()
                 );
             });
-
-        // Print out passenger waiting times for each line
-        System.out.println("Passenger waiting times per line/stop:");
-        simulation.waitingTimes()
-            .forEach((key, value) -> {
-                System.out.printf(
-                    "%s: %s\n",
-                    key.getName(),
-                    value.stream()
-                        .map(Statistic::getAverage)
-                        .collect(Collectors.toList())
-                );
-            });
+        DtSimulationTest.LOGGER.info("{}", new ObservedWaitingTime(simulation));
     }
 
     /**

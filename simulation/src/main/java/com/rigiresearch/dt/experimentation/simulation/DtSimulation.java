@@ -5,12 +5,10 @@ import com.rigiresearch.dt.experimentation.simulation.graph.Station;
 import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.Node;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import jsl.simulation.Simulation;
 import jsl.utilities.statistic.Statistic;
 import lombok.Getter;
@@ -34,14 +32,20 @@ public final class DtSimulation extends Simulation {
         LoggerFactory.getLogger(DtSimulation.class);
 
     /**
-     * A random number generator.
+     * An empty double array.
      */
-    public static final Random RANDOM = new SecureRandom("seed".getBytes());
+    public static final Double[] EMPTY_ARRAY = new Double[0];
 
     /**
      * Map of station-models.
      */
     private final Map<Station, StationSchedulingElement> models;
+
+    /**
+     * The graph on which this simulation is based.
+     */
+    @Getter
+    private final Graph<Node> graph;
 
     /**
      * Default constructor.
@@ -50,6 +54,7 @@ public final class DtSimulation extends Simulation {
      */
     public DtSimulation(final Graph<Node> graph, final Configuration config) {
         super("DT Simulation");
+        this.graph = graph;
         this.models = new HashMap<>(graph.getNodes().size());
         graph.getNodes()
             .stream()
