@@ -2,6 +2,8 @@ package com.rigiresearch.dt.experimentation.simulation;
 
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import com.rigiresearch.dt.experimentation.simulation.graph.Station;
+import com.rigiresearch.dt.experimentation.simulation.metrics.ObservedLineHeadway;
+import com.rigiresearch.dt.experimentation.simulation.metrics.ObservedWaitingTime;
 import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.GraphParser;
 import com.rigiresearch.middleware.graph.Node;

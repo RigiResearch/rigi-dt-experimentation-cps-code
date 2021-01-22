@@ -1,18 +1,19 @@
-package com.rigiresearch.dt.experimentation.simulation;
+package com.rigiresearch.dt.experimentation.simulation.metrics;
 
+import com.rigiresearch.dt.experimentation.simulation.DtSimulation;
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import java.util.List;
 import jsl.utilities.statistic.Statistic;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Summarizes the observed waiting time for a given simulation.
+ * Summarizes the observed line headways for a given simulation.
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
  * @since 0.1.0
  */
 @RequiredArgsConstructor
-public final class ObservedWaitingTime implements SimulationMetric {
+public final class ObservedLineHeadway implements SimulationMetric {
 
     /**
      * The simulation from which this metric is computed.
@@ -22,20 +23,20 @@ public final class ObservedWaitingTime implements SimulationMetric {
     @Override
     public Statistic value(final Line line) {
         return SimulationMetric.consolidated(
-            this.simulation.waitingTimes()
+            this.simulation.observedHeadways()
                 .get(line)
         );
     }
 
     @Override
     public List<Statistic> values(final Line line) {
-        return this.simulation.waitingTimes().get(line);
+        return this.simulation.observedHeadways().get(line);
     }
 
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Observed waiting time per line:");
+        builder.append("Observed headway per line:");
         builder.append('\n');
         this.simulation.getGraph()
             .getNodes()

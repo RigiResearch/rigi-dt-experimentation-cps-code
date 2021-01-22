@@ -1,5 +1,6 @@
-package com.rigiresearch.dt.experimentation.simulation;
+package com.rigiresearch.dt.experimentation.simulation.metrics;
 
+import com.rigiresearch.dt.experimentation.simulation.DtSimulation;
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import java.util.ArrayList;
 import java.util.Arrays;
