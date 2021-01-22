@@ -1,59 +1,28 @@
 package com.rigiresearch.dt.experimentation.evolution.fitness;
 
+import java.util.List;
+import lombok.Value;
+
 /**
  * A fitness function to either minimize or maximize a value.
- * @param <T> The type of input argument
- *
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
  * @since 0.1.0
  */
-public interface FitnessFunction<T extends FitnessFunction.Argument> {
-
-    /**
-     * An object-oriented argument contract.
-     */
-    interface Argument {
-        /**
-         * Returns this argument's value.
-         * @return A double number
-         */
-        double[] values();
-    }
+public interface FitnessFunction {
 
     /**
      * Evaluate this function.
-     * @param args The arguments passed to this function
+     * @param arguments The arguments passed to this function
      * @return A positive or negative number, including 0
      */
-    double evaluate(double... args);
+    double evaluate(FitnessFunction.NamedArgument... arguments);
 
     /**
-     * Evaluate this function normalizing the output.
-     * @param args The arguments passed to this function
-     * @return A number between 0 and 1
+     * The names of the arguments accepted by this function.
+     * @return A list of names
      */
-    double evaluateNormalized(double... args);
-
-    /**
-     * Evaluate this function.
-     * @param args The arguments passed to this function
-     * @return A positive or negative number, including 0
-     */
-    double evaluate(FitnessFunction.Argument... args);
-
-    /**
-     * Evaluate this function normalizing the output.
-     * @param args The arguments passed to this function
-     * @return A number between 0 and 1
-     */
-    double evaluateNormalized(FitnessFunction.Argument... args);
-
-    /**
-     * The type of argument accepted by this function.
-     * @return A class
-     */
-    Class<T> argumentType();
+    List<String> arguments();
 
     /**
      * Calculates a value between 0 and 1, given the precondition that value
@@ -85,6 +54,21 @@ public interface FitnessFunction<T extends FitnessFunction.Argument> {
     static double normalizeInRange(final double value, final double min,
         final double max, final double a, final double b) {
         return (b - a) * ((value-min)/(max-min)) + a;
+    }
+
+    @Value
+    class NamedArgument {
+
+        /**
+         * This argument's name.
+         */
+        String name;
+
+        /**
+         * This argument's value.
+         */
+        Double value;
+
     }
 
 }

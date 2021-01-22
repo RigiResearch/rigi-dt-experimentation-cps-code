@@ -18,21 +18,22 @@ class NormalizedFitnessFunctionTest {
 
     @Test
     void simpleTest() {
-        final FitnessFunction<?> function =
-            new NormalizedFitnessFunction(0.0, 30.0);
+        final String arg = "x";
+        final FitnessFunction function =
+            new NormalizedFitnessFunction(0.0, 30.0, arg);
         Assertions.assertTrue(
-            1.0 - function.evaluate(0.0)
-                < NormalizedFitnessFunctionTest.EPSILON,
+            1.0 - function.evaluate(new FitnessFunction.NamedArgument(arg, 0.0)) <
+                NormalizedFitnessFunctionTest.EPSILON,
             "Should be technically 1.0"
         );
         Assertions.assertTrue(
-            0.0 - function.evaluate(15.0)
-                < NormalizedFitnessFunctionTest.EPSILON,
+            0.0 - function.evaluate(new FitnessFunction.NamedArgument(arg, 15.0)) <
+                NormalizedFitnessFunctionTest.EPSILON,
             "Should be technically 0.0"
         );
         Assertions.assertTrue(
-            1.0 + function.evaluate(30.0)
-                < NormalizedFitnessFunctionTest.EPSILON,
+            1.0 + function.evaluate(new FitnessFunction.NamedArgument(arg, 30.0)) <
+                NormalizedFitnessFunctionTest.EPSILON,
             "Should be technically -1.0"
         );
     }
