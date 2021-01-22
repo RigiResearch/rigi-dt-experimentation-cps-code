@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
  * @since 0.1.0
  */
 @RequiredArgsConstructor
-public final class ObservedLineHeadway implements SimulationMetric {
+public final class ObservedLineHeadway implements SimulationMetric<Statistic> {
 
     /**
      * The simulation from which this metric is computed.

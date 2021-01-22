@@ -2,6 +2,7 @@ package com.rigiresearch.dt.experimentation.simulation;
 
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import com.rigiresearch.dt.experimentation.simulation.graph.Station;
+import com.rigiresearch.dt.experimentation.simulation.metrics.HeadwayCoefficientOfVariation;
 import com.rigiresearch.dt.experimentation.simulation.metrics.ObservedLineHeadway;
 import com.rigiresearch.dt.experimentation.simulation.metrics.ObservedWaitingTime;
 import com.rigiresearch.middleware.graph.Graph;
@@ -102,6 +103,7 @@ class DtSimulationTest {
         // simulation.setNumberOfReplications(5);
         simulation.run();
 
+        DtSimulationTest.LOGGER.info("{}", new HeadwayCoefficientOfVariation(simulation));
         DtSimulationTest.LOGGER.info("{}", new ObservedLineHeadway(simulation));
         DtSimulationTest.LOGGER.info("{}", new ObservedWaitingTime(simulation));
     }

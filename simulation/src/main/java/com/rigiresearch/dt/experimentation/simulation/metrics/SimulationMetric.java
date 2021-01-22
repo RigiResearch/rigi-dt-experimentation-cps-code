@@ -11,25 +11,26 @@ import jsl.utilities.statistic.Statistic;
 
 /**
  * A simulation metric.
+ * @param <T> The computed value's type
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
  * @since 0.1.0
  */
-public interface SimulationMetric {
+public interface SimulationMetric<T> {
 
     /**
      * Computes this metric for the given line.
      * @param line The line of interest
-     * @return A statistic object
+     * @return The computed value
      */
-    Statistic value(Line line);
+    T value(Line line);
 
     /**
      * Computes this metric per stop for the given line.
      * @param line The line of interest
-     * @return A list of statistic objects
+     * @return A list of computed values
      */
-    List<Statistic> values(Line line);
+    List<T> values(Line line);
 
     /**
      * Consolidates a list of statistics into a single instance.

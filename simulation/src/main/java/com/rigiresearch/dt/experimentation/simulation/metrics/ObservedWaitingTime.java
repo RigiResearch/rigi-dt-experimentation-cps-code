@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
  * @since 0.1.0
  */
 @RequiredArgsConstructor
-public final class ObservedWaitingTime implements SimulationMetric {
+public final class ObservedWaitingTime implements SimulationMetric<Statistic> {
 
     /**
      * The simulation from which this metric is computed.
