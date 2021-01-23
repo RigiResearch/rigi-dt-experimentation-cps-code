@@ -9,6 +9,9 @@ repositories {
     maven {
         url "https://packages.atlassian.com/3rdparty/"
     }
+    maven {
+        url "https://archiva.uark.edu/repository/jsl"
+    }
 }
 
 dependencies {
