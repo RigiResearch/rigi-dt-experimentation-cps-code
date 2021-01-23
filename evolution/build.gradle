@@ -9,12 +9,16 @@ repositories {
     maven {
         url "https://packages.atlassian.com/3rdparty/"
     }
+    maven {
+        url "https://archiva.uark.edu/repository/jsl"
+    }
 }
 
 dependencies {
     // Model and code generation
     implementation project(":metamodels")
     implementation project(":metamodels:graph")
+    implementation project(":simulation")
     // Evolutionary algorithms
     implementation "io.jenetics:jenetics:6.1.0"
     // Support for Epsilon languages
