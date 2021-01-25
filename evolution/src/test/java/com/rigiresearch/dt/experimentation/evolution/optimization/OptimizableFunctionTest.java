@@ -50,8 +50,9 @@ class OptimizableFunctionTest {
 
     @Test
     void testWithAKnownFunction() {
+        final double[] initial = {0.0, 0.0};
         final OptimizableFunction optimizable =
-            new OptimizableFunction(OptimizableFunctionTest.FUNCTION, 0.0, 0.0);
+            new OptimizableFunction(OptimizableFunctionTest.FUNCTION, initial);
         final Optimizer optimizer = new LimitedMemoryBFGS(optimizable);
         boolean converged = false;
         try {
@@ -84,21 +85,11 @@ class OptimizableFunctionTest {
     //  such as symbolic regression
     @Test
     void testWithAnInterpolatedFunction() {
-        // Generate random data usign the known function
-        final int n = 50;
-        final double[] x = new double[n];
-        final double[] y = new double[n];
-        final double[] f = new double[n];
-        final SecureRandom random = new SecureRandom("seed".getBytes());
-        for (int i = 0; i < n; i++) {
-            x[i] = random.nextDouble() * i;
-            y[i] = random.nextDouble() * i;
-            f[i] = OptimizableFunctionTest.FUNCTION.value(new double[]{x[i], y[i]});
-        }
         final DifferentiableInterpolatedFunction function =
-            new DifferentiableInterpolatedFunction(x, y, f);
+            OptimizableFunctionTest.interpolatedFunction();
+        final double[] initial = {0.0, 0.0};
         final OptimizableFunction optimizable =
-            new OptimizableFunction(function, 0.0, 0.0);
+            new OptimizableFunction(function, initial);
         final Optimizer optimizer = new LimitedMemoryBFGS(optimizable);
         boolean converged = false;
         try {
@@ -126,6 +117,24 @@ class OptimizableFunctionTest {
             OptimizableFunctionTest.LOGGER.info("The optimizer did not converged (interpolated)");
             OptimizableFunctionTest.LOGGER.info("{}", function);
         }
+    }
+
+    /**
+     * Generates random data using the known function.
+     * @return An interpolated function based on the sampled data
+     */
+    private static DifferentiableInterpolatedFunction interpolatedFunction() {
+        final int n = 50;
+        final double[] x = new double[n];
+        final double[] y = new double[n];
+        final double[] f = new double[n];
+        final SecureRandom random = new SecureRandom("seed".getBytes());
+        for (int i = 0; i < n; i++) {
+            x[i] = random.nextDouble() * i;
+            y[i] = random.nextDouble() * i;
+            f[i] = OptimizableFunctionTest.FUNCTION.value(new double[]{x[i], y[i]});
+        }
+        return new DifferentiableInterpolatedFunction(x, y, f);
     }
 
 }

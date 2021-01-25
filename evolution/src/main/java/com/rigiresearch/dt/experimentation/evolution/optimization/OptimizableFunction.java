@@ -23,20 +23,18 @@ public final class OptimizableFunction implements Optimizable.ByGradientValue {
     /**
      * Default constructor.
      * @param function A differentiable function
-     * @param x Initial value for parameter x
-     * @param y Initial value for parameter y
+     * @param initial Initial values for the parameters
      */
     public OptimizableFunction(final DifferentiableFunction function,
-        final double x, final double y) {
+        final double[] initial) {
         this.function = function;
-        this.parameters = new double[]{x, y};
+        this.parameters = initial.clone();
     }
 
     @Override
     public void getValueGradient(final double[] result) {
         final double[] value = this.function.gradient(this.parameters);
-        result[0] = value[0];
-        result[1] = value[1];
+        System.arraycopy(value, 0, result, 0, value.length);
     }
 
     @Override
@@ -46,28 +44,27 @@ public final class OptimizableFunction implements Optimizable.ByGradientValue {
 
     @Override
     public int getNumParameters() {
-        return 2;
+        return this.parameters.length;
     }
 
     @Override
     public void getParameters(final double[] result) {
-        result[0] = this.parameters[0];
-        result[1] = this.parameters[1];
+        System.arraycopy(this.parameters, 0, result, 0, this.parameters.length);
     }
 
     @Override
-    public double getParameter(final int i) {
-        return this.parameters[i];
+    public double getParameter(final int parameter) {
+        return this.parameters[parameter];
     }
 
     @Override
     public void setParameters(final double[] values) {
-        this.parameters = values;
+        this.parameters = values.clone();
     }
 
     @Override
-    public void setParameter(final int i, final double value) {
-        this.parameters[i] = value;
+    public void setParameter(final int parameter, final double value) {
+        this.parameters[parameter] = value;
     }
 
 }
