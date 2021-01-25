@@ -12,6 +12,12 @@ repositories {
     maven {
         url "https://archiva.uark.edu/repository/jsl"
     }
+    flatDir {
+        dirs "libs"
+    }
+    maven {
+        url "https://jitpack.io"
+    }
 }
 
 dependencies {
@@ -21,6 +27,10 @@ dependencies {
     implementation project(":simulation")
     // Evolutionary algorithms
     implementation "io.jenetics:jenetics:6.1.0"
+    // Scientific computation library for function interpolation
+    implementation name: "flanagan"
+    // Math library for optimization methods
+    implementation "com.github.mimno:Mallet:v2.0.8"
     // Support for Epsilon languages
     implementation "org.eclipse.epsilon:org.eclipse.epsilon.flexmi:${epsilonVersion}"
     implementation "org.eclipse.epsilon:org.eclipse.epsilon.emc.emf:${epsilonVersion}"
