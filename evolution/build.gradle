@@ -3,6 +3,7 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
     maven {
         url "https://repo.eclipse.org/content/repositories/atl-releases/"
     }
@@ -25,6 +26,7 @@ dependencies {
     implementation project(":metamodels")
     implementation project(":metamodels:graph")
     implementation project(":simulation")
+    implementation "com.rigiresearch:JAutoDiff:0.0.1-SNAPSHOT:all"
     // Evolutionary algorithms
     implementation "io.jenetics:jenetics:6.1.0"
     // Scientific computation library for function interpolation

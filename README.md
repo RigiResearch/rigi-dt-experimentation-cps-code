@@ -4,6 +4,7 @@
 
 1. Install R so that it is accessible from the command line
 2. Install the R package "dunn.test" (i.e., `install.packages("dunn.test")`)
+3. Clone the repository https://github.com/jachinte/JAutoDiff and run `./gradlew publishToMavenLocal`
 
 #### Generate the .ecore and .genmodel files
 
