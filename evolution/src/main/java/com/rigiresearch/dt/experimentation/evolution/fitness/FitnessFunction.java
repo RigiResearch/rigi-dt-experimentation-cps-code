@@ -1,6 +1,7 @@
 package com.rigiresearch.dt.experimentation.evolution.fitness;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.Value;
 
 /**
@@ -23,6 +24,24 @@ public interface FitnessFunction {
      * @return A list of names
      */
     List<String> arguments();
+
+    /**
+     * Finds an argument by its name.
+     * @param name The argument name
+     * @param arguments The function arguments
+     * @return The argument, if there is a match
+     */
+    static Optional<FitnessFunction.NamedArgument> argument(final String name,
+        final FitnessFunction.NamedArgument[] arguments) {
+        Optional<FitnessFunction.NamedArgument> optional = Optional.empty();
+        for (final FitnessFunction.NamedArgument arg : arguments) {
+            if (arg.getName().equals(name)) {
+                optional = Optional.of(arg);
+                break;
+            }
+        }
+        return optional;
+    }
 
     /**
      * Calculates a value between 0 and 1, given the precondition that value

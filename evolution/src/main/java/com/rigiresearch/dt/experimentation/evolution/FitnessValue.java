@@ -3,6 +3,7 @@ package com.rigiresearch.dt.experimentation.evolution;
 import com.rigiresearch.dt.experimentation.evolution.fitness.CompositeFitnessFunction;
 import com.rigiresearch.dt.experimentation.evolution.fitness.CubicFitnessFunction;
 import com.rigiresearch.dt.experimentation.evolution.fitness.FitnessFunction;
+import com.rigiresearch.dt.experimentation.evolution.fitness.LinearFitnessFunction;
 import com.rigiresearch.dt.experimentation.evolution.fitness.NormalizedFitnessFunction;
 import com.rigiresearch.dt.experimentation.simulation.DtSimulation;
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
@@ -71,7 +72,8 @@ public final class FitnessValue {
     /**
      * The fitness function.
      */
-    final Function<Double, CompositeFitnessFunction> fitness;
+    final FitnessValue.TriFunction<Double, Double, Double, CompositeFitnessFunction>
+        fitness;
 
     /**
      * The simulation configuration data.
@@ -103,13 +105,13 @@ public final class FitnessValue {
         this.ewt = new ExcessWaitingTime(simulation, headways);
         this.hcv = new HeadwayCoefficientOfVariation(simulation);
         this.olh = new ObservedLineHeadway(simulation);
-        // FIXME Define a new type of function with a minimum value but without a maximum value
-        this.fitness = x ->
+        this.fitness = (headway, fleet, plannedBuses) ->
             new CompositeFitnessFunction()
-                .withFunction(new CubicFitnessFunction(0.0, 26.0, 34.0, FitnessValue.BUSES), 0.2)
-                .withFunction(new NormalizedFitnessFunction(0.0, x, FitnessValue.OLH), 0.3)
-                .withFunction(new NormalizedFitnessFunction(0.0, 1.0, FitnessValue.HCV), 0.1)
-                .withFunction(new NormalizedFitnessFunction(0.0, 1.0, FitnessValue.VEWT), 0.1)
+                .withFunction(
+                    new CubicFitnessFunction(0.0, plannedBuses, fleet, FitnessValue.BUSES), 0.2)
+                .withFunction(new NormalizedFitnessFunction(0.0, headway, FitnessValue.OLH), 0.3)
+                .withFunction(new LinearFitnessFunction(0.0, FitnessValue.HCV), 0.1)
+                .withFunction(new LinearFitnessFunction(0.0, FitnessValue.VEWT), 0.1)
                 .withFunction(new NormalizedFitnessFunction(0.0, 30.0, FitnessValue.EWT), 0.3)
                 .validate();
     }
@@ -121,8 +123,14 @@ public final class FitnessValue {
      */
     public double asDouble(final Line line) {
         // Configured number of buses
-        final double buses = this.config.getDouble(
+        final double fleet = this.config.getDouble(
             String.format("%s.fleet", line.getName())
+        );
+        final double plannedBuses = this.config.getDouble(
+            String.format("%s.planned.buses", line.getName())
+        );
+        final double buses = this.config.getDouble(
+            String.format("%s.buses", line.getName())
         );
         final double headway = this.config.getDouble(
             String.format("%s.headway", line.getName())
@@ -135,7 +143,7 @@ public final class FitnessValue {
         final Double hcv = this.hcv.value(line);
         // Observed line headway
         final double olh = this.olh.value(line).getAverage();
-        return this.fitness.apply(headway)
+        return this.fitness.apply(headway, fleet, plannedBuses)
             .evaluate(
                 new FitnessFunction.NamedArgument(FitnessValue.BUSES, buses),
                 new FitnessFunction.NamedArgument(FitnessValue.OLH, olh),
@@ -158,6 +166,26 @@ public final class FitnessValue {
             .map(this::asDouble)
             .mapToDouble(value -> value)
             .sum();
+    }
+
+    /**
+     * A function with three parameters.
+     * @param <X1> The first parameter of this function
+     * @param <X2> The second parameter of this function
+     * @param <X3> The third parameter of this function
+     * @param <Y> The type of result
+     */
+    @FunctionalInterface
+    public interface TriFunction<X1, X2, X3, Y> {
+
+        /**
+         * Applies this function.
+         * @param arg1 The first argument
+         * @param arg2 The second argument
+         * @param arg3 The third argument
+         * @return The result
+         */
+        Y apply(X1 arg1, X2 arg2, X3 arg3);
     }
 
 }

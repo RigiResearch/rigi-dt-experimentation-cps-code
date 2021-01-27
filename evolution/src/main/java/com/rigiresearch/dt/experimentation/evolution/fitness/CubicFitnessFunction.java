@@ -3,6 +3,7 @@ package com.rigiresearch.dt.experimentation.evolution.fitness;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Defines a cubic fitness function to reward minimizing certain variable.
@@ -96,8 +97,15 @@ public final class CubicFitnessFunction implements FitnessFunction {
      */
     @Override
     public double evaluate(final FitnessFunction.NamedArgument... arguments) {
-        final BigDecimal x = BigDecimal.valueOf(arguments[0].getValue());
-        final double y = this.evaluateNonNormalized(arguments[0].getValue());
+        final Optional<FitnessFunction.NamedArgument> arg =
+            FitnessFunction.argument(this.argument, arguments);
+        if (!arg.isPresent()) {
+            throw new IllegalArgumentException(
+                String.format("Argument '%s' not found", this.argument)
+            );
+        }
+        final BigDecimal x = BigDecimal.valueOf(arg.get().getValue());
+        final double y = this.evaluateNonNormalized(arg.get().getValue());
         final double normalized;
         if (CubicFitnessFunction.lessThanOrEqual(this.a, x) &&
             CubicFitnessFunction.lessThanOrEqual(x, this.b)) {

@@ -2,6 +2,7 @@ package com.rigiresearch.dt.experimentation.evolution.fitness;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -39,9 +40,11 @@ public final class NormalizedFitnessFunction implements FitnessFunction {
      */
     @Override
     public double evaluate(final FitnessFunction.NamedArgument... arguments) {
-        this.checkArguments(arguments);
+        final Optional<NamedArgument> arg =
+            FitnessFunction.argument(this.argument, arguments);
+        this.checkArgument(arg);
         return FitnessFunction.normalizeInRange(
-            arguments[0].getValue(),
+            arg.get().getValue(),
             this.max,
             this.min,
             -1.0,
@@ -56,30 +59,17 @@ public final class NormalizedFitnessFunction implements FitnessFunction {
 
     /**
      * Checks preconditions on the arguments.
-     * @param args The arguments
+     * @param arg The argument
      */
-    private void checkArguments(final FitnessFunction.NamedArgument... args) {
-        if (args.length != 1) {
+    private void checkArgument(final Optional<FitnessFunction.NamedArgument> arg) {
+        if (!arg.isPresent()) {
             throw new IllegalArgumentException(
-                String.format(
-                    "Function %s accepts one argument only, %d found",
-                    this.getClass().getSimpleName(),
-                    args.length
-                )
+                String.format("Argument '%s' not found", this.argument)
             );
         }
-        if (!args[0].getName().equals(this.argument)) {
+        if (arg.get().getValue() > this.max || arg.get().getValue() < 0.0) {
             throw new IllegalArgumentException(
-                String.format(
-                    "Function %s requires argument \"%s\"",
-                    this.getClass().getSimpleName(),
-                    this.argument
-                )
-            );
-        }
-        if (args[0].getValue() > this.max || args[0].getValue() < 0.0) {
-            throw new IllegalArgumentException(
-                String.format("Value %f is out of bounds", args[0].getValue())
+                String.format("Value %f is out of bounds", arg.get().getValue())
             );
         }
     }
