@@ -46,4 +46,4 @@ tmp/
 
 ### Allow libraries ###
 !**/lib/*.jar
-!**/templates/**/*.jar
+!**/libs/**/*.jar
