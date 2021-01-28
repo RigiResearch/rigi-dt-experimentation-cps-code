@@ -120,7 +120,7 @@ public final class GeneticAlgorithm {
     public EvolutionResults evolve(double chromosomeMin, double chromosomeMax, int chromosomeLength, int numRoutes, int populationSize, int steadyNumber, int numGenerations) {
 
         // Obtain the Jenetics engine for the generation.
-        final Engine<DoubleGene, Double> engine = Engine.builder(GeneticAlgorithm::fitness, getFactory(chromosomeMin, chromosomeMax, chromosomeLength, numRoutes))
+        final Engine<DoubleGene, Double> engine = Engine.builder(genotype -> this.fitness(genotype), getFactory(chromosomeMin, chromosomeMax, chromosomeLength, numRoutes))
                 .populationSize(populationSize)
                 .selector(new RouletteWheelSelector<>())
                 .alterers(
