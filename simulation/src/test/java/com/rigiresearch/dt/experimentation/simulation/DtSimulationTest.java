@@ -2,10 +2,12 @@ package com.rigiresearch.dt.experimentation.simulation;
 
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import com.rigiresearch.dt.experimentation.simulation.graph.Station;
+import com.rigiresearch.dt.experimentation.simulation.metrics.BusQueueLength;
 import com.rigiresearch.dt.experimentation.simulation.metrics.ExcessWaitingTime;
 import com.rigiresearch.dt.experimentation.simulation.metrics.HeadwayCoefficientOfVariation;
 import com.rigiresearch.dt.experimentation.simulation.metrics.ObservedLineHeadway;
 import com.rigiresearch.dt.experimentation.simulation.metrics.ObservedWaitingTime;
+import com.rigiresearch.dt.experimentation.simulation.metrics.PassengerQueueLength;
 import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.GraphParser;
 import com.rigiresearch.middleware.graph.Node;
@@ -121,6 +123,8 @@ class DtSimulationTest {
         DtSimulationTest.LOGGER.info("{}", new HeadwayCoefficientOfVariation(simulation));
         DtSimulationTest.LOGGER.info("{}", new ObservedLineHeadway(simulation));
         DtSimulationTest.LOGGER.info("{}", new ObservedWaitingTime(simulation));
+        DtSimulationTest.LOGGER.info("{}", new PassengerQueueLength(simulation));
+        DtSimulationTest.LOGGER.info("{}", new BusQueueLength(simulation));
     }
 
     /**

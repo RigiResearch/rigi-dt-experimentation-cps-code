@@ -59,6 +59,12 @@ public final class LineStopSchedulingElement extends SchedulingElement {
     private final Statistic wt;
 
     /**
+     * Passenger queue length statistic.
+     */
+    @Getter
+    private final Statistic ql;
+
+    /**
      * The graph node.
      */
     @Getter
@@ -107,14 +113,21 @@ public final class LineStopSchedulingElement extends SchedulingElement {
             DtSimulation.VariableType.TRANSPORTATION_TIME.getName(),
             config
         ).apply(this);
-        final String name = String.format(
+        final String wtname = String.format(
             "WT-%s-%s",
             segment.getFrom().getName(),
             segment.getLine().getName()
         );
-        this.wait = new Queue<>(this, name);
-        this.wt = new Statistic(name);
+        this.wait = new Queue<>(this, wtname);
+        this.wt = new Statistic(wtname);
         this.wt.setSaveOption(true);
+        final String qlname = String.format(
+            "PQL-%s-%s",
+            segment.getFrom().getName(),
+            segment.getLine().getName()
+        );
+        this.ql = new Statistic(qlname);
+        this.ql.setSaveOption(true);
         // TODO The number of passengers to create could be a config property
         this.passengers = this.createPassengers(100);
     }
@@ -150,6 +163,8 @@ public final class LineStopSchedulingElement extends SchedulingElement {
      * @param bus The simulated bus
      */
     public void handleBusDeparture(final Bus bus) {
+        // Collect the queue length when a bus arrives
+        this.ql.collect((double) this.wait.size());
         final List<Passenger> boarding = this.nextPassengers(bus.availableSeats());
         bus.updateOccupation(boarding);
         DtSimulation.log(
@@ -199,6 +214,7 @@ public final class LineStopSchedulingElement extends SchedulingElement {
 
     /**
      * Creates passengers for this line/stop.
+     * @param n The number of passengers to create
      * @return A non-null, non-empty linked list of passengers.
      */
     private LinkedList<Passenger> createPassengers(final int n) {
