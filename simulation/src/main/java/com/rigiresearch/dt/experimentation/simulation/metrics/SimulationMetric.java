@@ -1,12 +1,8 @@
 package com.rigiresearch.dt.experimentation.simulation.metrics;
 
-import com.rigiresearch.dt.experimentation.simulation.DtSimulation;
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import jsl.utilities.statistic.Statistic;
 
 /**
@@ -38,22 +34,13 @@ public interface SimulationMetric<T> {
      * @return A non-null statistics
      */
     static Statistic consolidated(final Iterable<Statistic> statistics) {
-        final List<Double> samples = new ArrayList<>();
-        statistics.forEach(statistic ->
-            samples.addAll(
-                Arrays.stream(statistic.getSavedData())
-                    .mapToObj(Double.class::cast)
-                    .collect(Collectors.toList())
-            )
-        );
-        final Statistic statistic = new Statistic();
-        statistic.setSaveOption(true);
-        final Double[] boxed = samples.toArray(DtSimulation.EMPTY_ARRAY);
-        final double[] unboxed = Stream.of(boxed)
-            .mapToDouble(Double::doubleValue)
-            .toArray();
-        statistic.collect(unboxed);
-        return statistic;
+        final Statistic result = new Statistic();
+        result.setSaveOption(true);
+        statistics.forEach(statistic -> {
+            Arrays.stream(statistic.getSavedData())
+                .forEach(result::collect);
+        });
+        return result;
     }
 
 }
