@@ -71,6 +71,7 @@ public final class SymbolicRegression {
      * @param data The data points to come up with a function
      * @param terminals The terminals to use
      */
+    @SafeVarargs
     public SymbolicRegression(final Double[][] data,
         final Op<Double>... terminals) {
         this.data = data.clone();

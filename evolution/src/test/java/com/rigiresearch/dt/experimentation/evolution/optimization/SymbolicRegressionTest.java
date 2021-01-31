@@ -32,7 +32,6 @@ final class SymbolicRegressionTest {
      */
     private static final double EPSILON = 0.0001;
 
-    @SuppressWarnings("unchecked")
     @Test
     void testKnownSimpleFunction() {
         // Acceptable error
@@ -54,17 +53,17 @@ final class SymbolicRegressionTest {
         );
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     void testKnownComplexFunction() {
         // Acceptable error
         final double error = 0.01;
         final long generations = 10_000L;
         final Function<Double, Double> function = x ->
-            5.5 * StrictMath.pow(x, 2.0) + 10.0 * x;
+            StrictMath.sqrt(x) + 3.0 * x;
+            // 5.5 * StrictMath.pow(x, 2.0) + 10.0 * x;
             // 4.0 * StrictMath.pow(x, 3.0) - 3.0 * StrictMath.pow(x, 2.0) + x;
         final Double[][] samples =
-            SymbolicRegressionTest.samples(-1.0, 1.0, 100, function);
+            SymbolicRegressionTest.samples(0.0, 1.0, 100, function);
         final SymbolicRegression.Result result =
             new SymbolicRegression(
                 samples,
