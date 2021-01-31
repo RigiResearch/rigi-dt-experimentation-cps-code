@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An experiment.
+ * An experiment with one independent factor.
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
  * @since 0.1.0
@@ -119,8 +119,8 @@ public final class OneVarMultiGroupExperiment implements Experiment {
 
     /**
      * Determines whether the samples' averages are significantly different.
-     * Note that this test assumes that only one variable was observed and that
-     * the groups are independent.
+     * Note that this test assumes that there was only one independent factor
+     * and that the groups are independent.
      * @param normal Whether the data is normally distributed
      * @return Either {@code true} or {@code false}
      */
