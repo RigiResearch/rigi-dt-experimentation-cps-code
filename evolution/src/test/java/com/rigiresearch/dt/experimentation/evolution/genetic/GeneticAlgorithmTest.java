@@ -132,6 +132,8 @@ public class GeneticAlgorithmTest {
         GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(config, graph, NUM_GENERATIONS);
 
         EvolutionResults results = geneticAlgorithm.evolve(CHROMOSOME_MIN,CHROMOSOME_MAX,CHROMOSOME_LENGTH,POPULATION_SIZE,STEADY_NUMBER,NUM_GENERATIONS,MUTATION_PROB,CROSSOVER_PROB);
+        System.out.println(results.getPhenotype());
+        System.out.println(results.getStatistics());
 
     }
 

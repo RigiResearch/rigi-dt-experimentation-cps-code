@@ -153,6 +153,7 @@ public final class GeneticAlgorithm {
         // Obtain the Jenetics engine for the generation.
         final Engine<DoubleGene, Double> engine = Engine.builder(this::fitness, encoding)
                 .populationSize(populationSize)
+                .maximizing()
                 .selector(new RouletteWheelSelector<>())
                 .alterers(
                         new Mutator<>(mutationProb),

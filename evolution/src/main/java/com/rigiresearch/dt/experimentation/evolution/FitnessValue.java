@@ -72,7 +72,7 @@ public final class FitnessValue {
     /**
      * The fitness function.
      */
-    final FitnessValue.TriFunction<Double, Double, Double, CompositeFitnessFunction>
+    final FitnessValue.TriFunction<Double, Double, Double, Double, CompositeFitnessFunction>
         fitness;
 
     /**
@@ -105,11 +105,11 @@ public final class FitnessValue {
         this.ewt = new ExcessWaitingTime(simulation, headways);
         this.hcv = new HeadwayCoefficientOfVariation(simulation);
         this.olh = new ObservedLineHeadway(simulation);
-        this.fitness = (headway, fleet, plannedBuses) ->
+        this.fitness = (minHeadway,maxHeadway, fleet, plannedBuses) ->
             new CompositeFitnessFunction()
                 .withFunction(
                     new CubicFitnessFunction(0.0, plannedBuses, fleet, FitnessValue.BUSES), 0.2)
-                .withFunction(new NormalizedFitnessFunction(0.0, headway, FitnessValue.OLH), 0.3)
+                .withFunction(new NormalizedFitnessFunction(minHeadway, maxHeadway, FitnessValue.OLH), 0.3)
                 .withFunction(new LinearFitnessFunction(0.0, FitnessValue.HCV), 0.1)
                 .withFunction(new LinearFitnessFunction(0.0, FitnessValue.VEWT), 0.1)
                 .withFunction(new NormalizedFitnessFunction(0.0, 30.0, FitnessValue.EWT), 0.3)
@@ -132,8 +132,11 @@ public final class FitnessValue {
         final double buses = this.config.getDouble(
             String.format("%s.buses", line.getName())
         );
-        final double headway = this.config.getDouble(
-            String.format("%s.headway", line.getName())
+        final double maxHeadway = this.config.getDouble(
+            String.format("%s.headway.max", line.getName())
+        );
+        final double minHeadway = this.config.getDouble(
+                String.format("%s.headway.min", line.getName())
         );
         // Excess waiting time
         final Statistic ewt = this.ewt.value(line);
@@ -143,7 +146,7 @@ public final class FitnessValue {
         final Double hcv = this.hcv.value(line);
         // Observed line headway
         final double olh = this.olh.value(line).getAverage();
-        return this.fitness.apply(headway, fleet, plannedBuses)
+        return this.fitness.apply(minHeadway, maxHeadway, fleet, plannedBuses)
             .evaluate(
                 new FitnessFunction.NamedArgument(FitnessValue.BUSES, buses),
                 new FitnessFunction.NamedArgument(FitnessValue.OLH, olh),
@@ -176,16 +179,17 @@ public final class FitnessValue {
      * @param <Y> The type of result
      */
     @FunctionalInterface
-    public interface TriFunction<X1, X2, X3, Y> {
+    public interface TriFunction<X1, X2, X3, X4, Y> {
 
         /**
          * Applies this function.
          * @param arg1 The first argument
          * @param arg2 The second argument
          * @param arg3 The third argument
+         * @param arg4 The fourth argument
          * @return The result
          */
-        Y apply(X1 arg1, X2 arg2, X3 arg3);
+        Y apply(X1 arg1, X2 arg2, X3 arg3, X4 arg4);
     }
 
 }
