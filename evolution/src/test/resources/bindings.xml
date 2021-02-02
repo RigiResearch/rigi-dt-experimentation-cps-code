@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml-bindings xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/oxm"
+              package-name="com.rigiresearch.middleware.graph">
+  <java-types>
+    <java-type name="Graph">
+      <java-attributes>
+        <xml-elements java-attribute="nodes">
+          <xml-element name="station" type="com.rigiresearch.dt.experimentation.simulation.graph.Station"/>
+          <xml-element name="line" type="com.rigiresearch.dt.experimentation.simulation.graph.Line"/>
+        </xml-elements>
+      </java-attributes>
+    </java-type>
+    <java-type name="Node">
+      <java-attributes>
+        <xml-elements java-attribute="parameters">
+          <xml-element name="stop"
+                       type="com.rigiresearch.dt.experimentation.simulation.graph.Stop"/>
+        </xml-elements>
+        <xml-elements java-attribute="metadata">
+          <xml-element-wrapper name="segments" />
+          <xml-element name="segment"
+                       type="com.rigiresearch.dt.experimentation.simulation.graph.Segment"/>
+        </xml-elements>
+      </java-attributes>
+    </java-type>
+  </java-types>
+</xml-bindings>

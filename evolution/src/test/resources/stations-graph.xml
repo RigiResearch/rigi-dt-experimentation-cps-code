@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graph xmlns="http://www.rigiresearch.com/middleware/graph/1.0.0">
+  <station name="Universidades">
+    <stop name="UP1"/>
+    <stop name="UP2"/>
+    <segments>
+      <segment from="UP1" to="SP1" line="T31n"/>
+    </segments>
+  </station>
+  <station name="Salomia">
+    <stop name="SP1"/>
+    <stop name="SP2"/>
+    <segments>
+      <segment from="SP1" to="PP1" line="T31n"/>
+      <segment from="SP2" to="UP2" line="T31s"/>
+    </segments>
+  </station>
+  <station name="Paso_Comercio">
+    <stop name="PP1"/>
+    <stop name="PP2"/>
+    <segments>
+      <segment from="PP2" to="SP2" line="T31s"/>
+    </segments>
+  </station>
+  <line name="T31n" from="Universidades" to="Paso_Comercio"/>
+  <line name="T31s" from="Paso_Comercio" to="Universidades"/>
+</graph>
