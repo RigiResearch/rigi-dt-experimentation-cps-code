@@ -29,6 +29,7 @@ dependencies {
     implementation name: "jautodiff-parser-0.0.1-SNAPSHOT-all"
     // Evolutionary algorithms
     implementation "io.jenetics:jenetics:6.1.0"
+    implementation "io.jenetics:jenetics.prog:6.1.0"
     // Math library for optimization methods
     implementation "com.github.mimno:Mallet:v2.0.8"
     // Support for Epsilon languages

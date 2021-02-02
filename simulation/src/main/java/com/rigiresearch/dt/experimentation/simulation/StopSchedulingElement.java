@@ -42,6 +42,7 @@ public final class StopSchedulingElement extends SchedulingElement {
     /**
      * The graph node.
      */
+    @Getter
     private final Stop node;
 
     /**
@@ -77,6 +78,12 @@ public final class StopSchedulingElement extends SchedulingElement {
     private Map<Line, Statistic> headways;
 
     /**
+     * Bus queue length statistic.
+     */
+    @Getter
+    private final Statistic ql;
+
+    /**
      * Default constructor.
      * @param parent The parent model
      * @param stop The stop's graph node
@@ -91,6 +98,8 @@ public final class StopSchedulingElement extends SchedulingElement {
         this.service =
             new Queue<>(this, String.format("ST-%s", stop.getName()));
         this.service.setInitialDiscipline(Queue.Discipline.FIFO);
+        this.ql = new Statistic(String.format("BQL-%s", stop.getName()));
+        this.ql.setSaveOption(true);
         // First, find lines stopping at this stop
         final Set<Line> lines = stop.getStation()
             .getMetadata()
@@ -161,6 +170,8 @@ public final class StopSchedulingElement extends SchedulingElement {
      * @param bus The arriving bus
      */
     public void handleBusArrival(final Bus bus) {
+        // Collect the queue length when a bus arrives
+        this.ql.collect((double) this.service.size());
         final boolean empty = this.service.isEmpty();
         this.service.enqueue(bus);
         this.computeObservedHeadway(bus.getLine());
@@ -286,12 +297,31 @@ public final class StopSchedulingElement extends SchedulingElement {
      * @return A non-null, possibly empty map
      */
     public Map<Line, Statistic> observedWaitingTimes() {
+        return this.statisticsPerLine(LineStopSchedulingElement::getWt);
+    }
+
+    /**
+     * Returns the passenger queue length statistics for each line passing
+     * through this stop.
+     * @return A non-null, possibly empty map
+     */
+    public Map<Line, Statistic> passengerQueueLengths() {
+        return this.statisticsPerLine(LineStopSchedulingElement::getQl);
+    }
+
+    /**
+     * Returns statistics for each line passing through this stop.
+     * @param method The method reference to obtain the statistic
+     * @return A non-null, possibly empty map
+     */
+    private Map<Line, Statistic> statisticsPerLine(
+        final Function<LineStopSchedulingElement, Statistic> method) {
         return this.models.entrySet()
             .stream()
             .collect(
                 Collectors.toMap(
                     Map.Entry::getKey,
-                    entry -> entry.getValue().getWt()
+                    entry -> method.apply(entry.getValue())
                 )
             );
     }

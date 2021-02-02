@@ -7,6 +7,7 @@ import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import jsl.modeling.elements.entity.EntityType;
 import jsl.modeling.elements.variable.RandomVariable;
@@ -247,21 +248,37 @@ public final class StationSchedulingElement extends SchedulingElement {
     }
 
     /**
+     * Returns the bus queue length statistics for each line passing through this
+     * station.
+     * @return A non-null, possibly empty map
+     */
+    public Map<Stop, Statistic> busQueueLengths() {
+        return this.stops.values()
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    StopSchedulingElement::getNode,
+                    StopSchedulingElement::getQl
+                )
+            );
+    }
+
+    /**
+     * Returns the passenger queue length statistics for each line passing
+     * through this station.
+     * @return A non-null, possibly empty map
+     */
+    public Map<Line, Statistic> passengerQueueLength() {
+        return this.statisticsPerLine(StopSchedulingElement::passengerQueueLengths);
+    }
+
+    /**
      * Returns the waiting time statistics for each line passing through this
      * station.
      * @return A non-null, possibly empty map
      */
     public Map<Line, Statistic> observedWaitingTimes() {
-        return this.stops.values()
-            .stream()
-            .map(StopSchedulingElement::observedWaitingTimes)
-            .flatMap(map -> map.entrySet().stream())
-            .collect(
-                Collectors.toMap(
-                    Map.Entry::getKey,
-                    Map.Entry::getValue
-                )
-            );
+        return this.statisticsPerLine(StopSchedulingElement::observedWaitingTimes);
     }
 
     /**
@@ -270,9 +287,19 @@ public final class StationSchedulingElement extends SchedulingElement {
      * @return A non-null, possibly empty map
      */
     public Map<Line, Statistic> observedHeadways() {
+        return this.statisticsPerLine(StopSchedulingElement::observedHeadways);
+    }
+
+    /**
+     * Returns statistics for each line passing through this station.
+     * @param method The method reference to obtain the statistic
+     * @return A non-null, possibly empty map
+     */
+    public Map<Line, Statistic> statisticsPerLine(
+        final Function<StopSchedulingElement, Map<Line, Statistic>> method) {
         return this.stops.values()
             .stream()
-            .map(StopSchedulingElement::observedHeadways)
+            .map(method)
             .flatMap(map -> map.entrySet().stream())
             .collect(
                 Collectors.toMap(

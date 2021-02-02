@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import jsl.simulation.Simulation;
 import jsl.utilities.statistic.Statistic;
 import lombok.Getter;
@@ -84,6 +85,31 @@ public final class DtSimulation extends Simulation {
      */
     public Map<Line, List<Statistic>> observedHeadways() {
         return this.modelToMap(StationSchedulingElement::observedHeadways);
+    }
+
+    /**
+     * Returns the passenger queue lengths per line.
+     * @return A non-null, possibly empty map
+     */
+    public Map<Line, List<Statistic>> passengerQueueLengths() {
+        return this.modelToMap(StationSchedulingElement::passengerQueueLength);
+    }
+
+    /**
+     * Returns the bus queue lengths per stop.
+     * @return A non-null, possibly empty map
+     */
+    public Map<Stop, Statistic> busQueueLengths() {
+        return this.models.values()
+            .stream()
+            .map(StationSchedulingElement::busQueueLengths)
+            .flatMap(map -> map.entrySet().stream())
+            .collect(
+                Collectors.toMap(
+                    Map.Entry::getKey,
+                    Map.Entry::getValue
+                )
+            );
     }
 
     /**
