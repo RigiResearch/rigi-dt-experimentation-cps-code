@@ -22,11 +22,14 @@ import io.jenetics.stat.DoubleMomentStatistics;
 import io.jenetics.util.DoubleRange;
 import io.jenetics.util.IntRange;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import org.apache.commons.configuration2.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines a the genetic algorithm to search new experimentation scenarios.
@@ -37,6 +40,12 @@ import org.apache.commons.configuration2.Configuration;
  */
 @SuppressWarnings("unchecked")
 public final class GeneticAlgorithm {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(GeneticAlgorithm.class);
 
     /**
      * The ids of the lines defined in the configuration file.
@@ -145,9 +154,16 @@ public final class GeneticAlgorithm {
         // Collection of metrics
         final FitnessValue metrics = new FitnessValue(simulation, config);
         // Obtaining the record
-        Record record = metrics.asRecord();
-        simulationRecords.add(record);
-        return (double) record.get(EvolvingProperties.SIM_FITNESS.getId());
+        final Collection<Record> records = metrics.asRecords();
+        this.simulationRecords.addAll(records);
+        return records.stream()
+            .map(record -> {
+                GeneticAlgorithm.LOGGER.info(record.asLog());
+                return record.get(EvolvingProperties.SIM_FITNESS.getId());
+            })
+            .map(Double.class::cast)
+            .mapToDouble(value -> value)
+            .sum();
     }
 
     /***

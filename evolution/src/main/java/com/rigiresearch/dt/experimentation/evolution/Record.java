@@ -1,6 +1,7 @@
 package com.rigiresearch.dt.experimentation.evolution;
 
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * Defines a record of the inputs and outputs for each simulation.
@@ -9,7 +10,12 @@ import java.util.HashMap;
  * @version $Id$
  * @since 0.1.0
  */
-public class Record extends HashMap<String, Object> {
+public final class Record extends HashMap<String, Object> {
+
+    /**
+     * Serial version UID.
+     */
+    private static final long serialVersionUID = 756532385482446155L;
 
     /**
      * Allows to get the headers (keys) of a record.
@@ -17,10 +23,10 @@ public class Record extends HashMap<String, Object> {
      * @return the headers (keys) of a record.
      */
     public String asCSVHeader() {
-        StringBuilder builder = new StringBuilder();
-        if (!isEmpty()) {
+        final StringBuilder builder = new StringBuilder();
+        if (!this.isEmpty()) {
             boolean firstTime = true;
-            for (String key : keySet()) {
+            for (final String key : this.keySet()) {
                 if (firstTime) {
                     builder.append(key);
                     firstTime = false;
@@ -38,11 +44,11 @@ public class Record extends HashMap<String, Object> {
      * @return the record in a CSV format.
      */
     public String asCSVRecord() {
-        StringBuilder builder = new StringBuilder();
-        if (!isEmpty()) {
+        final StringBuilder builder = new StringBuilder();
+        if (!this.isEmpty()) {
             boolean firstTime = true;
-            for (String key : keySet()) {
-                String value = get(key).toString();
+            for (final String key : this.keySet()) {
+                final String value = this.get(key).toString();
                 if (firstTime) {
                     builder.append(value);
                     firstTime = false;
@@ -52,6 +58,16 @@ public class Record extends HashMap<String, Object> {
             }
         }
         return builder.toString();
+    }
+
+    /**
+     * Returns a log-friendly string listing each key:value pair in this record.
+     * @return A non-null, possibly empty string
+     */
+    public String asLog() {
+        return this.keySet().stream()
+            .map(key -> String.format("%s: %s", key, this.get(key)))
+            .collect(Collectors.joining(", "));
     }
 
 }
