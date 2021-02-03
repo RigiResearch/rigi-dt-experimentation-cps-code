@@ -47,3 +47,4 @@ tmp/
 ### Allow libraries ###
 !**/lib/*.jar
 !**/libs/**/*.jar
+.Rproj.user
