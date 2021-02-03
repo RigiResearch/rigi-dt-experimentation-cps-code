@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import org.apache.commons.configuration2.Configuration;
@@ -88,6 +89,8 @@ public final class GeneticAlgorithm {
      */
     private Genotype encoding;
 
+    private AtomicInteger execution;
+
     /**
      * Constructor of the class.
      *
@@ -102,6 +105,7 @@ public final class GeneticAlgorithm {
         //lineIds = config.getList("lines").stream().map(String.class::cast).collect(Collectors.toSet());
         lineIds = config.getList("lines").stream().map(String.class::cast).collect(Collectors.toList());
         simulationRecords = new ArrayList<Record>(numGenerations);
+        this.execution = new AtomicInteger(0);
         generateEncoding();
     }
 
@@ -132,6 +136,7 @@ public final class GeneticAlgorithm {
      * @return the effectiveness of a transit system's configuration (chromosome).
      */
     private Double fitness(Genotype genotype) {
+        int number = this.execution.incrementAndGet();
         int lineId = 0;
         // Adjusting properties for the simulation
         for (int i = 0; i < genotype.length(); i++) {
@@ -155,6 +160,7 @@ public final class GeneticAlgorithm {
         final FitnessValue metrics = new FitnessValue(simulation, config);
         // Obtaining the record
         final Collection<Record> records = metrics.asRecords();
+        records.forEach(record -> record.put("number", number));
         this.simulationRecords.addAll(records);
         return records.stream()
             .map(record -> {
