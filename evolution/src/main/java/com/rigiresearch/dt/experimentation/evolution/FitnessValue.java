@@ -5,19 +5,25 @@ import com.rigiresearch.dt.experimentation.evolution.fitness.CubicFitnessFunctio
 import com.rigiresearch.dt.experimentation.evolution.fitness.FitnessFunction;
 import com.rigiresearch.dt.experimentation.evolution.fitness.LinearFitnessFunction;
 import com.rigiresearch.dt.experimentation.evolution.fitness.NormalizedFitnessFunction;
+import com.rigiresearch.dt.experimentation.evolution.genetic.EvolvingProperties;
 import com.rigiresearch.dt.experimentation.simulation.DtSimulation;
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import com.rigiresearch.dt.experimentation.simulation.metrics.ExcessWaitingTime;
 import com.rigiresearch.dt.experimentation.simulation.metrics.HeadwayCoefficientOfVariation;
 import com.rigiresearch.dt.experimentation.simulation.metrics.ObservedLineHeadway;
+
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import com.rigiresearch.middleware.graph.Node;
 import jsl.utilities.statistic.Statistic;
 import org.apache.commons.configuration2.Configuration;
 
 /**
  * A decorator that computes metrics for the original simulation.
+ *
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
  * @since 0.1.0
@@ -73,7 +79,7 @@ public final class FitnessValue {
      * The fitness function.
      */
     final FitnessValue.TriFunction<Double, Double, Double, Double, CompositeFitnessFunction>
-        fitness;
+            fitness;
 
     /**
      * The simulation configuration data.
@@ -82,58 +88,60 @@ public final class FitnessValue {
 
     /**
      * Default constructor.
+     *
      * @param simulation The input graph
-     * @param config The configuration options
+     * @param config     The configuration options
      */
     public FitnessValue(final DtSimulation simulation,
-        final Configuration config) {
+                        final Configuration config) {
         this.config = config;
         this.simulation = simulation;
         final Map<Line, Double> headways = simulation.getGraph()
-            .getNodes()
-            .stream()
-            .filter(Line.class::isInstance)
-            .map(Line.class::cast)
-            .collect(
-                Collectors.toMap(
-                    Function.identity(),
-                    line -> config.getDouble(
-                        String.format("%s.headway", line.getName())
-                    )
-                )
-            );
+                .getNodes()
+                .stream()
+                .filter(Line.class::isInstance)
+                .map(Line.class::cast)
+                .collect(
+                        Collectors.toMap(
+                                Function.identity(),
+                                line -> config.getDouble(
+                                        String.format("%s.headway", line.getName())
+                                )
+                        )
+                );
         this.ewt = new ExcessWaitingTime(simulation, headways);
         this.hcv = new HeadwayCoefficientOfVariation(simulation);
         this.olh = new ObservedLineHeadway(simulation);
-        this.fitness = (minHeadway,maxHeadway, fleet, plannedBuses) ->
-            new CompositeFitnessFunction()
-                .withFunction(
-                    new CubicFitnessFunction(0.0, plannedBuses, fleet, FitnessValue.BUSES), 0.2)
-                .withFunction(new NormalizedFitnessFunction(minHeadway, maxHeadway, FitnessValue.OLH), 0.3)
-                .withFunction(new LinearFitnessFunction(0.0, FitnessValue.HCV), 0.1)
-                .withFunction(new LinearFitnessFunction(0.0, FitnessValue.VEWT), 0.1)
-                .withFunction(new NormalizedFitnessFunction(0.0, 30.0, FitnessValue.EWT), 0.3)
-                .validate();
+        this.fitness = (minHeadway, maxHeadway, fleet, plannedBuses) ->
+                new CompositeFitnessFunction()
+                        .withFunction(
+                                new CubicFitnessFunction(0.0, plannedBuses, fleet, FitnessValue.BUSES), 0.2)
+                        .withFunction(new NormalizedFitnessFunction(minHeadway, maxHeadway, FitnessValue.OLH), 0.3)
+                        .withFunction(new LinearFitnessFunction(0.0, FitnessValue.HCV), 0.1)
+                        .withFunction(new LinearFitnessFunction(0.0, FitnessValue.VEWT), 0.1)
+                        .withFunction(new NormalizedFitnessFunction(0.0, 30.0, FitnessValue.EWT), 0.3)
+                        .validate();
     }
 
     /**
      * Computes the fitness value for the given line.
+     *
      * @param line The line of interest
      * @return A double between {@code -1} and {@code 1}
      */
     public double asDouble(final Line line) {
         // Configured number of buses
         final double fleet = this.config.getDouble(
-            String.format("%s.fleet", line.getName())
+                String.format("%s.fleet", line.getName())
         );
         final double plannedBuses = this.config.getDouble(
-            String.format("%s.planned.buses", line.getName())
+                String.format("%s.planned.buses", line.getName())
         );
         final double buses = this.config.getDouble(
-            String.format("%s.buses", line.getName())
+                String.format("%s.buses", line.getName())
         );
         final double maxHeadway = this.config.getDouble(
-            String.format("%s.headway.max", line.getName())
+                String.format("%s.headway.max", line.getName())
         );
         final double minHeadway = this.config.getDouble(
                 String.format("%s.headway.min", line.getName())
@@ -147,42 +155,110 @@ public final class FitnessValue {
         // Observed line headway
         final double olh = this.olh.value(line).getAverage();
         return this.fitness.apply(minHeadway, maxHeadway, fleet, plannedBuses)
-            .evaluate(
-                new FitnessFunction.NamedArgument(FitnessValue.BUSES, buses),
-                new FitnessFunction.NamedArgument(FitnessValue.OLH, olh),
-                new FitnessFunction.NamedArgument(FitnessValue.HCV, hcv),
-                new FitnessFunction.NamedArgument(FitnessValue.VEWT, ewtv),
-                new FitnessFunction.NamedArgument(FitnessValue.EWT, ewta)
-            );
+                .evaluate(
+                        new FitnessFunction.NamedArgument(FitnessValue.BUSES, buses),
+                        new FitnessFunction.NamedArgument(FitnessValue.OLH, olh),
+                        new FitnessFunction.NamedArgument(FitnessValue.HCV, hcv),
+                        new FitnessFunction.NamedArgument(FitnessValue.VEWT, ewtv),
+                        new FitnessFunction.NamedArgument(FitnessValue.EWT, ewta)
+                );
     }
 
     /**
      * Computes the fitness value for the given simulation.
+     *
      * @return The sum of fitness values
      */
     public double asDouble() {
         return this.simulation.getGraph()
-            .getNodes()
-            .stream()
-            .filter(Line.class::isInstance)
-            .map(Line.class::cast)
-            .map(this::asDouble)
-            .mapToDouble(value -> value)
-            .sum();
+                .getNodes()
+                .stream()
+                .filter(Line.class::isInstance)
+                .map(Line.class::cast)
+                .map(this::asDouble)
+                .mapToDouble(value -> value)
+                .sum();
+    }
+
+    /***
+     * Allows ot obtain a record containing the inputs and outputs of a simulation.
+     * @return a record containing the inputs and outputs of a simulation.
+     */
+    public Record asRecord() {
+        final Iterator<Node> iterator = simulation.getGraph().getNodes().iterator();
+        double sumFitness = 0;
+        Record record = new Record();
+        while (iterator.hasNext()) {
+            final Node node = iterator.next();
+            if (node instanceof Line) {
+                final Line line = (Line) node;
+                //Headway
+                final String headwayProperty = String.format("%s.headway", line.getName());
+                final double headway = this.config.getDouble(headwayProperty);
+                record.put(headwayProperty, headway);
+                // Min Headway
+                final String minHeadwayProperty = String.format("%s.headway.min", line.getName());
+                final double minHeadway = this.config.getDouble(minHeadwayProperty);
+                record.put(minHeadwayProperty, minHeadway);
+                // Max Headway
+                final String maxHeadwayProperty = String.format("%s.headway.max", line.getName());
+                final double maxHeadway = this.config.getDouble(maxHeadwayProperty);
+                record.put(maxHeadwayProperty, maxHeadway);
+                // Buses
+                final String busesProperty = String.format("%s.buses", line.getName());
+                final double buses = this.config.getDouble(busesProperty);
+                record.put(busesProperty, buses);
+                // Planned Buses
+                final String plannedBusesProperty = String.format("%s.planned.buses", line.getName());
+                final double plannedBuses = this.config.getDouble(plannedBusesProperty);
+                record.put(plannedBusesProperty, plannedBuses);
+                // Fleet
+                final String fleetProperty = String.format("%s.fleet", line.getName());
+                final double fleet = this.config.getDouble(fleetProperty);
+                record.put(fleetProperty, fleet);
+                // Excess waiting time
+                final Statistic ewt = this.ewt.value(line);
+                final double ewta = ewt.getAverage();
+                record.put(String.format("%s.ewt.a", line.getName()), ewta);
+                final double ewtv = ewt.getVariance();
+                record.put(String.format("%s.ewt.v", line.getName()), ewtv);
+                // Headway coefficient of variation
+                final Double hcv = this.hcv.value(line);
+                record.put(String.format("%s.hcv", line.getName()), hcv);
+                // Observed line headway
+                final double olh = this.olh.value(line).getAverage();
+                record.put(String.format("%s.headway.observed", line.getName()), olh);
+                // Fitness
+                final double fitness = this.fitness.apply(minHeadway, maxHeadway, fleet, plannedBuses)
+                        .evaluate(
+                                new FitnessFunction.NamedArgument(FitnessValue.BUSES, buses),
+                                new FitnessFunction.NamedArgument(FitnessValue.OLH, olh),
+                                new FitnessFunction.NamedArgument(FitnessValue.HCV, hcv),
+                                new FitnessFunction.NamedArgument(FitnessValue.VEWT, ewtv),
+                                new FitnessFunction.NamedArgument(FitnessValue.EWT, ewta)
+                        );
+                record.put(String.format("%s.fitness", line.getName()), fitness);
+                sumFitness += fitness;
+            }
+        }
+        record.put(EvolvingProperties.SIM_FITNESS.getId(), sumFitness);
+        return record;
     }
 
     /**
      * A function with three parameters.
+     *
      * @param <X1> The first parameter of this function
      * @param <X2> The second parameter of this function
      * @param <X3> The third parameter of this function
-     * @param <Y> The type of result
+     * @param <Y>  The type of result
      */
     @FunctionalInterface
     public interface TriFunction<X1, X2, X3, X4, Y> {
 
         /**
          * Applies this function.
+         *
          * @param arg1 The first argument
          * @param arg2 The second argument
          * @param arg3 The third argument

@@ -13,7 +13,8 @@ import lombok.Getter;
 public enum EvolvingProperties {
 
     HEADWAY("headway"),
-    NUM_BUSES("buses");
+    NUM_BUSES("buses"),
+    SIM_FITNESS("simulation.fitness");
 
     /**
      * The id of the property in the configuration file.
