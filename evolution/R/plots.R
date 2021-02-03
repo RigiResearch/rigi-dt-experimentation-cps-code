@@ -83,3 +83,27 @@ finalise_plot(plot_name = fitness_chart,
               save_filepath = sprintf("%s/overall_fitness_performance.pdf", dir),
               width_pixels = width,
               height_pixels = height)
+
+##
+## CH2. Excess waiting time
+##
+
+miniature_title = "Excess Waiting Time"
+miniature_subtitle = "Effect of headway design on passenger waiting time"
+
+headway_ewt_chart <- ggplot(results,aes(x=headway,y=ewt.a)) +
+  geom_point(aes(color = factor(line))) +
+  custom_style +
+  theme(legend.position="none") +
+  # Legend
+  scale_color_manual(values=colors) +
+  # Labels
+  labs(title=miniature_title,subtitle=miniature_subtitle) +
+  # Axis
+  scale_y_continuous("Excess waiting time") +
+  scale_x_continuous("Headway design")
+
+finalise_plot(plot_name = headway_ewt_chart,
+              save_filepath = sprintf("%s/headway_ewt.pdf", dir),
+              width_pixels = width,
+              height_pixels = height)
