@@ -1,6 +1,7 @@
 package com.rigiresearch.dt.experimentation.evolution.genetic;
 
 import com.rigiresearch.dt.experimentation.evolution.FitnessValue;
+import com.rigiresearch.dt.experimentation.evolution.Record;
 import com.rigiresearch.dt.experimentation.simulation.DtSimulation;
 import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.Node;
@@ -34,6 +35,7 @@ import org.apache.commons.configuration2.Configuration;
  * @version $Id$
  * @since 0.1.0
  */
+@SuppressWarnings("unchecked")
 public final class GeneticAlgorithm {
 
     /**
@@ -60,12 +62,17 @@ public final class GeneticAlgorithm {
     /**
      * The length of the replication of the simulations.
      */
-    private final int LENGTH_REPLICATION = 100;
+    public final static int LENGTH_REPLICATION = 100;
 
     /**
      * The length of the replication of the warm up of the simulations.
      */
-    private final int LENGTH_WARM_UP = 100;
+    public final static int LENGTH_WARM_UP = 100;
+
+    /**
+     * The simulation recoreds.
+     */
+    private List<Record> simulationRecords;
 
     /**
      * The encoding used to characterize a solution in the problem.
@@ -85,8 +92,8 @@ public final class GeneticAlgorithm {
         this.numGenerations = numGenerations;
         //lineIds = config.getList("lines").stream().map(String.class::cast).collect(Collectors.toSet());
         lineIds = config.getList("lines").stream().map(String.class::cast).collect(Collectors.toList());
+        simulationRecords = new ArrayList<Record>(numGenerations);
         generateEncoding();
-
     }
 
     /**
@@ -99,9 +106,9 @@ public final class GeneticAlgorithm {
                     final List<Chromosome> chromosomes = new ArrayList<Chromosome>(lineIds.size() * 2);
                     for (String lineId : lineIds) {
                         final DoubleRange headwayRange = DoubleRange.of(config.getDouble(lineId.concat(".").concat("headway.min")), config.getDouble(lineId.concat(".").concat("headway.max")));
-                        chromosomes.add((Chromosome) DoubleChromosome.of(headwayRange));
+                        chromosomes.add(DoubleChromosome.of(headwayRange));
                         final IntRange busRange = IntRange.of(1, config.getInt(lineId.concat(".").concat("fleet")));
-                        chromosomes.add((Chromosome) IntegerChromosome.of(busRange));
+                        chromosomes.add(IntegerChromosome.of(busRange));
                     }
                     encoding = Genotype.of((Iterable) chromosomes);
                 }
@@ -117,8 +124,7 @@ public final class GeneticAlgorithm {
      */
     private Double fitness(Genotype genotype) {
         int lineId = 0;
-        boolean firstTime = true;
-        // ADjusting properties for the simulation
+        // Adjusting properties for the simulation
         for (int i = 0; i < genotype.length(); i++) {
             if (i % 2 == 0) {
                 //Double Chromosome
@@ -138,23 +144,21 @@ public final class GeneticAlgorithm {
         simulation.run();
         // Collection of metrics
         final FitnessValue metrics = new FitnessValue(simulation, config);
-        return metrics.asDouble();
+        // Obtaining the record
+        Record record = metrics.asRecord();
+        simulationRecords.add(record);
+        return (double) record.get(EvolvingProperties.SIM_FITNESS.getId());
     }
 
     /***
      * Allows to evolve the genetic algorithm and produce results.
-     * @param chromosomeMin The min value of the genes of a chromosome.
-     * @param chromosomeMax The max value of the genes of a chromosome.
-     * @param chromosomeLength The length of the chromosome.
      * @param populationSize The size of the population.
      * @param steadyNumber The number of steady evolutions before ending the algorithm.
-     * @param numGenerations The max num of generations.
      * @param mutationProb The mutation probability.
      * @param crossoverProb The crossover probability.
      * @return The evolution results.
      */
-    public EvolutionResults evolve(double chromosomeMin, double chromosomeMax, int chromosomeLength, int populationSize, int steadyNumber, int numGenerations, double mutationProb, double crossoverProb) {
-
+    public EvolutionResults evolve(int populationSize, int steadyNumber, double mutationProb, double crossoverProb) {
         // Obtain the Jenetics engine for the generation.
         final Engine<DoubleGene, Double> engine = Engine.builder(this::fitness, encoding)
                 .populationSize(populationSize)
@@ -168,11 +172,9 @@ public final class GeneticAlgorithm {
 
         // Define the statistics to be collected.
         final EvolutionStatistics<Double, DoubleMomentStatistics> statistics = EvolutionStatistics.ofNumber();
-
         // Run the algorithm
         final Phenotype<DoubleGene, Double> phenotypeResult = engine.stream().limit((Limits.bySteadyFitness(steadyNumber))).limit(numGenerations).peek(statistics).collect(toBestPhenotype());
-
-        return new EvolutionResults(phenotypeResult, statistics);
+        return new EvolutionResults(phenotypeResult, statistics, simulationRecords);
 
     }
 

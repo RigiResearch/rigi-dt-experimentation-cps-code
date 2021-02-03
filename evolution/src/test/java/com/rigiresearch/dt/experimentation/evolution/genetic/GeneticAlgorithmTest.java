@@ -1,5 +1,6 @@
 package com.rigiresearch.dt.experimentation.evolution.genetic;
 
+import com.rigiresearch.dt.experimentation.evolution.genetic.util.CSVUtil;
 import com.rigiresearch.dt.experimentation.simulation.graph.Line;
 import com.rigiresearch.dt.experimentation.simulation.graph.Station;
 import com.rigiresearch.middleware.graph.Graph;
@@ -49,21 +50,6 @@ public class GeneticAlgorithmTest {
      * The number of generations for the genetic algorithm.
      */
     private final int NUM_GENERATIONS = 10;
-
-    /**
-     * The minimum value for a gene in a chromosome.
-     */
-    private final double CHROMOSOME_MIN = 5.0;
-
-    /**
-     * The maximum value for a gene in a chromosome.
-     */
-    private final double CHROMOSOME_MAX = 10.0;
-
-    /**
-     * The number of properties that will vary during the execution of the genetic algorithm (e.g., headway design and number of buses).
-     */
-    private final int CHROMOSOME_LENGTH = 2;
 
     /**
      * The size of the population.
@@ -131,9 +117,10 @@ public class GeneticAlgorithmTest {
 
         GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(config, graph, NUM_GENERATIONS);
 
-        EvolutionResults results = geneticAlgorithm.evolve(CHROMOSOME_MIN,CHROMOSOME_MAX,CHROMOSOME_LENGTH,POPULATION_SIZE,STEADY_NUMBER,NUM_GENERATIONS,MUTATION_PROB,CROSSOVER_PROB);
+        EvolutionResults results = geneticAlgorithm.evolve(POPULATION_SIZE,STEADY_NUMBER,MUTATION_PROB,CROSSOVER_PROB);
         System.out.println(results.getPhenotype());
         System.out.println(results.getStatistics());
+        CSVUtil.writeCSV("sim-results.csv",results.getRecords());
 
     }
 

@@ -1,13 +1,17 @@
 package com.rigiresearch.dt.experimentation.evolution.genetic;
 
+import com.rigiresearch.dt.experimentation.evolution.Record;
 import io.jenetics.DoubleGene;
 import io.jenetics.Phenotype;
 import io.jenetics.engine.EvolutionStatistics;
 import io.jenetics.stat.DoubleMomentStatistics;
 import lombok.Getter;
 
+import java.util.List;
+
 /**
  * Defines a the genetic algorithm to search new experimentation scenarios.
+ *
  * @author Felipe Rivera (rivera@uvic.ca)
  * @version $Id$
  * @since 0.1.0
@@ -26,12 +30,20 @@ public final class EvolutionResults {
     private EvolutionStatistics<Double, DoubleMomentStatistics> statistics;
 
     /**
-     * Constructor of the class.
-     * @param phenotype The phenotype that was obtained from evolving the algorithm.
-     * @param statistics The statistics of the evolution process.
+     * The simulation records.
      */
-    public EvolutionResults(Phenotype<DoubleGene, Double> phenotype, EvolutionStatistics<Double, DoubleMomentStatistics> statistics){
+    private List<Record> records;
+
+    /**
+     * Constructor of the class.
+     *
+     * @param phenotype  The phenotype that was obtained from evolving the algorithm.
+     * @param statistics The statistics of the evolution process.
+     * @param records    The simulation records.
+     */
+    public EvolutionResults(Phenotype<DoubleGene, Double> phenotype, EvolutionStatistics<Double, DoubleMomentStatistics> statistics, List<Record> records) {
         this.phenotype = phenotype;
         this.statistics = statistics;
+        this.records = records;
     }
 }
