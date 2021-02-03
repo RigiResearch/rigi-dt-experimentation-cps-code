@@ -189,7 +189,7 @@ public final class GeneticAlgorithm {
                 .alterers(
                         new Mutator<>(mutationProb),
                         new SinglePointCrossover<>(crossoverProb))
-                .executor(Executors.newSingleThreadExecutor())
+                .executor(Executors.newFixedThreadPool(10))
                 .build();
 
         // Define the statistics to be collected.
