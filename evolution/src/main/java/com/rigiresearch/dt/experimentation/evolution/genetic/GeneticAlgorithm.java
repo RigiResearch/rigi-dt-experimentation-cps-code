@@ -4,22 +4,28 @@ import com.rigiresearch.dt.experimentation.evolution.FitnessValue;
 import com.rigiresearch.dt.experimentation.simulation.DtSimulation;
 import com.rigiresearch.middleware.graph.Graph;
 import com.rigiresearch.middleware.graph.Node;
-import io.jenetics.*;
+import io.jenetics.Chromosome;
+import io.jenetics.DoubleChromosome;
+import io.jenetics.DoubleGene;
+import io.jenetics.Genotype;
+import io.jenetics.IntegerChromosome;
+import io.jenetics.Mutator;
+import io.jenetics.Phenotype;
+import io.jenetics.RouletteWheelSelector;
+import io.jenetics.SinglePointCrossover;
 import io.jenetics.engine.Engine;
+import static io.jenetics.engine.EvolutionResult.toBestPhenotype;
 import io.jenetics.engine.EvolutionStatistics;
 import io.jenetics.engine.Limits;
 import io.jenetics.stat.DoubleMomentStatistics;
 import io.jenetics.util.DoubleRange;
-import io.jenetics.util.Factory;
 import io.jenetics.util.IntRange;
-import lombok.Getter;
-import org.apache.commons.configuration2.Configuration;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
-
-import static io.jenetics.engine.EvolutionResult.toBestPhenotype;
+import lombok.Getter;
+import org.apache.commons.configuration2.Configuration;
 
 /**
  * Defines a the genetic algorithm to search new experimentation scenarios.
@@ -132,7 +138,6 @@ public final class GeneticAlgorithm {
         simulation.run();
         // Collection of metrics
         final FitnessValue metrics = new FitnessValue(simulation, config);
-
         return metrics.asDouble();
     }
 
