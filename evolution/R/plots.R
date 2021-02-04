@@ -142,19 +142,37 @@ finalise_plot(plot_name = fleet_ewt_chart,
 miniature_title = "Excess Waiting Time"
 miniature_subtitle = "Effect of operating fleet size and headway design on passenger waiting time"
 
-axx <- list(title = "Operating fleet size")
-axy <- list(title = "Bus headway")
-axz <- list(title = "Excess waiting time")
+axx <- list(title = "Fleet size")
+axy <- list(title = "Headway")
+axz <- list(title = "EWT")
 
-ewt <- plot_ly(x=results$fleet,y=results$headway,z=results$ewt.a,type="scatter3d",color=results$line)
-ewt <- ewt %>% layout(scene = list(xaxis=axx,yaxis=axy,zaxis=axz))
+# Separate plots
+ewt <- plot_ly(
+  x = results$fleet,
+  y = results$headway,
+  z = results$ewt.a,
+  type= "scatter3d",
+  mode = "markers",
+  color = results$line
+)
+ewt <- ewt %>% layout(
+  scene = list(xaxis=axx,yaxis=axy,zaxis=axz,aspectmode='cube'),
+  title = miniature_title
+)
 ewt
 
-ewt.T31n <- plot_ly(x=T31n$fleet,y=T31n$headway,z=T31n$ewt.a,type="mesh3d")
-ewt.T31n <- ewt.T31n %>% layout(scene = list(xaxis=axx,yaxis=axy,zaxis=axz))
+ewt.T31n <- plot_ly(z = ~rbind(T31n$fleet,T31n$headway,T31n$ewt.a))
+ewt.T31n <- ewt.T31n %>% add_surface()
+ewt.T31n <- ewt.T31n %>% layout(
+  scene = list(xaxis=axx,yaxis=axy,zaxis=axz,aspectmode='cube'),
+  title = miniature_title
+)
 ewt.T31n
 
-ewt.T31s <- plot_ly(x=T31s$fleet,y=T31s$headway,z=T31s$ewt.a,type="mesh3d")
-ewt.T31s <- ewt.T31s %>% layout(scene = list(xaxis=axx,yaxis=axy,zaxis=axz))
+ewt.T31s <- plot_ly(z = ~rbind(T31s$fleet,T31s$headway,T31s$ewt.a))
+ewt.T31s <- ewt.T31s %>% add_surface()
+ewt.T31s <- ewt.T31s %>% layout(
+  scene = list(xaxis=axx,yaxis=axy,zaxis=axz,aspectmode='cube'),
+  title = miniature_title
+)
 ewt.T31s
-
