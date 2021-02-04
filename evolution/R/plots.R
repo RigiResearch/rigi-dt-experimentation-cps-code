@@ -14,6 +14,7 @@ if (!require("ggplot2")) install.packages("ggplot2")
 if (!require("ggExtra")) install.packages("ggExtra")
 if (!require("grid")) install.packages("grid")
 if (!require("gridExtra")) install.packages("gridExtra")
+if (!require("plotly")) install.packages("plotly")
 
 library(lubridate)
 library(dplyr)
@@ -22,6 +23,7 @@ library(bbplot)
 library(ggExtra)
 library(grid)
 library(dict)
+library(plotly)
 
 ################################################
 # 2. Setup global variables
@@ -85,7 +87,7 @@ finalise_plot(plot_name = fitness_chart,
               height_pixels = height)
 
 ##
-## CH2. Excess waiting time
+## CH2. Excess waiting time (vs headway design)
 ##
 
 miniature_title = "Excess Waiting Time"
@@ -107,3 +109,52 @@ finalise_plot(plot_name = headway_ewt_chart,
               save_filepath = sprintf("%s/headway_ewt.pdf", dir),
               width_pixels = width,
               height_pixels = height)
+
+##
+## CH3. Excess waiting time (vs operating fleet size)
+##
+
+miniature_title = "Excess Waiting Time"
+miniature_subtitle = "Effect of operating fleet size on passenger waiting time"
+
+fleet_ewt_chart <- ggplot(results,aes(x=buses,y=ewt.a)) +
+  geom_point(aes(color = factor(line))) +
+  custom_style +
+  theme(legend.position="none") +
+  # Legend
+  scale_color_manual(values=colors) +
+  # Labels
+  labs(title=miniature_title,subtitle=miniature_subtitle) +
+  # Axis
+  scale_y_continuous("Excess waiting time") +
+  scale_x_continuous("Number of buses")
+
+finalise_plot(plot_name = fleet_ewt_chart,
+              save_filepath = sprintf("%s/fleet_ewt.pdf", dir),
+              width_pixels = width,
+              height_pixels = height)
+
+
+##
+## CH4. Excess waiting time (vs operating fleet size)
+##
+
+miniature_title = "Excess Waiting Time"
+miniature_subtitle = "Effect of operating fleet size and headway design on passenger waiting time"
+
+axx <- list(title = "Operating fleet size")
+axy <- list(title = "Bus headway")
+axz <- list(title = "Excess waiting time")
+
+ewt <- plot_ly(x=results$fleet,y=results$headway,z=results$ewt.a,type="scatter3d",color=results$line)
+ewt <- ewt %>% layout(scene = list(xaxis=axx,yaxis=axy,zaxis=axz))
+ewt
+
+ewt.T31n <- plot_ly(x=T31n$fleet,y=T31n$headway,z=T31n$ewt.a,type="mesh3d")
+ewt.T31n <- ewt.T31n %>% layout(scene = list(xaxis=axx,yaxis=axy,zaxis=axz))
+ewt.T31n
+
+ewt.T31s <- plot_ly(x=T31s$fleet,y=T31s$headway,z=T31s$ewt.a,type="mesh3d")
+ewt.T31s <- ewt.T31s %>% layout(scene = list(xaxis=axx,yaxis=axy,zaxis=axz))
+ewt.T31s
+
