@@ -2,8 +2,9 @@ package com.rigiresearch.middleware.graph;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.xml.bind.JAXBException;
@@ -66,7 +67,7 @@ final class GraphParserTest {
     @Test
     void testSimpleGraphWithBindings() throws JAXBException {
         final Set<Node> nodes = new TreeSet<>();
-        final Set<Property> metadata = new TreeSet<>();
+        final List<Property> metadata = new ArrayList<>();
         metadata.add(new Property("key", "value"));
         nodes.add(new Node("test", Collections.emptySet(), metadata));
         final Graph<Node> graph = new Graph<>(nodes);
@@ -90,7 +91,7 @@ final class GraphParserTest {
 
     @Test
     void testComplexGraph() throws JAXBException {
-        final Set<Property> metadata = new HashSet<>(1);
+        final List<Property> metadata = new ArrayList<>(1);
         metadata.add(new Property("key", "value"));
         final Node simple = new Node(
             "simple",
@@ -103,7 +104,7 @@ final class GraphParserTest {
         final Node complex = new Node(
             "complex",
             parameters,
-            Collections.emptySet()
+            Collections.emptyList()
         );
         final Set<Node> nodes = new TreeSet<>();
         nodes.add(simple);

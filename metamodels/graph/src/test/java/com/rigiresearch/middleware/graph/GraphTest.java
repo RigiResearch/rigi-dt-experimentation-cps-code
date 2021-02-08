@@ -3,7 +3,9 @@ package com.rigiresearch.middleware.graph;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.xml.bind.SchemaOutputResolver;
@@ -45,13 +47,13 @@ final class GraphTest {
         final Node first = new Node(
             "first",
             Collections.emptySet(),
-            Collections.emptySet()
+            Collections.emptyList()
         );
         // Second node
         final Set<Parameter> sparams = new TreeSet<>();
         final Input input = new Input("input1", output.getName(), first);
         sparams.add(input);
-        final Node second = new Node("second", sparams, Collections.emptySet());
+        final Node second = new Node("second", sparams, Collections.emptyList());
         final Set<Node> nodes = new TreeSet<>();
         nodes.add(first);
         nodes.add(second);
@@ -84,8 +86,8 @@ final class GraphTest {
     @Test
     void testMetadata() {
         final Node first =
-            new Node("first", Collections.emptySet(), Collections.emptySet());
-        final Set<Property> metadata = new TreeSet<>();
+            new Node("first", Collections.emptySet(), Collections.emptyList());
+        final List<Property> metadata = new ArrayList<>();
         metadata.add(new Property("key", "value"));
         final Node second =
             new Node("second", Collections.emptySet(), metadata);
