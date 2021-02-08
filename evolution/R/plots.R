@@ -148,7 +148,7 @@ axz <- list(title = "EWT")
 
 # Separate plots
 ewt <- plot_ly(
-  x = results$fleet,
+  x = results$buses,
   y = results$headway,
   z = results$ewt.a,
   type= "scatter3d",
@@ -161,7 +161,7 @@ ewt <- ewt %>% layout(
 )
 ewt
 
-ewt.T31n <- plot_ly(z = ~rbind(T31n$fleet,T31n$headway,T31n$ewt.a))
+ewt.T31n <- plot_ly(z = ~rbind(T31n$buses,T31n$headway,T31n$ewt.a))
 ewt.T31n <- ewt.T31n %>% add_surface()
 ewt.T31n <- ewt.T31n %>% layout(
   scene = list(xaxis=axx,yaxis=axy,zaxis=axz,aspectmode='cube'),
@@ -169,7 +169,7 @@ ewt.T31n <- ewt.T31n %>% layout(
 )
 ewt.T31n
 
-ewt.T31s <- plot_ly(z = ~rbind(T31s$fleet,T31s$headway,T31s$ewt.a))
+ewt.T31s <- plot_ly(z = ~rbind(T31s$buses,T31s$headway,T31s$ewt.a))
 ewt.T31s <- ewt.T31s %>% add_surface()
 ewt.T31s <- ewt.T31s %>% layout(
   scene = list(xaxis=axx,yaxis=axy,zaxis=axz,aspectmode='cube'),
