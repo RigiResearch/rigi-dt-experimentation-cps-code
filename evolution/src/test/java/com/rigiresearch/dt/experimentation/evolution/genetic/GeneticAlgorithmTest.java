@@ -117,8 +117,8 @@ public class GeneticAlgorithmTest {
 
         GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm(config, graph, NUM_GENERATIONS);
 
-        EvolutionResults results = geneticAlgorithm.evolve(POPULATION_SIZE,STEADY_NUMBER,MUTATION_PROB,CROSSOVER_PROB);
-        System.out.println(results.getPhenotype());
+        EvolutionResults results = geneticAlgorithm.evolve(POPULATION_SIZE,STEADY_NUMBER,MUTATION_PROB,CROSSOVER_PROB, 1);
+        System.out.println(results.getResults());
         System.out.println(results.getStatistics());
         CSVUtil.writeCSV("sim-results.csv",results.getRecords());
 

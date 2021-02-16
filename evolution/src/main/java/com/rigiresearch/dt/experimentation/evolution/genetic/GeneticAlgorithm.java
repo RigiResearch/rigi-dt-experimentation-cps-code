@@ -11,15 +11,16 @@ import io.jenetics.DoubleGene;
 import io.jenetics.Genotype;
 import io.jenetics.IntegerChromosome;
 import io.jenetics.Mutator;
-import io.jenetics.Phenotype;
 import io.jenetics.RouletteWheelSelector;
 import io.jenetics.SinglePointCrossover;
 import io.jenetics.engine.Engine;
-import static io.jenetics.engine.EvolutionResult.toBestPhenotype;
+import io.jenetics.engine.EvolutionResult;
 import io.jenetics.engine.EvolutionStatistics;
 import io.jenetics.engine.Limits;
 import io.jenetics.stat.DoubleMomentStatistics;
+import io.jenetics.stat.MinMax;
 import io.jenetics.util.DoubleRange;
+import io.jenetics.util.ISeq;
 import io.jenetics.util.IntRange;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,9 +81,15 @@ public final class GeneticAlgorithm {
     public final static int LENGTH_WARM_UP = 100;
 
     /**
+     * The number of replicas.
+     */
+    private static final int NUM_REPLICAS = 10;
+
+    /**
      * The simulation recoreds.
      */
-    private List<Record> simulationRecords;
+    private List<Record> simulationRecords
+        ;
 
     /**
      * The encoding used to characterize a solution in the problem.
@@ -133,7 +140,7 @@ public final class GeneticAlgorithm {
      * The fitness function that defines the effectiveness of a transit system's configuration (chromosome).
      *
      * @param genotype The generated genotype in a generation.
-     * @return the effectiveness of a transit system's configuration (chromosome).
+     * @return The effectiveness of a transit system's configuration (chromosome).
      */
     private Double fitness(Genotype genotype) {
         int number = this.execution.incrementAndGet();
@@ -151,17 +158,13 @@ public final class GeneticAlgorithm {
                 lineId++;
             }
         }
-        // Configuration and execution of the simulation;
-        final DtSimulation simulation = new DtSimulation(graph, config);
-        simulation.setLengthOfReplication(LENGTH_REPLICATION);
-        simulation.setLengthOfWarmUp(LENGTH_WARM_UP);
-        simulation.run();
-        // Collection of metrics
-        final FitnessValue metrics = new FitnessValue(simulation, config);
-        // Obtaining the record
-        final Collection<Record> records = metrics.asRecords();
-        records.forEach(record -> record.put("number", number));
+        // Run the simulation replicas and collect the records
+        final Collection<Record> records = this.runReplicasAndCollectRecords(number);
+
+        // Store new records
         this.simulationRecords.addAll(records);
+
+        // Compute a fitness value by adding the replications' fitness values
         return records.stream()
             .map(record -> {
                 GeneticAlgorithm.LOGGER.info(record.asLog());
@@ -172,15 +175,46 @@ public final class GeneticAlgorithm {
             .sum();
     }
 
+    /**
+     * Run the simulation replicas and collect the records.
+     * @param number The execution number
+     * @return The collected records
+     */
+    private Collection<Record> runReplicasAndCollectRecords(final int number) {
+        // Run the simulation replicas and store the records
+        final Collection<Record> records = new ArrayList<>();
+        final AtomicInteger atomic = new AtomicInteger(1);
+        while (atomic.get() <= GeneticAlgorithm.NUM_REPLICAS) {
+            final int replica = atomic.getAndIncrement();
+
+            // Configuration and execution of the simulation;
+            final DtSimulation simulation = new DtSimulation(graph, config);
+            simulation.setLengthOfReplication(LENGTH_REPLICATION);
+            simulation.setLengthOfWarmUp(LENGTH_WARM_UP);
+            simulation.run();
+
+            // Collection of metrics
+            final FitnessValue metrics = new FitnessValue(simulation, config);
+            final Collection<Record> tmp = metrics.asRecords();
+            tmp.forEach(record -> {
+                record.put("number", number);
+                record.put("replica", replica);
+            });
+            records.addAll(tmp);
+        }
+        return records;
+    }
+
     /***
      * Allows to evolve the genetic algorithm and produce results.
      * @param populationSize The size of the population.
      * @param steadyNumber The number of steady evolutions before ending the algorithm.
      * @param mutationProb The mutation probability.
      * @param crossoverProb The crossover probability.
+     * @param results The number of results to collect
      * @return The evolution results.
      */
-    public EvolutionResults evolve(int populationSize, int steadyNumber, double mutationProb, double crossoverProb) {
+    public EvolutionResults evolve(int populationSize, int steadyNumber, double mutationProb, double crossoverProb, int results) {
         // Obtain the Jenetics engine for the generation.
         final Engine<DoubleGene, Double> engine = Engine.builder(this::fitness, encoding)
                 .populationSize(populationSize)
@@ -189,17 +223,20 @@ public final class GeneticAlgorithm {
                 .alterers(
                         new Mutator<>(mutationProb),
                         new SinglePointCrossover<>(crossoverProb))
-                .executor(Executors.newFixedThreadPool(10))
+                .executor(Executors.newSingleThreadExecutor())
                 .build();
 
         // Define the statistics to be collected.
         final EvolutionStatistics<Double, DoubleMomentStatistics> statistics = EvolutionStatistics.ofNumber();
-        // Run the algorithm
-        final Phenotype<DoubleGene, Double> phenotypeResult = engine.stream().limit((Limits.bySteadyFitness(steadyNumber))).limit(numGenerations).peek(statistics).collect(toBestPhenotype());
-        return new EvolutionResults(phenotypeResult, statistics, simulationRecords);
 
+        // Run the algorithm
+        final ISeq<EvolutionResult<DoubleGene, Double>> sequence = engine.stream()
+            .limit((Limits.bySteadyFitness(steadyNumber)))
+            .limit(numGenerations)
+            .peek(statistics)
+            .flatMap(MinMax.toStrictlyIncreasing())
+            .collect(ISeq.toISeq(results));
+        return new EvolutionResults(sequence, statistics, simulationRecords);
     }
 
 }
-
-

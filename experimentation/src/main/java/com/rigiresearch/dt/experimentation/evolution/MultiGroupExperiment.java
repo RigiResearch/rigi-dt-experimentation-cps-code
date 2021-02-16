@@ -19,13 +19,24 @@ import org.slf4j.LoggerFactory;
  * @since 0.1.0
  */
 @RequiredArgsConstructor
-public final class OneVarMultiGroupExperiment implements Experiment {
+public final class MultiGroupExperiment implements Experiment {
 
     /**
      * The logger.
      */
     private static final Logger LOGGER =
-        LoggerFactory.getLogger(OneVarMultiGroupExperiment.class);
+        LoggerFactory.getLogger(MultiGroupExperiment.class);
+
+    /**
+     * Error message for unsupported experiments.
+     */
+    private static final String UNSUPPORTED =
+        "Experiments with more than 1 factor are not supported yet";
+
+    /**
+     * The number of independent variables.
+     */
+    private final int factors;
 
     /**
      * The collected samples grouped by group id. Each measurement corresponds
@@ -55,7 +66,7 @@ public final class OneVarMultiGroupExperiment implements Experiment {
                 clusters = new DunnTest(this.data, this.alpha).test();
             }
         } else {
-            OneVarMultiGroupExperiment.LOGGER.warn(
+            MultiGroupExperiment.LOGGER.warn(
                 "There is no significant difference among groups"
             );
             clusters = new HashMap<>(0);
@@ -128,15 +139,18 @@ public final class OneVarMultiGroupExperiment implements Experiment {
         final boolean  significant;
         final TransposeDataCollection collection = Experiment.data(this.data);
         if (normal) {
-            // A one-way ANOVA is a type of statistical test that compares the
-            // variance in the group means within a sample whilst considering
-            // only one independent variable or factor. It is a hypothesis-based
-            // test, meaning that it aims to evaluate multiple mutually exclusive
-            // theories about our data.
-            significant = Anova.oneWayTestEqualVars(collection, this.alpha);
+            if (this.factors == 1) {
+                significant = Anova.oneWayTestEqualVars(collection, this.alpha);
+            } else {
+                throw new UnsupportedOperationException(MultiGroupExperiment.UNSUPPORTED);
+            }
         } else {
-            // The null hypothesis states that the population medians are all equal
-            significant = KruskalWallis.test(collection, this.alpha);
+            if (this.factors == 1) {
+                // The null hypothesis states that the population medians are all equal
+                significant = KruskalWallis.test(collection, this.alpha);
+            } else {
+                throw new UnsupportedOperationException(MultiGroupExperiment.UNSUPPORTED);
+            }
         }
         return significant;
     }

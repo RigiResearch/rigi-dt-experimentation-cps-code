@@ -50,3 +50,4 @@ tmp/
 !**/lib/*.jar
 !**/libs/**/*.jar
 
+.Rproj.user

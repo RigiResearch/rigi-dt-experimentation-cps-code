@@ -7,18 +7,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Tests {@link OneVarMultiGroupExperiment}.
+ * Tests {@link MultiGroupExperiment}.
  * @author Miguel Jimenez (miguel@uvic.ca)
  * @version $Id$
  * @since 0.1.0
  */
-class OneVarMultiGroupExperimentTest {
+class MultiGroupExperimentTest {
 
     /**
      * The logger.
      */
     private static final Logger LOGGER =
-        LoggerFactory.getLogger(OneVarMultiGroupExperimentTest.class);
+        LoggerFactory.getLogger(MultiGroupExperimentTest.class);
 
     @Test
     void testNormalData() {
@@ -30,9 +30,9 @@ class OneVarMultiGroupExperimentTest {
         samples.put("treat2", treatment2);
         samples.put("control", control);
         final ExperimentResult result =
-            new OneVarMultiGroupExperiment(samples, 0.05)
+            new MultiGroupExperiment(samples, 0.05)
             .result();
-        OneVarMultiGroupExperimentTest.LOGGER.info("\n{}", result);
+        MultiGroupExperimentTest.LOGGER.info("\n{}", result);
     }
 
     @Test
@@ -45,9 +45,9 @@ class OneVarMultiGroupExperimentTest {
         samples.put("treat2", treatment2);
         samples.put("control", control);
         final ExperimentResult result =
-            new OneVarMultiGroupExperiment(samples, 0.05)
+            new MultiGroupExperiment(samples, 0.05)
                 .result();
-        OneVarMultiGroupExperimentTest.LOGGER.info("\n{}", result);
+        MultiGroupExperimentTest.LOGGER.info("\n{}", result);
     }
 
 }

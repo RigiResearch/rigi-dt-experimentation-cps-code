@@ -7,7 +7,6 @@ sourceCompatibility = 11
 targetCompatibility = 11
 
 dependencies {
-    // api "org.apache.commons:commons-math3:3.6.1"
     api "org.apache.commons:commons-lang3:3.11"
     api "com.datumbox:datumbox-framework-lib:0.8.2"
     api "net.sourceforge.jdistlib:jdistlib:0.4.5"

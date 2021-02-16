@@ -50,6 +50,12 @@ subprojects { project ->
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
+    repositories {
+        flatDir {
+            dirs "$rootDir/libs"
+        }
+    }
+
     dependencies {
         // Tests
         testImplementation 'org.junit.jupiter:junit-jupiter:5.4.2'

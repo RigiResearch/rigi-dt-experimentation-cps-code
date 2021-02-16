@@ -1,0 +1,10 @@
+plugins {
+    id "java-library"
+}
+
+dependencies {
+    implementation project(":experimentation")
+    implementation project(":evolution")
+    implementation project(":simulation")
+    implementation project(":differentiation:differentiation.parser")
+}

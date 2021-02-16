@@ -1,0 +1,8 @@
+plugins {
+    id "java-library"
+}
+
+dependencies {
+    api project(":differentiation:differentiation.model")
+    api "net.objecthunter:exp4j:0.4.8"
+}

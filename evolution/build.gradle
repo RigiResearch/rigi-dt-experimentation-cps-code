@@ -13,9 +13,6 @@ repositories {
     maven {
         url "https://archiva.uark.edu/repository/jsl"
     }
-    flatDir {
-        dirs "libs"
-    }
     maven {
         url "https://jitpack.io"
     }
@@ -26,7 +23,8 @@ dependencies {
     implementation project(":metamodels")
     implementation project(":metamodels:graph")
     implementation project(":simulation")
-    implementation name: "jautodiff-parser-0.0.1-SNAPSHOT-all"
+    implementation project(":differentiation:differentiation.model")
+    implementation project(":differentiation:differentiation.parser")
     // Evolutionary algorithms
     implementation "io.jenetics:jenetics:6.1.0"
     implementation "io.jenetics:jenetics.prog:6.1.0"
