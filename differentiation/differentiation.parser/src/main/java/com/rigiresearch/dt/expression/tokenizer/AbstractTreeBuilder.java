@@ -195,7 +195,7 @@ public final class AbstractTreeBuilder<X extends RealNumber<X>> {
 		final Optional<Variable<X>> optional = Arrays.stream(this.variables)
 			.filter(tmp -> tmp.getName().equals(variable.getName()))
 			.findFirst();
-		if (optional.isEmpty()) {
+		if (!optional.isPresent()) {
 			throw new IllegalStateException(
 				String.format("Unknown variable '%s'", variable.getName())
 			);
