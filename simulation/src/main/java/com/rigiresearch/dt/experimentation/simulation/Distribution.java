@@ -8,15 +8,19 @@ import lombok.Getter;
 @Getter
 public enum Distribution {
     BERNOULLI,
+    BETA,
     BINOMIAL,
     CONSTANT,
     EMPIRICAL,
+    EXPONENTIAL,
+    LAPLACE,
     UNIFORM,
     GEOMETRIC,
     NEGATIVE_BINOMIAL,
     POISSON,
     SHIFTED_GEOMETRIC,
-    UPDATABLE_CONSTANT;
+    UPDATABLE_CONSTANT,
+    WEIBULL;
 
     /**
      * Returns the appropriate constant based on its name.
@@ -29,6 +33,9 @@ public enum Distribution {
             case "BernoulliRV":
                 distribution = Distribution.BERNOULLI;
                 break;
+            case "BetaRV":
+                distribution = Distribution.BETA;
+                break;
             case "BinomialRV":
                 distribution = Distribution.BINOMIAL;
                 break;
@@ -37,6 +44,12 @@ public enum Distribution {
                 break;
             case "DEmpiricalRV":
                 distribution = Distribution.EMPIRICAL;
+                break;
+            case "ExponentialRV":
+                distribution = Distribution.EXPONENTIAL;
+                break;
+            case "LogLaplaceRV":
+                distribution = Distribution.LAPLACE;
                 break;
             case "DUniformRV":
                 distribution = Distribution.UNIFORM;
@@ -55,6 +68,9 @@ public enum Distribution {
                 break;
             case "VConstantRV":
                 distribution = Distribution.UPDATABLE_CONSTANT;
+                break;
+            case "WeibullRV":
+                distribution = Distribution.WEIBULL;
                 break;
             default:
                 throw new IllegalArgumentException(

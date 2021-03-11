@@ -6,15 +6,19 @@ import java.util.function.Function;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.ModelElement;
 import jsl.utilities.random.rvariable.BernoulliRV;
+import jsl.utilities.random.rvariable.BetaRV;
 import jsl.utilities.random.rvariable.BinomialRV;
 import jsl.utilities.random.rvariable.ConstantRV;
 import jsl.utilities.random.rvariable.DEmpiricalRV;
 import jsl.utilities.random.rvariable.DUniformRV;
+import jsl.utilities.random.rvariable.ExponentialRV;
 import jsl.utilities.random.rvariable.GeometricRV;
+import jsl.utilities.random.rvariable.LaplaceRV;
 import jsl.utilities.random.rvariable.NegativeBinomialRV;
 import jsl.utilities.random.rvariable.PoissonRV;
 import jsl.utilities.random.rvariable.ShiftedGeometricRV;
 import jsl.utilities.random.rvariable.VConstantRV;
+import jsl.utilities.random.rvariable.WeibullRV;
 import org.apache.commons.configuration2.Configuration;
 
 /**
@@ -104,6 +108,17 @@ public final class RandomVariableFactory {
                         name
                     );
                 break;
+            case BETA:
+                function = element ->
+                    new RandomVariable(
+                        element,
+                        new BetaRV(
+                            config.getDouble("alpha1"),
+                            config.getDouble("alpha2")
+                        ),
+                        name
+                    );
+                break;
             case BINOMIAL:
                 function = element ->
                     new RandomVariable(
@@ -130,6 +145,25 @@ public final class RandomVariableFactory {
                         new DEmpiricalRV(
                             (double[]) config.getArray(double.class, "value"),
                             (double[]) config.getArray(double.class, "cdf")
+                        ),
+                        name
+                    );
+                break;
+            case EXPONENTIAL:
+                function = element ->
+                    new RandomVariable(
+                        element,
+                        new ExponentialRV(config.getDouble("mean")),
+                        name
+                    );
+                break;
+            case LAPLACE:
+                function = element ->
+                    new RandomVariable(
+                        element,
+                        new LaplaceRV(
+                            config.getDouble("mean"),
+                            config.getDouble("scale")
                         ),
                         name
                     );
@@ -185,6 +219,17 @@ public final class RandomVariableFactory {
                     new RandomVariable(
                         element,
                         new VConstantRV(config.getDouble("value")),
+                        name
+                    );
+                break;
+            case WEIBULL:
+                function = element ->
+                    new RandomVariable(
+                        element,
+                        new WeibullRV(
+                            config.getDouble("shape"),
+                            config.getDouble("scale")
+                        ),
                         name
                     );
                 break;
