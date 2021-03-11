@@ -48,7 +48,7 @@ public enum Distribution {
             case "ExponentialRV":
                 distribution = Distribution.EXPONENTIAL;
                 break;
-            case "LogLaplaceRV":
+            case "LaplaceRV":
                 distribution = Distribution.LAPLACE;
                 break;
             case "DUniformRV":
