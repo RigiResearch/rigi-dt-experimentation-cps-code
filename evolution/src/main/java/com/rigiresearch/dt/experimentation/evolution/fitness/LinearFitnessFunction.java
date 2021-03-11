@@ -40,9 +40,10 @@ public final class LinearFitnessFunction implements FitnessFunction {
         }
         final double result;
         if (arg.get().getValue() - this.min >= LinearFitnessFunction.EPSILON) {
-            result = arg.get().getValue();
+            // Make it negative to maximize the value
+            result = -arg.get().getValue();
         } else {
-            result = Double.MAX_VALUE;
+            result = Double.MIN_VALUE;
         }
         return result;
     }
