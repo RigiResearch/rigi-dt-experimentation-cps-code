@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A linear fitness function with a lower bound.
@@ -13,6 +15,12 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public final class LinearFitnessFunction implements FitnessFunction {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(LinearFitnessFunction.class);
 
     /**
      * A constant to compare doubles.
@@ -43,6 +51,8 @@ public final class LinearFitnessFunction implements FitnessFunction {
             // Make it negative to maximize the value
             result = -arg.get().getValue();
         } else {
+            LOGGER.warn("Value {} is below the minimum boundary ({}) = Double.MIN_VALUE",
+                arg.get().getValue(), this.min);
             result = Double.MIN_VALUE;
         }
         return result;

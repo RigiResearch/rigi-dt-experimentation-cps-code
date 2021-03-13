@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Defines a cubic fitness function to reward minimizing certain variable.
@@ -12,6 +14,12 @@ import java.util.Optional;
  * @since 0.1.0
  */
 public final class CubicFitnessFunction implements FitnessFunction {
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOGGER =
+        LoggerFactory.getLogger(CubicFitnessFunction.class);
 
     /**
      * The lower bound in the x axis.
@@ -72,8 +80,10 @@ public final class CubicFitnessFunction implements FitnessFunction {
             y = -10.0 * StrictMath.pow(x.subtract(this.b).doubleValue(), 3.0);
         } else if (x.compareTo(this.a) < 0) {
             y = Double.NEGATIVE_INFINITY;
+            LOGGER.warn("Value {} is below the minimum boundary ({}) = -Inf", x, this.a);
         } else {
             y = Double.POSITIVE_INFINITY;
+            LOGGER.warn("Value {} is above the maximum boundary ({}) = +Inf", x, this.c);
         }
         return y;
     }
