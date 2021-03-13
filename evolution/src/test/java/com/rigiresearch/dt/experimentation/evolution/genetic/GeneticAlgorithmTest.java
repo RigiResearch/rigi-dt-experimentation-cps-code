@@ -84,22 +84,13 @@ public class GeneticAlgorithmTest {
         final Graph<Node> graph = loadGraph();
 
         Assertions.assertEquals(
-                2L,
+                1L,
                 graph.getNodes()
                         .stream()
                         .filter(Line.class::isInstance)
                         .map(Line.class::cast)
                         .count(),
-                "Expected 2 lines"
-        );
-        Assertions.assertEquals(
-                3L,
-                graph.getNodes()
-                        .stream()
-                        .filter(Station.class::isInstance)
-                        .map(Station.class::cast)
-                        .count(),
-                "Expected 3 stations"
+                "Expected 1 lines"
         );
         Assertions.assertEquals(
                 4L,
@@ -107,10 +98,19 @@ public class GeneticAlgorithmTest {
                         .stream()
                         .filter(Station.class::isInstance)
                         .map(Station.class::cast)
+                        .count(),
+                "Expected 4 stations"
+        );
+        Assertions.assertEquals(
+                3L,
+                graph.getNodes()
+                        .stream()
+                        .filter(Station.class::isInstance)
+                        .map(Station.class::cast)
                         .map(Station::getMetadata)
                         .mapToLong(Collection::size)
                         .sum(),
-                "Expected 4 segments"
+                "Expected 3 segments"
         );
 
         final Configuration config = config();

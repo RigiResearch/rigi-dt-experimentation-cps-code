@@ -13,7 +13,9 @@ public enum Distribution {
     CONSTANT,
     EMPIRICAL,
     EXPONENTIAL,
+    GAMMA,
     LAPLACE,
+    LOG_LOGISTIC,
     UNIFORM,
     GEOMETRIC,
     NEGATIVE_BINOMIAL,
@@ -48,8 +50,14 @@ public enum Distribution {
             case "ExponentialRV":
                 distribution = Distribution.EXPONENTIAL;
                 break;
+            case "GammaRV":
+                distribution = Distribution.GAMMA;
+                break;
             case "LaplaceRV":
                 distribution = Distribution.LAPLACE;
+                break;
+            case "LogLogisticRV":
+                distribution = Distribution.LOG_LOGISTIC;
                 break;
             case "DUniformRV":
                 distribution = Distribution.UNIFORM;

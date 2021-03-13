@@ -5,20 +5,7 @@ import com.rigiresearch.dt.experimentation.simulation.graph.Stop;
 import java.util.function.Function;
 import jsl.modeling.elements.variable.RandomVariable;
 import jsl.simulation.ModelElement;
-import jsl.utilities.random.rvariable.BernoulliRV;
-import jsl.utilities.random.rvariable.BetaRV;
-import jsl.utilities.random.rvariable.BinomialRV;
-import jsl.utilities.random.rvariable.ConstantRV;
-import jsl.utilities.random.rvariable.DEmpiricalRV;
-import jsl.utilities.random.rvariable.DUniformRV;
-import jsl.utilities.random.rvariable.ExponentialRV;
-import jsl.utilities.random.rvariable.GeometricRV;
-import jsl.utilities.random.rvariable.LaplaceRV;
-import jsl.utilities.random.rvariable.NegativeBinomialRV;
-import jsl.utilities.random.rvariable.PoissonRV;
-import jsl.utilities.random.rvariable.ShiftedGeometricRV;
-import jsl.utilities.random.rvariable.VConstantRV;
-import jsl.utilities.random.rvariable.WeibullRV;
+import jsl.utilities.random.rvariable.*;
 import org.apache.commons.configuration2.Configuration;
 
 /**
@@ -157,6 +144,17 @@ public final class RandomVariableFactory {
                         name
                     );
                 break;
+            case GAMMA:
+                function = element ->
+                        new RandomVariable(
+                                element,
+                                new GammaRV(
+                                        config.getDouble("shape"),
+                                        config.getDouble("scale")
+                                ),
+                                name
+                        );
+                break;
             case LAPLACE:
                 function = element ->
                     new RandomVariable(
@@ -167,6 +165,17 @@ public final class RandomVariableFactory {
                         ),
                         name
                     );
+                break;
+            case LOG_LOGISTIC:
+                function = element ->
+                        new RandomVariable(
+                                element,
+                                new LogLogisticRV(
+                                        config.getDouble("shape"),
+                                        config.getDouble("scale")
+                                ),
+                                name
+                        );
                 break;
             case UNIFORM:
                 function = element ->
