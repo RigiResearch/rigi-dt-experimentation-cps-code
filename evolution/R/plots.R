@@ -51,12 +51,18 @@ custom_style <- bbc_style() + # theme_minimal()
   theme(axis.text.x=element_text(size=9,color="#666666"))
 
 results = read.csv("../sim-results.csv")
+# Remove column "line"
+results = subset(results, select=-c(line))
 min_seq = min(results$number)
 max_seq = max(results$number)
 
-# Filtered data by result type
-T31n <- results[grep("T31n",results$line),]
-T31s <- results[grep("T31s",results$line),]
+# Average replica data by simulation number (sim. number is unique)
+# ewt.a = aggregate(ewt.a ~ number, results, mean)
+results.averaged <- results %>% group_by(number) %>% summarise_each(funs(mean))
+results.averaged = subset(results.averaged, select=-c(replica))
+results.averaged$line = "T31s"
+
+T31s <- results.averaged[grep("T31s",results.averaged$line),]
 
 ################################################
 # 3. Charts
@@ -69,7 +75,7 @@ T31s <- results[grep("T31s",results$line),]
 miniature_title = "Overall Fitness Performance"
 miniature_subtitle = "Fitness progression over (simulated) time"
 
-fitness_chart <- ggplot(results,aes(x=number,y=simulation.fitness)) +
+fitness_chart <- ggplot(results.averaged,aes(x=number,y=simulation.fitness)) +
   geom_line(size=1) +
   custom_style +
   theme(legend.position="none") +
@@ -93,7 +99,7 @@ finalise_plot(plot_name = fitness_chart,
 miniature_title = "Excess Waiting Time"
 miniature_subtitle = "Effect of headway design on passenger waiting time"
 
-headway_ewt_chart <- ggplot(results,aes(x=headway,y=ewt.a)) +
+headway_ewt_chart <- ggplot(results.averaged,aes(x=headway,y=ewt.a)) +
   geom_point(aes(color = factor(line))) +
   custom_style +
   theme(legend.position="none") +
@@ -117,7 +123,7 @@ finalise_plot(plot_name = headway_ewt_chart,
 miniature_title = "Excess Waiting Time"
 miniature_subtitle = "Effect of operating fleet size on passenger waiting time"
 
-fleet_ewt_chart <- ggplot(results,aes(x=buses,y=ewt.a)) +
+fleet_ewt_chart <- ggplot(results.averaged,aes(x=buses,y=ewt.a)) +
   geom_point(aes(color = factor(line))) +
   custom_style +
   theme(legend.position="none") +
@@ -148,26 +154,18 @@ axz <- list(title = "EWT")
 
 # Separate plots
 ewt <- plot_ly(
-  x = results$buses,
-  y = results$headway,
-  z = results$ewt.a,
+  x = results.averaged$buses,
+  y = results.averaged$headway,
+  z = results.averaged$ewt.a,
   type= "scatter3d",
   mode = "markers",
-  color = results$line
+  color = results.averaged$line
 )
 ewt <- ewt %>% layout(
   scene = list(xaxis=axx,yaxis=axy,zaxis=axz,aspectmode='cube'),
   title = miniature_title
 )
 ewt
-
-ewt.T31n <- plot_ly(z = ~rbind(T31n$buses,T31n$headway,T31n$ewt.a))
-ewt.T31n <- ewt.T31n %>% add_surface()
-ewt.T31n <- ewt.T31n %>% layout(
-  scene = list(xaxis=axx,yaxis=axy,zaxis=axz,aspectmode='cube'),
-  title = miniature_title
-)
-ewt.T31n
 
 ewt.T31s <- plot_ly(z = ~rbind(T31s$buses,T31s$headway,T31s$ewt.a))
 ewt.T31s <- ewt.T31s %>% add_surface()
