@@ -128,8 +128,9 @@ public final class LineStopSchedulingElement extends SchedulingElement {
         );
         this.ql = new Statistic(qlname);
         this.ql.setSaveOption(true);
-        // TODO The number of passengers to create could be a config property
-        this.passengers = this.createPassengers(100);
+        this.passengers = this.createPassengers(
+            config.getInt("simulation.params.passengers")
+        );
     }
 
     @Override
