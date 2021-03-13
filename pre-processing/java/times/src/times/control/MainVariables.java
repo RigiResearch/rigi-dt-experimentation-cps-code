@@ -18,11 +18,14 @@ import times.model.Datagram;
 import times.model.SITMStop;
 
 public class MainVariables {
+	private static final String PATH = Paths.get("").toAbsolutePath().getParent().getParent().toString().concat(File.separator).concat("resources").concat(File.separator);
+	private static final String PATH_STOPS = PATH.concat("stops.csv");
+	private static final String PATH_LINESTOPS = PATH.concat("linestops.csv");
 	private static final boolean PRINT_INFO = false;
 	private static final long[] STOPS = {
 										 // North -> South
-										 AnalyzedStops.PASO_COMERCIO_A2.getStopId(),
-										 AnalyzedStops.PASO_COMERCIO_B3.getStopId()
+										 //AnalyzedStops.PASO_COMERCIO_A2.getStopId(),
+										   AnalyzedStops.CHIMINANGOS_A2.getStopId()
 										 //AnalyzedStops.FLORA_A1.getStopId(),
 										 //AnalyzedStops.SALOMIA_A1.getStopId(),
 										 //AnalyzedStops.POPULAR_A1.getStopId(),
@@ -37,7 +40,7 @@ public class MainVariables {
 										 //AnalyzedStops.CHIMINANGOS_B1.getStopId(),
 										 //AnalyzedStops.PASO_COMERCIO_B3.getStopId()
 										 };
-	private static final String FILENAME = /*System.getProperty("user.home") + */ Paths.get("").toAbsolutePath().toString() + File.separator + "data" + File.separator + "interarrivalTimes.csv";
+	private static final String FILENAME = PATH + "interarrivalTimes.csv";
 
 	public static HashMap<Long, SITMStop> stops; // HashMap with the stops
 	public static HashMap<Long, ArrayList<Datagram>> stopsBuses; // HashMap with the array of buses in one stop
@@ -45,27 +48,27 @@ public class MainVariables {
 	public static HashMap<Long, ArrayList<Long[]>> stopsWaitingTimes; // Excess Waiting Time at Bus stop
 	public static HashMap<Long, ArrayList<Long[]>> busesWaitingTimes; // Bus Stop Time
 
-	public static void main(String[] args) throws ParseException {
-		System.out.println(FILENAME);
+	public static void main(String[] args) {
 		try {
 			ArrayList<String> interarrivalTimes = new ArrayList<String>();
 			for(long stop : STOPS) {
-				init(131);
-				readDatagrams(131, stop);
+				init(131,PATH_STOPS,PATH_LINESTOPS);
+				readDatagrams(131, stop,PATH.concat("datagrams_generated.csv"));
 				postAnalysis(stop, interarrivalTimes);
 			}
 			saveResults(interarrivalTimes);
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 
 	/*
 	 * This method initialize the hash maps with the necessaries stop ids and arrays
 	 */
-	public static void init(long lineId) {
+	public static void init(long lineId, String stopsPath, String pathLineStops) {
 
-		ArrayList<SITMStop> stopsQuery = DataSource.findAllStopsByLine(261, lineId);
+		ArrayList<SITMStop> stopsQuery = DataSource.findAllStopsByLine(261, lineId, stopsPath, pathLineStops);
 		stops = new HashMap<>();
 		stopsBuses = new HashMap<>();
 
@@ -86,9 +89,7 @@ public class MainVariables {
 	/*
 	 * This method read the datagrams file
 	 */
-	public static void readDatagrams(long lineId, long observerStop) throws ParseException {
-
-		String path = "data/datagrams_generated.csv";
+	public static void readDatagrams(long lineId, long observerStop, String path) throws ParseException {
 		ArrayList<Datagram> datagrams = DataSource.readDatagrams3(lineId, path, PRINT_INFO);
 
 		for (int n = 0; n < datagrams.size(); n++) {

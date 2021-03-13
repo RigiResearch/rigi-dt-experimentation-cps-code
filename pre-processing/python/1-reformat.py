@@ -6,6 +6,10 @@ Created on Thu Mar 11 19:29:41 2021
 """
 
 import pandas as pd
+import os
+
+os.chdir("../resources")
+path = os.getcwd()
 
 file = 'output-02-APR-19-awk-sorted.csv'
 date_format_csv = '%Y-%m-%d %H:%M:%S'

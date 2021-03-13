@@ -6,6 +6,10 @@ Created on Thu Mar 11 10:18:06 2021
 """
 
 import pandas as pd
+import os
+
+mycwd = os.getcwd()
+os.chdir("../resources")
 
 # Orientation: 0 = South -> North ; 1 = North -> South
 orientation = 0

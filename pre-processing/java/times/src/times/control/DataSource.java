@@ -182,14 +182,13 @@ public class DataSource {
 		return day+" "+hour+minSec;
 	}
 	
-	public static ArrayList<SITMLineStop> findAllLineStopByPlanVersion(long planVersionId) {
+	public static ArrayList<SITMLineStop> findAllLineStopByPlanVersion(long planVersionId, String pathLineStops) {
 
-		String path = new File("data/linestops.csv").getAbsolutePath();
 		ArrayList<SITMLineStop> lineStops = new ArrayList<>();
 
 		BufferedReader br;
 		try {
-			br = new BufferedReader(new FileReader(path));
+			br = new BufferedReader(new FileReader(pathLineStops));
 			String[] columns = null;
 			String line = br.readLine();
 			line = br.readLine();
@@ -224,15 +223,14 @@ public class DataSource {
 		return lineStops;
 	}
 
-	public static ArrayList<SITMStop> findAllStopsByPlanVersion(long planVersionId) {
+	public static ArrayList<SITMStop> findAllStopsByPlanVersion(long planVersionId, String stopsPath) {
 
 		ArrayList<SITMStop> stops = new ArrayList<>();
-		String path = new File("data/stops.csv").getAbsolutePath();
 
 		BufferedReader br;
 
 		try {
-			br = new BufferedReader(new FileReader(path));
+			br = new BufferedReader(new FileReader(stopsPath));
 			String[] columns = null;
 			String line = br.readLine();
 			line = br.readLine();
@@ -285,11 +283,11 @@ public class DataSource {
 		return stops;
 	}
 
-	public static ArrayList<SITMStop> findAllStopsByLine(long planVersionId, long lineId) {
+	public static ArrayList<SITMStop> findAllStopsByLine(long planVersionId, long lineId, String stopsPath, String pathLineStops) {
 
 		ArrayList<SITMStop> stopsByLine = new ArrayList<>();
-		ArrayList<SITMStop> stops = findAllStopsByPlanVersion(planVersionId);
-		ArrayList<SITMLineStop> lineStops = findAllLineStopByPlanVersion(planVersionId);
+		ArrayList<SITMStop> stops = findAllStopsByPlanVersion(planVersionId,stopsPath);
+		ArrayList<SITMLineStop> lineStops = findAllLineStopByPlanVersion(planVersionId, pathLineStops);
 
 		for (int i = 0; i < lineStops.size(); i++) {
 			SITMLineStop lineStop = (SITMLineStop) lineStops.get(i);
