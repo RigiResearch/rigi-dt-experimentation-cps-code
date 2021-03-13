@@ -83,7 +83,7 @@ public final class GeneticAlgorithm {
     /**
      * The number of replicas.
      */
-    private static final int NUM_REPLICAS = 10;
+    private static final int NUM_REPLICAS = 5;
 
     /**
      * The simulation recoreds.
