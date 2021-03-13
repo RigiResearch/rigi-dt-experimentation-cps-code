@@ -73,7 +73,7 @@ public final class GeneticAlgorithm {
     /**
      * The length of the replication of the simulations.
      */
-    public final static int LENGTH_REPLICATION = 100;
+    public final static int LENGTH_REPLICATION = 15000;
 
     /**
      * The length of the replication of the warm up of the simulations.
