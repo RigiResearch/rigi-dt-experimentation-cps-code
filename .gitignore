@@ -29,6 +29,7 @@ fabric.properties
 
 ### Others ###
 
+.csv
 Thumbs.db
 .DS_Store
 .gradle
