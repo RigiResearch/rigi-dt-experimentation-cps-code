@@ -15,6 +15,6 @@
   <root level="info">
     <appender-ref ref="STDOUT"/>
   </root>
-  <logger name="com.rigiresearch" level="warn"/>
+  <logger name="com.rigiresearch" level="info"/>
   <logger name="jsl.utilities.reporting" level="error"/>
 </configuration>
