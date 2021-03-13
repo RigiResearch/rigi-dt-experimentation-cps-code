@@ -106,6 +106,7 @@ public final class FitnessValue {
                     )
                 )
             );
+        final double maxEwt = config.getDouble("fitness.params.ewt.max");
         this.ewt = new ExcessWaitingTime(simulation, headways);
         this.hcv = new HeadwayCoefficientOfVariation(simulation);
         this.olh = new ObservedLineHeadway(simulation);
@@ -116,7 +117,7 @@ public final class FitnessValue {
                 .withFunction(new NormalizedFitnessFunction(minHeadway, maxHeadway, FitnessValue.OLH), 0.3)
                 .withFunction(new LinearFitnessFunction(0.0, FitnessValue.HCV), 0.1)
                 .withFunction(new LinearFitnessFunction(0.0, FitnessValue.VEWT), 0.1)
-                .withFunction(new NormalizedFitnessFunction(0.0, 30.0, FitnessValue.EWT), 0.3)
+                .withFunction(new NormalizedFitnessFunction(0.0, maxEwt, FitnessValue.EWT), 0.3)
                 .validate();
     }
 
