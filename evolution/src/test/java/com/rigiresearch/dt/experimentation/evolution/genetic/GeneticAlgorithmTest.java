@@ -49,7 +49,7 @@ public class GeneticAlgorithmTest {
     /**
      * The number of generations for the genetic algorithm.
      */
-    private final int NUM_GENERATIONS = 10;
+    private final int NUM_GENERATIONS = 100;
 
     /**
      * The size of the population.
@@ -59,12 +59,12 @@ public class GeneticAlgorithmTest {
     /**
      * The number of consecutive evolutions that produce similar results before stopping the algorithm.
      */
-    private final int STEADY_NUMBER = 7;
+    private final int STEADY_NUMBER = 5;
 
     /**
      * The mutation probability.
      */
-    private final double MUTATION_PROB = 0.10;
+    private final double MUTATION_PROB = 0.01;
 
     /**
      * The crossover probability.
@@ -120,7 +120,9 @@ public class GeneticAlgorithmTest {
         EvolutionResults results = geneticAlgorithm.evolve(POPULATION_SIZE,STEADY_NUMBER,MUTATION_PROB,CROSSOVER_PROB, 1);
         System.out.println(results.getResults());
         System.out.println(results.getStatistics());
+
         CSVUtil.writeCSV("sim-results.csv",results.getRecords());
+        CSVUtil.writeCSV("fitness-results.csv",results.getFrecords());
 
     }
 

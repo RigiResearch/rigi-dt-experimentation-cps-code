@@ -35,6 +35,11 @@ public final class EvolutionResults {
     private final List<Record> records;
 
     /**
+     * Fitness values of the best phenotype per generation.
+     */
+    private final List<Record> frecords;
+
+    /**
      * Constructor of the class.
      *
      * @param results A sequence of evolution results.
@@ -43,9 +48,10 @@ public final class EvolutionResults {
      */
     public EvolutionResults(final ISeq<EvolutionResult<DoubleGene, Double>> results,
         EvolutionStatistics<Double, DoubleMomentStatistics> statistics,
-        List<Record> records) {
+        List<Record> records, final List<Record> frecords) {
         this.results = results;
         this.statistics = statistics;
         this.records = records;
+        this.frecords = frecords;
     }
 }

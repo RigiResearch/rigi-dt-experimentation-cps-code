@@ -83,7 +83,7 @@ public final class GeneticAlgorithm {
     /**
      * The number of replicas.
      */
-    private static final int NUM_REPLICAS = 10;
+    private static final int NUM_REPLICAS = 1;
 
     /**
      * The simulation recoreds.
@@ -229,14 +229,23 @@ public final class GeneticAlgorithm {
         // Define the statistics to be collected.
         final EvolutionStatistics<Double, DoubleMomentStatistics> statistics = EvolutionStatistics.ofNumber();
 
+        final List<Record> frecords = new ArrayList<>();
+        final AtomicInteger generation = new AtomicInteger(0);
+
         // Run the algorithm
         final ISeq<EvolutionResult<DoubleGene, Double>> sequence = engine.stream()
-            .limit((Limits.bySteadyFitness(steadyNumber)))
-            .limit(numGenerations)
+            .limit(Limits.bySteadyFitness(steadyNumber))
+            .limit(Limits.byFixedGeneration(numGenerations))
+            .peek(result -> {
+                final Record frecord = new Record();
+                frecord.put("generation", generation.incrementAndGet());
+                frecord.put("fitness", result.bestFitness());
+                frecords.add(frecord);
+            })
             .peek(statistics)
             .flatMap(MinMax.toStrictlyIncreasing())
             .collect(ISeq.toISeq(results));
-        return new EvolutionResults(sequence, statistics, simulationRecords);
+        return new EvolutionResults(sequence, statistics, simulationRecords, frecords);
     }
 
 }
