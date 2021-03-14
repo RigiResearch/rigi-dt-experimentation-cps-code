@@ -48,26 +48,26 @@ public enum Distribution {
             case "DEmpiricalRV":
                 distribution = Distribution.EMPIRICAL;
                 break;
+            case "DUniformRV":
+                distribution = Distribution.UNIFORM;
+                break;
             case "ExponentialRV":
                 distribution = Distribution.EXPONENTIAL;
                 break;
             case "GammaRV":
                 distribution = Distribution.GAMMA;
                 break;
-            case "LaplaceRV":
-                distribution = Distribution.LAPLACE;
-                break;
-            case "LogLogisticRV":
-                distribution = Distribution.LOG_LOGISTIC;
-                break;
-            case "DUniformRV":
-                distribution = Distribution.UNIFORM;
-                break;
             case "GeometricRV":
                 distribution = Distribution.GEOMETRIC;
                 break;
             case "JohnsonBRV":
                 distribution = Distribution.JOHNSON;
+                break;
+            case "LaplaceRV":
+                distribution = Distribution.LAPLACE;
+                break;
+            case "LogLogisticRV":
+                distribution = Distribution.LOG_LOGISTIC;
                 break;
             case "NegativeBinomialRV":
                 distribution = Distribution.NEGATIVE_BINOMIAL;
