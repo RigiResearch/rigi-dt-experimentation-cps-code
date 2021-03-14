@@ -14,6 +14,7 @@ public enum Distribution {
     EMPIRICAL,
     EXPONENTIAL,
     GAMMA,
+    JOHNSON,
     LAPLACE,
     LOG_LOGISTIC,
     UNIFORM,
@@ -64,6 +65,9 @@ public enum Distribution {
                 break;
             case "GeometricRV":
                 distribution = Distribution.GEOMETRIC;
+                break;
+            case "JohnsonBRV":
+                distribution = Distribution.JOHNSON;
                 break;
             case "NegativeBinomialRV":
                 distribution = Distribution.NEGATIVE_BINOMIAL;

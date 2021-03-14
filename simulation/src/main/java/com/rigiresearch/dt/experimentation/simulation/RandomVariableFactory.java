@@ -155,6 +155,19 @@ public final class RandomVariableFactory {
                                 name
                         );
                 break;
+            case JOHNSON:
+                function = element ->
+                    new RandomVariable(
+                        element,
+                        new JohnsonBRV(
+                            config.getDouble("alpha1"),
+                            config.getDouble("alpha2"),
+                            config.getDouble("min"),
+                            config.getDouble("max")
+                        ),
+                        name
+                    );
+                break;
             case LAPLACE:
                 function = element ->
                     new RandomVariable(
