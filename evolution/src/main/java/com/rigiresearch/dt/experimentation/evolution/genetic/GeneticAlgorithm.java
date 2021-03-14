@@ -234,7 +234,7 @@ public final class GeneticAlgorithm {
 
         // Run the algorithm
         final ISeq<EvolutionResult<DoubleGene, Double>> sequence = engine.stream()
-            .limit(Limits.bySteadyFitness(steadyNumber))
+            //.limit(Limits.bySteadyFitness(steadyNumber))
             .limit(Limits.byFixedGeneration(numGenerations))
             .peek(result -> {
                 final Record frecord = new Record();
