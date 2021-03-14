@@ -20,7 +20,7 @@ lines = [131]
 
 # date boundaries
 lower_boundary = '2019-04-02 05:00'
-upper_boundary = '2019-04-02 11:00'
+upper_boundary = '2019-04-02 10:00'
 
 
 headers = ['event_type','short_datagram_date','stopId','odometer','latitude','longitude','taskId','lineId','tripId','unkown1','datagramDate','busId']

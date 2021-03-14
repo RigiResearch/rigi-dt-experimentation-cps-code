@@ -24,10 +24,10 @@ public class MainVariables {
 	private static final boolean PRINT_INFO = false;
 	private static final long[] STOPS = {
 										 // North -> South
-										 //AnalyzedStops.PASO_COMERCIO_A2.getStopId(),
-										   AnalyzedStops.CHIMINANGOS_A2.getStopId()
+										// AnalyzedStops.PASO_COMERCIO_A2.getStopId()
+										 //  AnalyzedStops.CHIMINANGOS_A2.getStopId()
 										 //AnalyzedStops.FLORA_A1.getStopId(),
-										 //AnalyzedStops.SALOMIA_A1.getStopId(),
+										 AnalyzedStops.SALOMIA_A1.getStopId()
 										 //AnalyzedStops.POPULAR_A1.getStopId(),
 										 //AnalyzedStops.UNIDAD_DEP_A2.getStopId(),
 										// South -> North
