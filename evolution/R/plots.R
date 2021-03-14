@@ -50,7 +50,7 @@ custom_style <- bbc_style() + # theme_minimal()
   theme(axis.text=element_text(size=11)) +
   theme(axis.text.x=element_text(size=9,color="#666666"))
 
-results = read.csv("../sim-results.csv")
+results = read.csv("results.csv")
 # Remove column "line"
 results = subset(results, select=-c(line))
 min_seq = min(results$number)
