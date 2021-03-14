@@ -29,7 +29,7 @@ fabric.properties
 
 ### Others ###
 
-*.csv
+**/pre-processing/resources/*.csv
 Thumbs.db
 .DS_Store
 .gradle
