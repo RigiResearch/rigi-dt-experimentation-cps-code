@@ -72,6 +72,9 @@ T31s <- results.averaged[grep("T31s",results.averaged$line),]
 
 ################################################
 
+replicas.ewt = subset(results, select=c(number,ewt.a))
+write.csv(replicas.ewt,'replicas-ewt.csv',row.names=FALSE)
+
 write.csv(results.averaged,'averaged-results.csv',row.names=FALSE)
 
 ################################################

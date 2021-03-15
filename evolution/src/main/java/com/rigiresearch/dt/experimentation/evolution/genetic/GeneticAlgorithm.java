@@ -11,7 +11,6 @@ import io.jenetics.DoubleGene;
 import io.jenetics.Genotype;
 import io.jenetics.IntegerChromosome;
 import io.jenetics.Mutator;
-import io.jenetics.RouletteWheelSelector;
 import io.jenetics.SinglePointCrossover;
 import io.jenetics.engine.Engine;
 import io.jenetics.engine.EvolutionResult;
@@ -219,7 +218,8 @@ public final class GeneticAlgorithm {
         final Engine<DoubleGene, Double> engine = Engine.builder(this::fitness, encoding)
                 .populationSize(populationSize)
                 .maximizing()
-                .selector(new RouletteWheelSelector<>())
+                // Uncomment this to turn on the optimization mode
+                // .selector(new RouletteWheelSelector<>())
                 .alterers(
                         new Mutator<>(mutationProb),
                         new SinglePointCrossover<>(crossoverProb))

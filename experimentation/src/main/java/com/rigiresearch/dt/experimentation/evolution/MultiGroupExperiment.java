@@ -95,6 +95,7 @@ public final class MultiGroupExperiment implements Experiment {
      * @return A non-null, possibly empty map
      */
     private Map<String, Boolean> normality() {
+        MultiGroupExperiment.LOGGER.info("Running the normality test");
         final Map<String, Boolean> map = new HashMap<>(this.data.size());
         this.data.forEach((key, value) -> {
             final boolean result = this.isNormalNonParametric(value);
@@ -108,6 +109,7 @@ public final class MultiGroupExperiment implements Experiment {
      * @return A non-null, possibly empty map
      */
     private Map<String, Mean> means() {
+        MultiGroupExperiment.LOGGER.info("Computing means");
         final Map<String, Mean> map = new HashMap<>(this.data.size());
         this.data.forEach((key, value) -> {
             final Mean mean = new Mean(value, this.alpha);
@@ -140,12 +142,14 @@ public final class MultiGroupExperiment implements Experiment {
         final TransposeDataCollection collection = Experiment.data(this.data);
         if (normal) {
             if (this.factors == 1) {
+                MultiGroupExperiment.LOGGER.info("Running one-way ANOVA");
                 significant = Anova.oneWayTestEqualVars(collection, this.alpha);
             } else {
                 throw new UnsupportedOperationException(MultiGroupExperiment.UNSUPPORTED);
             }
         } else {
             if (this.factors == 1) {
+                MultiGroupExperiment.LOGGER.info("Running Kruskal Wallis");
                 // The null hypothesis states that the population medians are all equal
                 significant = KruskalWallis.test(collection, this.alpha);
             } else {

@@ -60,6 +60,7 @@ public final class TukeyHSD {
      * @return A non-null, possibly empty map
      */
     public Map<Mean, Set<String>> test() {
+        TukeyHSD.LOGGER.info("Running TukeyHSD");
         final OutputStream useless = new ByteArrayOutputStream();
         final OutputStream output = new ByteArrayOutputStream();
         // We run the test twice to get the adjusted P values and the comparisons
