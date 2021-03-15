@@ -115,8 +115,8 @@ public final class SymbolicRegression {
             .builder(this.regression)
             .minimizing()
             .alterers(
-                new SingleNodeCrossover<>(0.1),
-                new Mutator<>())
+                new SingleNodeCrossover<>(0.5),
+                new Mutator<>(0.01))
             .build();
         final EvolutionResult<ProgramGene<Double>, Double> result = engine
             .stream()

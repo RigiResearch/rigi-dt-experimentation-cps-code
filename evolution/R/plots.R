@@ -43,7 +43,7 @@ dir = "charts"
 colors <- c("#1F77B4", "#FF7F0E", "#AEC7E8", "#FFBB78", "#2CA02C",
             "#98DF8A", "#D62728", "#FF9896", "#9467BD", "#C5B0D5",
             "#8C564B", "#E377C2", "#7F7F7F", "#BCBD22", "#17BECF")
-custom_style <- bbc_style() + # theme_minimal()
+custom_style <- theme_minimal() + # bbc_style()
   theme(legend.position="bottom") +
   theme(panel.grid.major.y=element_line(color="#eeeeee")) +
   theme(plot.title=element_text(size=18,color="#063376",hjust=0)) +
@@ -71,6 +71,10 @@ results.averaged$line = "T31s"
 T31s <- results.averaged[grep("T31s",results.averaged$line),]
 
 ################################################
+
+write.csv(results.averaged,'averaged-results.csv',row.names=FALSE)
+
+################################################
 # 3. Charts
 ################################################
 
@@ -79,7 +83,7 @@ T31s <- results.averaged[grep("T31s",results.averaged$line),]
 ##
 
 fitness_title = "Overall Fitness Performance"
-
+fitness_title = NULL
 fitness_chart <- ggplot(fitness,aes(x=generation,y=fitness)) +
   geom_line(size=1) +
   geom_smooth(method='lm',aes(color="#BADA55")) +
@@ -92,7 +96,7 @@ fitness_chart <- ggplot(fitness,aes(x=generation,y=fitness)) +
   labs(title=fitness_title) +
   # Axis
   scale_y_continuous("Fitness value") +
-  scale_x_continuous("Chromosome")
+  scale_x_continuous("Generation (Best chromosome)")
 
 finalise_plot(plot_name = fitness_chart,
               save_filepath = sprintf("%s/overall_fitness_performance.pdf", dir),
@@ -104,7 +108,7 @@ finalise_plot(plot_name = fitness_chart,
 ##
 
 headway_ewt_title = "Headway design vs EWT"
-
+headway_ewt_title = NULL
 headway_ewt_chart <- ggplot(results.averaged,aes(x=headway,y=ewt.a)) +
   geom_point(aes(color = factor(line))) +
   geom_smooth(method='lm',aes(color="#BADA55")) +
@@ -129,12 +133,13 @@ finalise_plot(plot_name = headway_ewt_chart,
 ##
 
 spline.d <- as.data.frame(spline(results.averaged$headway, results.averaged$ewt.a))
-headway_ewt_int_title = "Headway design vs EWT (interpolation)"
 
+headway_ewt_int_title = "Headway design vs EWT (interpolation)"
+headway_ewt_int_title = NULL
 headway_ewt_int_chart <- ggplot(results.averaged,aes(x=headway,y=ewt.a)) +
   geom_point(aes(color = factor(line))) +
   geom_line(data=spline.d, aes(x=x,y=y)) +
-  stat_cor(method = "pearson") +
+  # stat_cor(method = "pearson") +
   custom_style +
   theme(legend.position="none") +
   # Legend
@@ -150,12 +155,38 @@ finalise_plot(plot_name = headway_ewt_int_chart,
               width_pixels = width,
               height_pixels = height)
 
+
+approximated <- function (x) {
+  sqrt(9.0 + (((7.0 + 2.0*x) + (x + sqrt(6.0 + ((8.0 + 2.0*x) + ((4.0 + 2.0*x) + (x + ((4.0 + 2.0*x) + 9.0))))))) + (6.0 + ((9.0 + (x + ((6.0 + 2.0*x) + 6.0))) + 2.0*x))))
+}
+
+headway_ewt_appr_title = "Approximated function using Symbolic Regression"
+headway_ewt_appr_title = NULL
+headway_ewt_appr_chart <- ggplot(results.averaged,aes(x=headway,y=ewt.a)) +
+  geom_point(aes(color = factor(line))) +
+  stat_function(fun=approximated,aes(x=headway)) +
+  custom_style +
+  theme(legend.position="none") +
+  # Legend
+  scale_color_manual(values=colors) +
+  # Labels
+  labs(title=headway_ewt_appr_title) +
+  # Axis
+  scale_y_continuous("Excess waiting time") +
+  ylim(-200, 120) +
+  scale_x_continuous("Headway design")
+
+finalise_plot(plot_name = headway_ewt_appr_chart,
+              save_filepath = sprintf("%s/headway_ewt_appr.pdf", dir),
+              width_pixels = width,
+              height_pixels = height)
+
 ##
 ## CH4. Excess waiting time (vs headway coefficient of variation)
 ##
 
 hcv_ewt_title = "HCoV vs EWT"
-
+hcv_ewt_title = NULL
 hcv_ewt_chart <- ggplot(results.averaged,aes(x=hcv,y=ewt.a)) +
   geom_point(aes(color = factor(line))) +
   geom_smooth(method='lm',aes(color="#BADA55")) +
@@ -181,7 +212,7 @@ finalise_plot(plot_name = hcv_ewt_chart,
 ##
 
 hcv_headway_title = "Headway vs HCoV"
-
+hcv_headway_title = NULL
 hcv_headway_chart <- ggplot(results.averaged,aes(x=headway,y=hcv)) +
   geom_point(aes(color = factor(line))) +
   geom_smooth(method='lm',aes(color="#BADA55")) +
@@ -205,7 +236,7 @@ finalise_plot(plot_name = hcv_headway_chart,
 ##
 
 fleet_ewt_title = "Operating fleet size vs EWT"
-
+fleet_ewt_title = NULL
 fleet_ewt_chart <- ggplot(results.averaged,aes(x=buses,y=ewt.a)) +
   geom_point(aes(color = factor(line))) +
   geom_smooth(method='lm',aes(color="#BADA55")) +
