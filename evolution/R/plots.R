@@ -12,6 +12,7 @@ if (!require("lubridate")) install.packages("lubridate")
 if (!require("dplyr")) install.packages("dplyr")
 if (!require("ggplot2")) install.packages("ggplot2")
 if (!require("ggExtra")) install.packages("ggExtra")
+if (!require("ggpubr")) install.packages("ggpubr")
 if (!require("grid")) install.packages("grid")
 if (!require("gridExtra")) install.packages("gridExtra")
 if (!require("plotly")) install.packages("plotly")
@@ -21,6 +22,7 @@ library(dplyr)
 library(ggplot2)
 library(bbplot)
 library(ggExtra)
+library(ggpubr)
 library(grid)
 library(dict)
 library(plotly)
@@ -51,6 +53,10 @@ custom_style <- bbc_style() + # theme_minimal()
   theme(axis.text.x=element_text(size=9,color="#666666"))
 
 results = read.csv("results.csv")
+fitness = read.csv("fitness-results.csv")
+# results = read.csv("../sim-results.csv")
+# fitness = read.csv("../fitness-results.csv")
+
 # Remove column "line"
 results = subset(results, select=-c(line))
 min_seq = min(results$number)
@@ -72,20 +78,21 @@ T31s <- results.averaged[grep("T31s",results.averaged$line),]
 ## CH1. Fitness progression over time
 ##
 
-miniature_title = "Overall Fitness Performance"
-miniature_subtitle = "Fitness progression over (simulated) time"
+fitness_title = "Overall Fitness Performance"
 
-fitness_chart <- ggplot(results.averaged,aes(x=number,y=simulation.fitness)) +
+fitness_chart <- ggplot(fitness,aes(x=generation,y=fitness)) +
   geom_line(size=1) +
+  geom_smooth(method='lm',aes(color="#BADA55")) +
+  stat_cor(method = "pearson") +
   custom_style +
   theme(legend.position="none") +
   # Legend
   scale_color_manual(values=colors) +
   # Labels
-  labs(title=miniature_title,subtitle=miniature_subtitle) +
+  labs(title=fitness_title) +
   # Axis
   scale_y_continuous("Fitness value") +
-  scale_x_continuous("Chromosome sequence")
+  scale_x_continuous("Chromosome")
 
 finalise_plot(plot_name = fitness_chart,
               save_filepath = sprintf("%s/overall_fitness_performance.pdf", dir),
@@ -96,17 +103,18 @@ finalise_plot(plot_name = fitness_chart,
 ## CH2. Excess waiting time (vs headway design)
 ##
 
-miniature_title = "Excess Waiting Time"
-miniature_subtitle = "Effect of headway design on passenger waiting time"
+headway_ewt_title = "Headway design vs EWT"
 
 headway_ewt_chart <- ggplot(results.averaged,aes(x=headway,y=ewt.a)) +
   geom_point(aes(color = factor(line))) +
+  geom_smooth(method='lm',aes(color="#BADA55")) +
+  stat_cor(method = "pearson") +
   custom_style +
   theme(legend.position="none") +
   # Legend
   scale_color_manual(values=colors) +
   # Labels
-  labs(title=miniature_title,subtitle=miniature_subtitle) +
+  labs(title=headway_ewt_title) +
   # Axis
   scale_y_continuous("Excess waiting time") +
   scale_x_continuous("Headway design")
@@ -117,20 +125,97 @@ finalise_plot(plot_name = headway_ewt_chart,
               height_pixels = height)
 
 ##
-## CH3. Excess waiting time (vs operating fleet size)
+## CH3. Interpolated function
 ##
 
-miniature_title = "Excess Waiting Time"
-miniature_subtitle = "Effect of operating fleet size on passenger waiting time"
+spline.d <- as.data.frame(spline(results.averaged$headway, results.averaged$ewt.a))
+headway_ewt_int_title = "Headway design vs EWT (interpolation)"
 
-fleet_ewt_chart <- ggplot(results.averaged,aes(x=buses,y=ewt.a)) +
+headway_ewt_int_chart <- ggplot(results.averaged,aes(x=headway,y=ewt.a)) +
   geom_point(aes(color = factor(line))) +
+  geom_line(data=spline.d, aes(x=x,y=y)) +
+  stat_cor(method = "pearson") +
   custom_style +
   theme(legend.position="none") +
   # Legend
   scale_color_manual(values=colors) +
   # Labels
-  labs(title=miniature_title,subtitle=miniature_subtitle) +
+  labs(title=headway_ewt_int_title) +
+  # Axis
+  scale_y_continuous("Excess waiting time") +
+  scale_x_continuous("Headway design")
+
+finalise_plot(plot_name = headway_ewt_int_chart,
+              save_filepath = sprintf("%s/headway_ewt_int.pdf", dir),
+              width_pixels = width,
+              height_pixels = height)
+
+##
+## CH4. Excess waiting time (vs headway coefficient of variation)
+##
+
+hcv_ewt_title = "HCoV vs EWT"
+
+hcv_ewt_chart <- ggplot(results.averaged,aes(x=hcv,y=ewt.a)) +
+  geom_point(aes(color = factor(line))) +
+  geom_smooth(method='lm',aes(color="#BADA55")) +
+  stat_cor(method = "pearson") +
+  custom_style +
+  theme(legend.position="none") +
+  # Legend
+  scale_color_manual(values=colors) +
+  # Labels
+  labs(title=hcv_ewt_title) +
+  # Axis
+  scale_y_continuous("Excess waiting time") +
+  scale_x_continuous("Headway coefficient of variation")
+
+finalise_plot(plot_name = hcv_ewt_chart,
+              save_filepath = sprintf("%s/hcv_ewt.pdf", dir),
+              width_pixels = width,
+              height_pixels = height)
+
+
+##
+## CH5. Excess waiting time (vs headway coefficient of variation)
+##
+
+hcv_headway_title = "Headway vs HCoV"
+
+hcv_headway_chart <- ggplot(results.averaged,aes(x=headway,y=hcv)) +
+  geom_point(aes(color = factor(line))) +
+  geom_smooth(method='lm',aes(color="#BADA55")) +
+  stat_cor(method = "pearson") +
+  custom_style +
+  theme(legend.position="none") +
+  # Legend
+  scale_color_manual(values=colors) +
+  # Labels
+  labs(title=hcv_headway_title) +
+  # Axis
+  scale_y_continuous("Excess waiting time") +
+  scale_x_continuous("Headway coefficient of variation")
+
+finalise_plot(plot_name = hcv_headway_chart,
+              save_filepath = sprintf("%s/hcv_headway.pdf", dir),
+              width_pixels = width,
+              height_pixels = height)
+##
+## CH6. Excess waiting time (vs operating fleet size)
+##
+
+fleet_ewt_title = "Operating fleet size vs EWT"
+
+fleet_ewt_chart <- ggplot(results.averaged,aes(x=buses,y=ewt.a)) +
+  geom_point(aes(color = factor(line))) +
+  geom_smooth(method='lm',aes(color="#BADA55")) +
+  stat_cor(method = "pearson") +
+  custom_style +
+  theme(legend.position="none") +
+  # Legend
+  scale_color_manual(values=colors) +
+  # Labels
+  labs(title=fleet_ewt_title) +
   # Axis
   scale_y_continuous("Excess waiting time") +
   scale_x_continuous("Number of buses")
@@ -140,37 +225,37 @@ finalise_plot(plot_name = fleet_ewt_chart,
               width_pixels = width,
               height_pixels = height)
 
-
 ##
-## CH4. Excess waiting time (vs operating fleet size)
+## CH7. Excess waiting time (vs operating fleet size)
 ##
 
-miniature_title = "Excess Waiting Time"
-miniature_subtitle = "Effect of operating fleet size and headway design on passenger waiting time"
+# miniature_title = "EWT vs Headway and Fleet size"
+# 
+# axx <- list(title = "Fleet size")
+# axy <- list(title = "Headway")
+# axz <- list(title = "EWT")
+# 
+# # Separate plots
+# ewt <- plot_ly(
+#   x = results.averaged$buses,
+#   y = results.averaged$headway,
+#   z = results.averaged$ewt.a,
+#   type= "scatter3d",
+#   mode = "markers",
+#   color = results.averaged$line
+# )
+# ewt <- ewt %>% layout(
+#   scene = list(xaxis=axx,yaxis=axy,zaxis=axz,aspectmode='cube'),
+#   title = miniature_title
+# )
+# ewt
+# 
+# ewt.T31s <- plot_ly(z = ~rbind(T31s$buses,T31s$headway,T31s$ewt.a))
+# ewt.T31s <- ewt.T31s %>% add_surface()
+# ewt.T31s <- ewt.T31s %>% layout(
+#   scene = list(xaxis=axx,yaxis=axy,zaxis=axz,aspectmode='cube'),
+#   title = miniature_title
+# )
+# ewt.T31s
+# 
 
-axx <- list(title = "Fleet size")
-axy <- list(title = "Headway")
-axz <- list(title = "EWT")
-
-# Separate plots
-ewt <- plot_ly(
-  x = results.averaged$buses,
-  y = results.averaged$headway,
-  z = results.averaged$ewt.a,
-  type= "scatter3d",
-  mode = "markers",
-  color = results.averaged$line
-)
-ewt <- ewt %>% layout(
-  scene = list(xaxis=axx,yaxis=axy,zaxis=axz,aspectmode='cube'),
-  title = miniature_title
-)
-ewt
-
-ewt.T31s <- plot_ly(z = ~rbind(T31s$buses,T31s$headway,T31s$ewt.a))
-ewt.T31s <- ewt.T31s %>% add_surface()
-ewt.T31s <- ewt.T31s %>% layout(
-  scene = list(xaxis=axx,yaxis=axy,zaxis=axz,aspectmode='cube'),
-  title = miniature_title
-)
-ewt.T31s
