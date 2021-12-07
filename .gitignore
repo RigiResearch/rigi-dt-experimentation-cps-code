@@ -1,6 +1,6 @@
 ### Eclipse ###
 
-.project
+#.project
 .settings
 .classpath
 
