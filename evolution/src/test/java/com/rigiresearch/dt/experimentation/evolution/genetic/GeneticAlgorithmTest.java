@@ -49,7 +49,7 @@ public class GeneticAlgorithmTest {
     /**
      * The number of generations for the genetic algorithm.
      */
-    private final int NUM_GENERATIONS = 50;
+    private final int NUM_GENERATIONS = 100;
 
     /**
      * The size of the population.
@@ -69,7 +69,7 @@ public class GeneticAlgorithmTest {
     /**
      * The crossover probability.
      */
-    private final double CROSSOVER_PROB = 0.50;
+    private final double CROSSOVER_PROB = 0.80;
 
     @Test
     void testGetLinesFromConfig() throws ConfigurationException {

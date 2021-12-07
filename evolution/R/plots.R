@@ -175,8 +175,7 @@ headway_ewt_appr_chart <- ggplot(results.averaged,aes(x=headway,y=ewt.a)) +
   # Labels
   labs(title=headway_ewt_appr_title) +
   # Axis
-  scale_y_continuous("Excess waiting time") +
-  ylim(-200, 120) +
+  scale_y_continuous("Excess waiting time",limits=c(-200, 120)) +
   scale_x_continuous("Headway design")
 
 finalise_plot(plot_name = headway_ewt_appr_chart,
@@ -227,8 +226,8 @@ hcv_headway_chart <- ggplot(results.averaged,aes(x=headway,y=hcv)) +
   # Labels
   labs(title=hcv_headway_title) +
   # Axis
-  scale_y_continuous("Excess waiting time") +
-  scale_x_continuous("Headway coefficient of variation")
+  scale_y_continuous("Headway coefficient of variation") +
+  scale_x_continuous("Headway design")
 
 finalise_plot(plot_name = hcv_headway_chart,
               save_filepath = sprintf("%s/hcv_headway.pdf", dir),

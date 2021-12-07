@@ -62,7 +62,7 @@ class MultiGroupExperimentTest {
                 "dt-experimentation-code/evolution/R/replicas-ewt.csv"
         );
         final ExperimentResult result =
-            new MultiGroupExperiment(1, samples, 0.05)
+            new MultiGroupExperiment(1, samples, 0.025)
                 .result();
         MultiGroupExperimentTest.LOGGER.info("\n{}", result);
     }
